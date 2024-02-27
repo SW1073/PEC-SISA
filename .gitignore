@@ -1,0 +1,11 @@
+*.qws
+*.rpt
+*db/
+*incremental_db/
+*output_files/
+*simulation/
+*.bak
+.config/
+.altera.quartus/
+.modelsim
+.hdl_checker/
