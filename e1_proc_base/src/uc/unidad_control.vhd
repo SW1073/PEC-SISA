@@ -33,6 +33,7 @@ ARCHITECTURE Structure OF unidad_control IS
 	 END COMPONENT;
 
 	 signal s_ldpc: std_logic;
+	 signal s_pc: std_logic_vector(15 downto 0) := (others => '0');
 BEGIN
 
     -- Aqui iria la declaracion del "mapeo" (PORT MAP) de los nombres de las entradas/salidas de los componentes
@@ -48,4 +49,21 @@ BEGIN
 		  addr_d => addr_d,
 		  immed => immed
 	 );
+	 
+	 cp: process(clk) is
+	 begin
+		if rising_edge(clk) then
+			s_pc <= s_pc; -- solo pasa si ldpc es 0
+
+			if s_ldpc = '1' and boot = '0' then
+				s_pc <= s_pc + 2;
+			elsif boot = '1' then
+				s_pc <= x"C000";
+			end if;
+			
+		end if;
+	 end process; -- cp
+	 
+	 pc <= s_pc;
+
 END Structure;
