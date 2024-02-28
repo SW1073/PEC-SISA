@@ -13,6 +13,9 @@ END alu;
 ARCHITECTURE Structure OF alu IS
 BEGIN
 
-    -- Aqui iria la definicion del comportamiento de la ALU
-
+	-- Aqui iria la definicion del comportamiento de la ALU
+	
+	w <= y when op = '0' else
+		  y(7 downto 0) & x(7 downto 0);
+	
 END Structure;
