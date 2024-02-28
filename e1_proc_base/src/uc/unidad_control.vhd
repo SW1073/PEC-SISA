@@ -53,14 +53,16 @@ BEGIN
 	 cp: process(clk) is
 	 begin
 		if rising_edge(clk) then
-			s_pc <= s_pc; -- solo pasa si ldpc es 0
 
-			if s_ldpc = '1' and boot = '0' then
-				s_pc <= s_pc + 2;
-			elsif boot = '1' then
-				s_pc <= x"C000";
-			end if;
-			
+            if boot = '1' then
+                if s_ldpc = '1' then
+                    s_pc <= s_pc + 2;
+                end if;
+
+            else
+                s_pc <= x"C000";
+            end if;
+
 		end if;
 	 end process; -- cp
 	 
