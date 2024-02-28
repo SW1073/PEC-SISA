@@ -24,6 +24,18 @@ ARCHITECTURE Structure OF proc IS
           immed  : IN STD_LOGIC_VECTOR(15 DOWNTO 0));
 	END COMPONENT;
 	
+	COMPONENT unidad_control IS
+    PORT (boot   : IN  STD_LOGIC;
+          clk    : IN  STD_LOGIC;
+          ir     : IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
+          op     : OUT STD_LOGIC;
+          wrd    : OUT STD_LOGIC;
+          addr_a : OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
+          addr_d : OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
+          immed  : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
+          pc     : OUT STD_LOGIC_VECTOR(15 DOWNTO 0));
+	END COMPONENT;
+	
 	signal s_op: std_logic;
 	signal s_wrd: std_logic;
 	signal s_addr_a: std_logic_vector (2 downto 0);
@@ -41,6 +53,18 @@ BEGIN
 		addr_a => s_addr_a,
 		addr_d => s_addr_d,
 		immed => s_immed
+	);
+	
+	uc: unidad_control port map(
+		boot => boot,
+		clk => clk,
+		ir => datard_m,
+		op => s_op,
+		wrd => s_wrd,
+		addr_a => s_addr_a,
+		addr_d => s_addr_d,
+		immed => s_immed,
+		pc => addr_m
 	);
 
 END Structure;
