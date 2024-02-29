@@ -1,0 +1,87 @@
+C:/Users/eloii/source/PEC-SISA/e1_proc_base/src/datapath/datapath.vhd {1 {vcom -work work -2002 -explicit C:/Users/eloii/source/PEC-SISA/e1_proc_base/src/datapath/datapath.vhd
+Model Technology ModelSim ALTERA vcom 10.1d Compiler 2012.11 Nov  2 2012
+-- Loading package STANDARD
+-- Loading package TEXTIO
+-- Loading package std_logic_1164
+-- Loading package NUMERIC_STD
+-- Compiling entity datapath
+-- Compiling architecture Structure of datapath
+
+} {} {}} C:/Users/eloii/source/PEC-SISA/e1_proc_base/src/test_rom.vhd {1 {vcom -work work -2002 -explicit C:/Users/eloii/source/PEC-SISA/e1_proc_base/src/test_rom.vhd
+Model Technology ModelSim ALTERA vcom 10.1d Compiler 2012.11 Nov  2 2012
+-- Loading package STANDARD
+-- Loading package TEXTIO
+-- Loading package std_logic_1164
+-- Loading package std_logic_arith
+-- Loading package STD_LOGIC_UNSIGNED
+-- Compiling entity test_rom
+-- Compiling architecture test of test_rom
+
+} {} {}} C:/Users/eloii/source/PEC-SISA/e1_proc_base/src/memory.vhd {1 {vcom -work work -2002 -explicit C:/Users/eloii/source/PEC-SISA/e1_proc_base/src/memory.vhd
+Model Technology ModelSim ALTERA vcom 10.1d Compiler 2012.11 Nov  2 2012
+-- Loading package STANDARD
+-- Loading package TEXTIO
+-- Loading package std_logic_1164
+-- Loading package std_logic_arith
+-- Loading package STD_LOGIC_UNSIGNED
+-- Loading package std_logic_textio
+-- Compiling entity memory
+-- Compiling architecture comportament of memory
+
+} {} {}} C:/Users/eloii/source/PEC-SISA/e1_proc_base/src/alu/alu.vhd {1 {vcom -work work -2002 -explicit C:/Users/eloii/source/PEC-SISA/e1_proc_base/src/alu/alu.vhd
+Model Technology ModelSim ALTERA vcom 10.1d Compiler 2012.11 Nov  2 2012
+-- Loading package STANDARD
+-- Loading package TEXTIO
+-- Loading package std_logic_1164
+-- Loading package NUMERIC_STD
+-- Compiling entity alu
+-- Compiling architecture Structure of alu
+
+} {} {}} C:/Users/eloii/source/PEC-SISA/e1_proc_base/src/uc/control_l.vhd {1 {vcom -work work -2002 -explicit C:/Users/eloii/source/PEC-SISA/e1_proc_base/src/uc/control_l.vhd
+Model Technology ModelSim ALTERA vcom 10.1d Compiler 2012.11 Nov  2 2012
+-- Loading package STANDARD
+-- Loading package TEXTIO
+-- Loading package std_logic_1164
+-- Loading package NUMERIC_STD
+-- Compiling entity control_l
+-- Compiling architecture Structure of control_l
+
+} {} {}} C:/Users/eloii/source/PEC-SISA/e1_proc_base/src/test_sisa.vhd {1 {vcom -work work -2002 -explicit C:/Users/eloii/source/PEC-SISA/e1_proc_base/src/test_sisa.vhd
+Model Technology ModelSim ALTERA vcom 10.1d Compiler 2012.11 Nov  2 2012
+-- Loading package STANDARD
+-- Loading package TEXTIO
+-- Loading package std_logic_1164
+-- Compiling entity test_sisa
+-- Compiling architecture comportament of test_sisa
+
+} {} {}} C:/Users/eloii/source/PEC-SISA/e1_proc_base/src/banco_regs/regfile.vhd {1 {vcom -work work -2002 -explicit C:/Users/eloii/source/PEC-SISA/e1_proc_base/src/banco_regs/regfile.vhd
+Model Technology ModelSim ALTERA vcom 10.1d Compiler 2012.11 Nov  2 2012
+-- Loading package STANDARD
+-- Loading package TEXTIO
+-- Loading package std_logic_1164
+-- Loading package NUMERIC_STD
+-- Loading package std_logic_arith
+-- Loading package STD_LOGIC_UNSIGNED
+-- Compiling entity regfile
+-- Compiling architecture Structure of regfile
+
+} {} {}} C:/Users/eloii/source/PEC-SISA/e1_proc_base/src/uc/unidad_control.vhd {1 {vcom -work work -2002 -explicit C:/Users/eloii/source/PEC-SISA/e1_proc_base/src/uc/unidad_control.vhd
+Model Technology ModelSim ALTERA vcom 10.1d Compiler 2012.11 Nov  2 2012
+-- Loading package STANDARD
+-- Loading package TEXTIO
+-- Loading package std_logic_1164
+-- Loading package NUMERIC_STD
+-- Loading package std_logic_arith
+-- Loading package STD_LOGIC_UNSIGNED
+-- Compiling entity unidad_control
+-- Compiling architecture Structure of unidad_control
+
+} {} {}} C:/Users/eloii/source/PEC-SISA/e1_proc_base/src/proc.vhd {1 {vcom -work work -2002 -explicit C:/Users/eloii/source/PEC-SISA/e1_proc_base/src/proc.vhd
+Model Technology ModelSim ALTERA vcom 10.1d Compiler 2012.11 Nov  2 2012
+-- Loading package STANDARD
+-- Loading package TEXTIO
+-- Loading package std_logic_1164
+-- Compiling entity proc
+-- Compiling architecture Structure of proc
+
+} {} {}}

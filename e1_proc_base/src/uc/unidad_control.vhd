@@ -54,7 +54,7 @@ BEGIN
 	begin
 		if rising_edge(clk) then
 
-			if boot = '1' then
+			if boot = '0' then
 				if s_ldpc = '1' then
 					s_pc <= s_pc + 2;
 				end if;

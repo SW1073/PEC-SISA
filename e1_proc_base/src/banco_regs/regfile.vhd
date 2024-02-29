@@ -27,10 +27,11 @@ BEGIN
 	begin
 		if rising_edge(clk) then
 			if wrd = '1' then
-				registers(to_integer(signed(addr_d))) <= d;
+				registers(conv_integer(addr_d)) <= d;
 			end if;
-			a <= registers(to_integer(signed(addr_a)));
 		end if;
 	end process;
+
+	a <= registers(conv_integer(addr_a));
 
 END Structure;
