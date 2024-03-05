@@ -17,9 +17,10 @@ ARCHITECTURE Structure OF proc IS
 
 	COMPONENT datapath IS
 		PORT (clk    : IN STD_LOGIC;
-			  op     : IN STD_LOGIC;
+			  op     : IN STD_LOGIC_VECTOR(1 DOWNTO 0);
 			  wrd    : IN STD_LOGIC;
 			  addr_a : IN STD_LOGIC_VECTOR(2 DOWNTO 0);
+			  addr_b : IN STD_LOGIC_VECTOR(2 DOWNTO 0);
 			  addr_d : IN STD_LOGIC_VECTOR(2 DOWNTO 0);
 			  immed  : IN STD_LOGIC_VECTOR(15 DOWNTO 0));
 	END COMPONENT;
@@ -28,17 +29,19 @@ ARCHITECTURE Structure OF proc IS
 		PORT (boot   : IN  STD_LOGIC;
 			  clk    : IN  STD_LOGIC;
 			  ir     : IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
-			  op     : OUT STD_LOGIC;
+			  op     : OUT STD_LOGIC_VECTOR(1 DOWNTO 0);
 			  wrd    : OUT STD_LOGIC;
 			  addr_a : OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
+			  addr_b : OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
 			  addr_d : OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
 			  immed  : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
 			  pc     : OUT STD_LOGIC_VECTOR(15 DOWNTO 0));
 	END COMPONENT;
 
-	signal s_op: std_logic;
+	signal s_op: std_logic_vector (1 downto 0);
 	signal s_wrd: std_logic;
 	signal s_addr_a: std_logic_vector (2 downto 0);
+	signal s_addr_b: std_logic_vector (2 downto 0);
 	signal s_addr_d: std_logic_vector (2 downto 0);
 	signal s_immed: std_logic_vector (15 downto 0);
 BEGIN
@@ -51,6 +54,7 @@ BEGIN
 		op => s_op,
 		wrd => s_wrd,
 		addr_a => s_addr_a,
+		addr_b => s_addr_b,
 		addr_d => s_addr_d,
 		immed => s_immed
 	);
@@ -62,6 +66,7 @@ BEGIN
 		op => s_op,
 		wrd => s_wrd,
 		addr_a => s_addr_a,
+		addr_b => s_addr_b,
 		addr_d => s_addr_d,
 		immed => s_immed,
 		pc => addr_m

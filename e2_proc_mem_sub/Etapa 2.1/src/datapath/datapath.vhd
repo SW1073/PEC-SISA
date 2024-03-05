@@ -4,9 +4,10 @@ USE ieee.numeric_std.all;
 
 ENTITY datapath IS
 	PORT (clk    : IN STD_LOGIC;
-		  op     : IN STD_LOGIC;
+		  op     : IN STD_LOGIC_VECTOR(1 DOWNTO 0);
 		  wrd    : IN STD_LOGIC;
 		  addr_a : IN STD_LOGIC_VECTOR(2 DOWNTO 0);
+		  addr_b : IN STD_LOGIC_VECTOR(2 DOWNTO 0);
 		  addr_d : IN STD_LOGIC_VECTOR(2 DOWNTO 0);
 		  immed  : IN STD_LOGIC_VECTOR(15 DOWNTO 0));
 END datapath;
@@ -21,7 +22,7 @@ ARCHITECTURE Structure OF datapath IS
 	COMPONENT alu IS
 		PORT (x  : IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
 			  y  : IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
-			  op : IN  STD_LOGIC;
+			  op : IN  STD_LOGIC_VECTOR(1 DOWNTO 0);
 			  w  : OUT STD_LOGIC_VECTOR(15 DOWNTO 0));
 	END COMPONENT;
 
@@ -31,11 +32,14 @@ ARCHITECTURE Structure OF datapath IS
 			  wrd    : IN  STD_LOGIC;
 			  d      : IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
 			  addr_a : IN  STD_LOGIC_VECTOR(2 DOWNTO 0);
+			  addr_b : IN  STD_LOGIC_VECTOR(2 DOWNTO 0);
 			  addr_d : IN  STD_LOGIC_VECTOR(2 DOWNTO 0);
-			  a      : OUT STD_LOGIC_VECTOR(15 DOWNTO 0));
+			  a      : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
+			  b      : OUT STD_LOGIC_VECTOR(15 DOWNTO 0));
 	END COMPONENT;
 
-	signal s_regout: std_logic_vector(15 downto 0);
+	signal s_regout_a: std_logic_vector(15 downto 0);
+	signal s_regout_b: std_logic_vector(15 downto 0);
 	signal s_aluout: std_logic_vector(15 downto 0);
 
 BEGIN
@@ -48,13 +52,15 @@ BEGIN
 		wrd => wrd,
 		d => s_aluout,
 		addr_a => addr_a,
+		addr_b => addr_a,
 		addr_d => addr_d,
-		a => s_regout
+		a => s_regout_a,
+		b => s_regout_b
 	);
 
 	al: alu port map(
 		op => op,
-		x => s_regout,
+		x => s_regout_a,
 		y => immed,
 		w => s_aluout
 	);

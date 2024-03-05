@@ -7,9 +7,10 @@ ENTITY unidad_control IS
 	PORT (boot   : IN  STD_LOGIC;
 		  clk    : IN  STD_LOGIC;
 		  ir     : IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
-		  op     : OUT STD_LOGIC;
+		  op     : OUT STD_LOGIC_VECTOR(1 DOWNTO 0);
 		  wrd    : OUT STD_LOGIC;
 		  addr_a : OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
+		  addr_b : OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
 		  addr_d : OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
 		  immed  : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
 		  pc     : OUT STD_LOGIC_VECTOR(15 DOWNTO 0));
@@ -24,10 +25,11 @@ ARCHITECTURE Structure OF unidad_control IS
 
 	COMPONENT control_l IS
 		PORT (ir     : IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
-			  op     : OUT STD_LOGIC;
+              op     : OUT STD_LOGIC_VECTOR(1 DOWNTO 0);
 			  ldpc   : OUT STD_LOGIC;
 			  wrd    : OUT STD_LOGIC;
 			  addr_a : OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
+			  addr_b : OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
 			  addr_d : OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
 			  immed  : OUT STD_LOGIC_VECTOR(15 DOWNTO 0));
 	END COMPONENT;
@@ -46,6 +48,7 @@ BEGIN
 		ldpc => s_ldpc,
 		wrd => wrd,
 		addr_a => addr_a,
+		addr_b => addr_a,
 		addr_d => addr_d,
 		immed => immed
 	);
