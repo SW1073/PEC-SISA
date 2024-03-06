@@ -48,8 +48,8 @@ ARCHITECTURE Structure OF datapath IS
 	signal s_regout_b: std_logic_vector(15 downto 0);
 	signal s_aluout: std_logic_vector(15 downto 0);
 
-    signal s_data: std_logic_vector(15 downto 0);
-    signal s_y: std_logic_vector(15 downto 0);
+	signal s_data: std_logic_vector(15 downto 0);
+	signal s_y: std_logic_vector(15 downto 0);
 
 BEGIN
 
@@ -62,7 +62,7 @@ BEGIN
 	reg: regfile port map(
 		clk => clk,
 		wrd => wrd,
-		d => s_aluout,
+		d => s_data,
 		addr_a => addr_a,
 		addr_b => addr_a,
 		addr_d => addr_d,
@@ -73,9 +73,11 @@ BEGIN
 	al: alu port map(
 		op => op,
 		x => s_regout_a,
-		y => immed,
+		y => s_y,
 		w => s_aluout
 	);
 
+	addr_m <= s_aluout when ins_dad = '1' else pc;
+	data_wr <= s_regout_b;
 
 END Structure;
