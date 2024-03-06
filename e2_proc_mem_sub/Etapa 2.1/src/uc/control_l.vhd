@@ -3,28 +3,78 @@ USE ieee.std_logic_1164.all;
 USE ieee.numeric_std.all;
 
 ENTITY control_l IS
-	PORT (ir     : IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
-		  op     : OUT STD_LOGIC_VECTOR(1 DOWNTO 0);
-		  ldpc   : OUT STD_LOGIC;
-		  wrd    : OUT STD_LOGIC;
-		  addr_a : OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
-		  addr_b : OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
-		  addr_d : OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
-		  immed  : OUT STD_LOGIC_VECTOR(15 DOWNTO 0));
+	PORT (ir				: IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
+			op				: OUT STD_LOGIC_VECTOR(1 DOWNTO 0);
+			ldpc			: OUT STD_LOGIC;
+			wrd 			: OUT STD_LOGIC;
+			addr_a 		: OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
+			addr_b 		: OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
+			addr_d 		: OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
+			immed 		: OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
+			wr_m 			: OUT STD_LOGIC;
+			in_d 			: OUT STD_LOGIC;
+			immed_x2 	: OUT STD_LOGIC;
+			word_byte 	: OUT STD_LOGIC);
 END control_l;
 
 
 ARCHITECTURE Structure OF control_l IS
+	signal s_opcode: std_logic_vector(3 downto 0);
+	signal s_first_reg:  std_logic_vector(2 downto 0);
+	signal s_second_reg: std_logic_vector(2 downto 0);
+	signal s_short_immed: signed(5 downto 0);
+	signal s_long_immed: signed(7 downto 0);
+	signal s_op: std_logic;
 BEGIN
+
+	s_opcode <= ir(15 downto 12);
+	s_first_reg <= ir(11 downto 9);
+	s_second_reg <= ir(8 downto 6);
+	s_short_immed <= signed(ir(5 downto 0));
+	s_long_immed <= signed(ir(7 downto 0));
+	s_op <= ir(8);
 
 	-- Aqui iria la generacion de las senales de control del datapath
 
-	op(0) <= ir(8); -- TODO CAMBIAR ESTO PORQUE ASUME QUE SOLO HAY INSTRUCCIONES MOVI Y MOVHI !!!!!!!!!!!!!!!!!!!!11
-	wrd <= '1' when ir(15 downto 12) = "0101" else '0';
-	immed(15 downto 8) <= (others => ir(7));
-	immed(7 downto 0) <= ir(7 downto 0);
-	addr_a <= ir(11 downto 9);
-	addr_d <= ir(11 downto 9);
+	-- Operacion de ALU
+	op <= ('0' & s_op) when s_opcode = "0101" else "10"; -- Se suma solo si no son MoviS
+
+	-- Enable de incremento de PC
 	ldpc <= '0' when ir = x"FFFF" else '1';
+
+	-- Permiso de escritura en el Banco de registros
+	wrd <= '1' when s_opcode = "0101" or s_opcode = "0011" or s_opcode = "1101" else '0';
+	
+	-- Direcciones de registros
+	with s_opcode select	addr_a <=
+		s_first_reg when "0101",
+		s_second_reg when others;
+
+	addr_b <= s_first_reg; -- Realmente solo se usa su valor cuando STx
+	addr_d <= s_first_reg; -- Realmente solo se uaa su valor cuando LDx o MOVxI
+	
+	-- Valor inmediato con extension de signo extraido de la instruccion.
+	immed <= std_logic_vector(resize(s_long_immed, immed'length)) when s_opcode = "0101" else
+				std_logic_vector(resize(s_short_immed, immed'length));
+
+	-- Permiso de escritura en la memoria si es una instrucción ST o STB
+	with s_opcode select wr_m <=
+		'1' when ("0100" or "1110"), -- Cuando ST o STB
+		'0' when others;
+	
+	-- 1 when MEM, 0 when ALU (permiso para el banco de registros)
+	with s_opcode select in_d <=
+		'1' when ("0011" or "1101"), -- Cuando LD o LDB
+		'0' when others;
+
+	-- La señal que determina si hay que desplazar el inmediato o no
+	with s_opcode select immed_x2 <=
+		'1' when ("0011" or "0100"), -- Cuando LD o ST
+		'0' when others;
+
+	-- La señal indica si el acceso a memoria es a nivel de byte o word
+	with s_opcode select word_byte <=
+		'1' when ("1101" or "1110"), -- Cuando LDB o STB
+		'0' when others;
 
 END Structure;
