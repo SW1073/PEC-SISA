@@ -3,15 +3,21 @@ USE ieee.std_logic_1164.all;
 USE ieee.numeric_std.all;
 
 ENTITY datapath IS
-	PORT (clk    : IN STD_LOGIC;
-		  op     : IN STD_LOGIC_VECTOR(1 DOWNTO 0);
-		  wrd    : IN STD_LOGIC;
-		  addr_a : IN STD_LOGIC_VECTOR(2 DOWNTO 0);
-		  addr_b : IN STD_LOGIC_VECTOR(2 DOWNTO 0);
-		  addr_d : IN STD_LOGIC_VECTOR(2 DOWNTO 0);
-		  immed  : IN STD_LOGIC_VECTOR(15 DOWNTO 0));
+    PORT (clk:         IN STD_LOGIC;
+          op:          IN STD_LOGIC_VECTOR(1 DOWNTO 0);
+          wrd:         IN STD_LOGIC;
+          addr_a:      IN STD_LOGIC_VECTOR(2 DOWNTO 0);
+          addr_b:      IN STD_LOGIC_VECTOR(2 DOWNTO 0);
+          addr_d:      IN STD_LOGIC_VECTOR(2 DOWNTO 0);
+          immed:       IN STD_LOGIC_VECTOR(15 DOWNTO 0);
+          immed_x2:    IN STD_LOGIC;
+          datard_m:    IN STD_LOGIC_VECTOR(15 DOWNTO 0);
+          ins_dad:     IN STD_LOGIC;
+          pc:          IN STD_LOGIC_VECTOR(15 DOWNTO 0);
+          in_d:        IN STD_LOGIC;
+          addr_m:      OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
+          data_wr:     OUT STD_LOGIC_VECTOR(15 DOWNTO 0));
 END datapath;
-
 
 ARCHITECTURE Structure OF datapath IS
 
@@ -42,10 +48,16 @@ ARCHITECTURE Structure OF datapath IS
 	signal s_regout_b: std_logic_vector(15 downto 0);
 	signal s_aluout: std_logic_vector(15 downto 0);
 
+    signal s_data: std_logic_vector(15 downto 0);
+    signal s_y: std_logic_vector(15 downto 0);
+
 BEGIN
 
 	-- Aqui iria la declaracion del "mapeo" (PORT MAP) de los nombres de las entradas/salidas de los componentes
 	-- En los esquemas de la documentacion a la instancia del banco de registros le hemos llamado reg0 y a la de la alu le hemos llamado alu0
+
+    s_data <= datard_m when in_d = '1' else s_aluout;
+    s_y <= immed when immed_x2 = '0' else (immed(14 DOWNTO 0) & '0');
 
 	reg: regfile port map(
 		clk => clk,
