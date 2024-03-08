@@ -27,7 +27,11 @@ begin
 		process (clk) is
 		begin
 			if rising_edge(clk) then
-				s_estado <= not s_estado;		
+				if boot = '1' then
+					s_estado <= '0'; -- FETCH
+				else
+					s_estado <= not s_estado;		
+				end if;
 			end if;
 		end process;
 		

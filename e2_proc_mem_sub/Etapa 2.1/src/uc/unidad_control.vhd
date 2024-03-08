@@ -33,6 +33,21 @@ ARCHITECTURE Structure OF unidad_control IS
 			  addr_d : OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
 			  immed  : OUT STD_LOGIC_VECTOR(15 DOWNTO 0));
 	END COMPONENT;
+	
+	COMPONENT multi IS
+    PORT(clk       : IN  STD_LOGIC;
+         boot      : IN  STD_LOGIC;
+         ldpc_l    : IN  STD_LOGIC;
+         wrd_l     : IN  STD_LOGIC;
+         wr_m_l    : IN  STD_LOGIC;
+         w_b       : IN  STD_LOGIC;
+         ldpc      : OUT STD_LOGIC;
+         wrd       : OUT STD_LOGIC;
+         wr_m      : OUT STD_LOGIC;
+         ldir      : OUT STD_LOGIC;
+         ins_dad   : OUT STD_LOGIC;
+         word_byte : OUT STD_LOGIC);
+	END COMPONENT;
 
 	signal s_ldpc: std_logic;
 	signal s_pc: std_logic_vector(15 downto 0) := (others => '0');
@@ -51,6 +66,22 @@ BEGIN
 		addr_b => addr_a,
 		addr_d => addr_d,
 		immed => immed
+	);
+	
+	-- TODO: Conectar bien
+	multi0: multi port map (
+		clk => clk,
+		boot => boot,
+		ldpc_l => '1',
+		wrd_l => '1',
+		wr_m_l => '1',
+		w_b => '1'
+		-- ldpc => ,
+		-- wrd => ,
+		-- wr_m => ,
+		-- ldir => ,
+		-- ins_dad => ,
+		-- word_byte =>
 	);
 
 	cp: process(clk) is
