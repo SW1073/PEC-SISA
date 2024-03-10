@@ -23,11 +23,8 @@ END unidad_control;
 
 ARCHITECTURE Structure OF unidad_control IS
 
-	-- Aqui iria la declaracion de las entidades que vamos a usar
-	-- Usaremos la palabra reservada COMPONENT ...
-	-- Tambien crearemos los cables/buses (signals) necesarios para unir las entidades
-	-- Aqui iria la definicion del program counter
-
+	-- Declaracion de las entidades que vamos a usar
+	-- Control Logic
 	COMPONENT control_l IS
 		PORT(ir			: IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
 			 op			: OUT STD_LOGIC_VECTOR(1 DOWNTO 0);
@@ -43,6 +40,7 @@ ARCHITECTURE Structure OF unidad_control IS
 			 word_byte 	: OUT STD_LOGIC);
 	END COMPONENT;
 
+	-- Multi
 	COMPONENT multi IS
 		PORT(clk       : IN  STD_LOGIC;
 			 boot      : IN  STD_LOGIC;
@@ -64,13 +62,13 @@ ARCHITECTURE Structure OF unidad_control IS
 	signal s_wr_m: std_logic;
 	signal s_wrd: std_logic;
 
-	-- Señales útiles que salen del multi
+	-- Señales útiles que salen del multi y usamos dentro de la uc
 	signal s_multi_ldpc: std_logic;
 	signal s_multi_ldir: std_logic;
 
 	-- Registros de valores que tienen que mantenerse entre clock cycles
-	signal s_pc: std_logic_vector(15 downto 0) := (others => '0'); -- pc register
-	signal s_ir: std_logic_vector(15 downto 0); -- instruction register
+	signal s_reg_pc: std_logic_vector(15 downto 0); -- pc register
+	signal s_reg_ir: std_logic_vector(15 downto 0); -- instruction register
 BEGIN
 
 	-- Aqui iria la declaracion del "mapeo" (PORT MAP) de los nombres de las entradas/salidas de los componentes
@@ -79,7 +77,7 @@ BEGIN
 
 	control_l0: control_l port map(
 		-- input
-		ir			=> s_ir, -- instruction register
+		ir			=> s_reg_ir, -- instruction register
 		-- ouputs
 		op			=> op,
 		ldpc		=> s_ldpc,
@@ -118,21 +116,21 @@ BEGIN
 			if boot = '0' then
 				-- Sumamos al PC solo cuando ldpc que sale del multi = 1
 				if s_multi_ldpc = '1' then
-					s_pc <= s_pc + 2;
+					s_reg_pc <= s_reg_pc + 2;
 				end if;
 
 				-- Sumamos al IR solo cuando ldir que sale del multi = 1
 				if s_multi_ldir = '1' then
-					s_ir <= datard_m;
+					s_reg_ir <= datard_m;
 				end if;
 			else
 				-- Valores default cuando en boot
-				s_pc <= x"C000";
-				s_ir <= x"0000";
+				s_reg_pc <= x"C000";
+				s_reg_ir <= x"0000";
 			end if;
 		end if;
 	end process; -- cp_and_ir
 
-	pc <= s_pc;
+	pc <= s_reg_pc;
 
 END Structure;
