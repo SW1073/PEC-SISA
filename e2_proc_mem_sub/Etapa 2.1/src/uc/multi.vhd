@@ -57,7 +57,7 @@ begin
 
 		-- Esta señal a 1 le indicará al datapath que en el bus de direcciones de la memoria deberá poner la
 		-- salida de la ALU y si vale 0 deberá poner el PC. Básicamente nos dice si estamos al ciclo F o DEMW
-		ins_dad <= '1' when s_estado = FETCH else '0'; -- s_estado es 0 si FETCH, 1 cuando DEMW
+		ins_dad <= '0' when s_estado = FETCH else '0'; -- s_estado es 0 si FETCH, 1 cuando DEMW
 
 		-- Es la señal que indica que cargaremos un nuevo valor en el IR, sólo se activa en el ciclo F
 		ldir <= '1' when s_estado = FETCH else '0';

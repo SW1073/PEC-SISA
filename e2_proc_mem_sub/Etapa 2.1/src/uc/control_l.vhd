@@ -59,22 +59,26 @@ BEGIN
 
 	-- Permiso de escritura en la memoria si es una instrucción ST o STB
 	with s_opcode select wr_m <=
-		'1' when ("0100" or "1110"), -- Cuando ST o STB
+        '1' when "0100", -- Cuando ST o STB
+        '1' when "1110", -- Cuando ST o STB
 		'0' when others;
 
 	-- 1 when MEM, 0 when ALU (permiso para el banco de registros)
 	with s_opcode select in_d <=
-		'1' when ("0011" or "1101"), -- Cuando LD o LDB
+        '1' when "0011", -- Cuando LD o LDB
+        '1' when "1101", -- Cuando LD o LDB
 		'0' when others;
 
 	-- La señal que determina si hay que desplazar el inmediato o no
 	with s_opcode select immed_x2 <=
-		'1' when ("0011" or "0100"), -- Cuando LD o ST
+        '1' when "0011", -- Cuando LD o ST
+        '1' when "0100", -- Cuando LD o ST
 		'0' when others;
 
 	-- La señal indica si el acceso a memoria es a nivel de byte o word
 	with s_opcode select word_byte <=
-		'1' when ("1101" or "1110"), -- Cuando LDB o STB
+        '1' when "1101", -- Cuando LDB o STB
+        '1' when "1110", -- Cuando LDB o STB
 		'0' when others;
 
 END Structure;
