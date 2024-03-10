@@ -70,7 +70,7 @@ BEGIN
 	-- En los esquemas de la documentacion a la instancia del DATAPATH le hemos llamado e0 y a la de la unidad de control le hemos llamado c0
 
 	dp: datapath port map (
-		-- intpus
+		-- inpus
 		clk         => clk,
 		op          => s_op,
 		wrd         => s_wrd,
