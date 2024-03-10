@@ -44,7 +44,7 @@ BEGIN
 
 	-- Permiso de escritura en el Banco de registros
 	wrd <= '1' when s_opcode = "0101" or s_opcode = "0011" or s_opcode = "1101" else '0';
-	
+
 	-- Direcciones de registros
 	with s_opcode select	addr_a <=
 		s_first_reg when "0101",
@@ -52,27 +52,27 @@ BEGIN
 
 	addr_b <= s_first_reg; -- Realmente solo se usa su valor cuando STx
 	addr_d <= s_first_reg; -- Realmente solo se uaa su valor cuando LDx o MOVxI
-	
+
 	-- Valor inmediato con extension de signo extraido de la instruccion.
 	immed <= std_logic_vector(resize(s_long_immed, immed'length)) when s_opcode = "0101" else
 				std_logic_vector(resize(s_short_immed, immed'length));
 
-	-- Permiso de escritura en la memoria si es una instrucciÃ³n ST o STB
+	-- Permiso de escritura en la memoria si es una instrucción ST o STB
 	with s_opcode select wr_m <=
 		'1' when ("0100" or "1110"), -- Cuando ST o STB
 		'0' when others;
-	
+
 	-- 1 when MEM, 0 when ALU (permiso para el banco de registros)
 	with s_opcode select in_d <=
 		'1' when ("0011" or "1101"), -- Cuando LD o LDB
 		'0' when others;
 
-	-- La seÃ±al que determina si hay que desplazar el inmediato o no
+	-- La señal que determina si hay que desplazar el inmediato o no
 	with s_opcode select immed_x2 <=
 		'1' when ("0011" or "0100"), -- Cuando LD o ST
 		'0' when others;
 
-	-- La seÃ±al indica si el acceso a memoria es a nivel de byte o word
+	-- La señal indica si el acceso a memoria es a nivel de byte o word
 	with s_opcode select word_byte <=
 		'1' when ("1101" or "1110"), -- Cuando LDB o STB
 		'0' when others;
