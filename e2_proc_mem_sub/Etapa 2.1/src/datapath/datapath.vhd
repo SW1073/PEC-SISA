@@ -64,7 +64,7 @@ BEGIN
 		wrd => wrd,
 		d => s_data,
 		addr_a => addr_a,
-		addr_b => addr_a,
+		addr_b => addr_b,
 		addr_d => addr_d,
 		a => s_regout_a,
 		b => s_regout_b
