@@ -38,28 +38,28 @@ begin
 			end if;
 		end process; -- prx_estado
 
-		-- Señal que, o bien vale el valor de ldpc generado por la lógica de control cuando se está en el ciclo
+		-- Seï¿½al que, o bien vale el valor de ldpc generado por la lï¿½gica de control cuando se estï¿½ en el ciclo
 		--de DEMW o 0 en otro caso (hasta que implementemos las instrucciones de salto).
 		ldpc <= ldpc_l when s_estado = DEMW else '0';
 
-		-- Señal que, o bien vale el valor de wrd generado por la lógica de control cuando se está en el ciclo
+		-- Seï¿½al que, o bien vale el valor de wrd generado por la lï¿½gica de control cuando se estï¿½ en el ciclo
 		-- de DEMW o 0 en otro caso.
 		wrd <= wrd_l when s_estado = DEMW else '0';
 
-		-- Señal que, o bien vale el valor de wr_m generado por la lógica de control cuando se está en el
+		-- Seï¿½al que, o bien vale el valor de wr_m generado por la lï¿½gica de control cuando se estï¿½ en el
 		-- ciclo de DEMW o 0 en otro caso.
 		wr_m <= wr_m_l when s_estado = DEMW else '0';
 
-		-- Señal word_byte generada por la lógica de control y que sólo debe dejarse pasar en el ciclo de
+		-- Seï¿½al word_byte generada por la lï¿½gica de control y que sï¿½lo debe dejarse pasar en el ciclo de
 		-- DEMW. En el ciclo F debe valer 0 ya que el acceso a la memoria,
-		-- para traerse una instrucción, es a nivel de word
+		-- para traerse una instrucciï¿½n, es a nivel de word
 		word_byte <= w_b when s_estado = DEMW else '0';
 
-		-- Esta señal a 1 le indicará al datapath que en el bus de direcciones de la memoria deberá poner la
-		-- salida de la ALU y si vale 0 deberá poner el PC. Básicamente nos dice si estamos al ciclo F o DEMW
-		ins_dad <= '0' when s_estado = FETCH else '0'; -- s_estado es 0 si FETCH, 1 cuando DEMW
+		-- Esta seï¿½al a 1 le indicarï¿½ al datapath que en el bus de direcciones de la memoria deberï¿½ poner la
+		-- salida de la ALU y si vale 0 deberï¿½ poner el PC. Bï¿½sicamente nos dice si estamos al ciclo F o DEMW
+		ins_dad <= '0' when s_estado = FETCH else '1'; -- s_estado es 0 si FETCH, 1 cuando DEMW
 
-		-- Es la señal que indica que cargaremos un nuevo valor en el IR, sólo se activa en el ciclo F
+		-- Es la seï¿½al que indica que cargaremos un nuevo valor en el IR, sï¿½lo se activa en el ciclo F
 		ldir <= '1' when s_estado = FETCH else '0';
 
 -- Forma alternativa de hacer lo mismo
