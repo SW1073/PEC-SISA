@@ -4,7 +4,7 @@ use ieee.std_logic_arith.all;
 use ieee.std_logic_unsigned.all;
 
 entity SRAMController is
-    port (clk         : in    std_logic;
+    port (clk         : in    std_logic; -- Va a 50MHZ. Esto lo tenemos que aprovechar
           -- se�ales para la placa de desarrollo
           SRAM_ADDR   : out   std_logic_vector(17 downto 0);
           SRAM_DQ     : inout std_logic_vector(15 downto 0);
@@ -22,6 +22,9 @@ entity SRAMController is
 end SRAMController;
 
 architecture comportament of SRAMController is
+
+    type State_t is (IDLE, READ, VALID); -- TODO: Añadir más estados
+    signal s_state: State_t := IDLE;
 begin
 -- Así pues, las entradas de la SRAMController son:
 --   - clk: La señal de reloj.
@@ -40,5 +43,60 @@ begin
 -- desde el chip de memoria. Al ser un bus bidireccional implica que diversos componentes pondrán datos en él en distintos
 -- momentos. Hemos de garantizar en el diseño que dos componentes nunca pongan un valor en el bus de forma simultánea.
 -- Por ello, cuando un componente no desee escribir en el bus deberá poner sus salidas en alta impedancia (High-Z)
+
+    next_state: process(clk) is
+        variable v_valid_counter: integer;
+        variable v_state: State_t;
+    begin
+        if rising_edge(clk) then
+            v_state := s_state;
+            case (s_state) is
+                when IDLE =>
+                    v_state := READ;
+                    -- TODO: Aquí hay que hacer un if, para ver si se lee o se escribe
+                    -- se puede hacer ese if con WE, que nos marca cuando queremos
+                    -- hacer escritura, y cuando lectura
+                when READ =>
+                    v_valid_counter := 7;
+                    v_state := VALID;
+                when VALID =>
+                    if v_valid_counter > 0 then
+                        v_state := VALID;
+                        v_valid_counter := v_valid_counter - 1;
+                    else
+                        v_state := IDLE;
+                    end if;
+            end case;
+            s_state <= v_state;
+        end if;
+    end process; -- next_state
+
+    output_logic: process(clk) is
+    begin
+        if rising_edge(clk) then
+            case (s_state) is
+                when IDLE =>
+                    SRAM_UB_N <= '1';
+                    SRAM_LB_N <= '0';
+                    SRAM_CE_N <= '0';
+                    SRAM_OE_N <= '0';
+                    SRAM_WE_N <= '0';
+                    -- if next state is gona be READ, hacer las cosaas de read
+                    -- COMO EN MP XD
+                    SRAM_ADDR <= "00" & address;
+
+                when READ =>
+                    -- Read cycle no. 1 en el datasheet
+
+                when VALID => 
+                    SRAM_UB_N <= '1';
+                    SRAM_LB_N <= '0';
+                    SRAM_CE_N <= '0';
+                    SRAM_OE_N <= '0';
+                    SRAM_WE_N <= '0';
+                    dataReaded <= SRAM_DQ;
+            end case;
+        end if;
+    end process; -- output_logic
 
 end comportament;
