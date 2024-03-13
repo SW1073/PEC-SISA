@@ -45,7 +45,7 @@ architecture comportament of MemoryController is
 begin
     -- Por ahora, toda lectura es siempre de la SRAM, per en un futuro aquí habrá que multiplexar
     rd_data <= s_sram_data_readed;
-    s_sram_wr <= '1' when (addr < x"C000") else '0';
+    s_sram_wr <= we when (addr < x"C000") else '0';
 
     sramctrl0: SRAMController port map(
         clk         => CLOCK_50,
