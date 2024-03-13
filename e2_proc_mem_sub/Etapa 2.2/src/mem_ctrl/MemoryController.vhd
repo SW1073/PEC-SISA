@@ -10,7 +10,7 @@ entity MemoryController is
           rd_data   : out std_logic_vector(15 downto 0);
           we        : in  std_logic;
           byte_m    : in  std_logic;
-          -- se�ales para la placa de desarrollo
+          -- se�ales para la placa de desarrollo
           SRAM_ADDR : out   std_logic_vector(17 downto 0);
           SRAM_DQ   : inout std_logic_vector(15 downto 0);
           SRAM_UB_N : out   std_logic;
@@ -21,6 +21,48 @@ entity MemoryController is
 end MemoryController;
 
 architecture comportament of MemoryController is
+    COMPONENT SRAMController is
+        port (clk         : in    std_logic;
+            -- se�ales para la placa de desarrollo
+            SRAM_ADDR   : out   std_logic_vector(17 downto 0);
+            SRAM_DQ     : inout std_logic_vector(15 downto 0);
+            SRAM_UB_N   : out   std_logic;
+            SRAM_LB_N   : out   std_logic;
+            SRAM_CE_N   : out   std_logic := '1';
+            SRAM_OE_N   : out   std_logic := '1';
+            SRAM_WE_N   : out   std_logic := '1';
+            -- se�ales internas del procesador
+            address     : in    std_logic_vector(15 downto 0) := "0000000000000000";
+            dataReaded  : out   std_logic_vector(15 downto 0);
+            dataToWrite : in    std_logic_vector(15 downto 0);
+            WR          : in    std_logic;
+            byte_m      : in    std_logic := '0');
+    end COMPONENT;
+
+
+    signal s_sram_data_readed: std_logic_vector(15 downto 0);
+    signal s_sram_wr: std_logic;
 begin
+    -- Por ahora, toda lectura es siempre de la SRAM, per en un futuro aquí habrá que multiplexar
+    rd_data <= s_sram_data_readed;
+    s_sram_wr <= '1' when (addr < x"C000") else '0';
+
+    sramctrl0: SRAMController port map(
+        clk         => CLOCK_50,
+        -- se�ales para la placa de desarrollo
+        SRAM_ADDR   => SRAM_ADDR,
+        SRAM_DQ     => SRAM_DQ,
+        SRAM_UB_N   => SRAM_UB_N,
+        SRAM_LB_N   => SRAM_LB_N,
+        SRAM_CE_N   => SRAM_CE_N,
+        SRAM_OE_N   => SRAM_OE_N,
+        SRAM_WE_N   => SRAM_WE_N,
+        -- se�ales internas del procesador
+        address     => addr,
+        dataReaded  => s_sram_data_readed,
+        dataToWrite => wr_data,
+        WR          => s_sram_wr,
+        byte_m      => byte_m
+    );
 
 end comportament;
