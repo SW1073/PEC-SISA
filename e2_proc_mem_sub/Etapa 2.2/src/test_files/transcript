@@ -1,0 +1,236 @@
+# Compile of async_64Kx16.vhd was successful.
+# Compile of package_timing.vhd was successful.
+# Compile of package_utility.vhd was successful.
+# Compile of test_sisa.vhd was successful with warnings.
+# Compile of sisa.vhd was successful.
+# Compile of MemoryController.vhd was successful.
+# Compile of SRAMController.vhd failed with 1 errors.
+# Compile of proc.vhd was successful.
+# Compile of control_l.vhd was successful.
+# Compile of multi.vhd was successful.
+# Compile of unidad_control.vhd was successful.
+# Compile of datapath.vhd was successful.
+# Compile of regfile.vhd was successful.
+# Compile of alu.vhd was successful.
+# 14 compiles, 1 failed with 1 error. 
+# Compile of async_64Kx16.vhd was successful.
+# Compile of package_timing.vhd was successful.
+# Compile of package_utility.vhd was successful.
+# Compile of test_sisa.vhd was successful with warnings.
+# Compile of sisa.vhd was successful.
+# Compile of MemoryController.vhd was successful.
+# Compile of SRAMController.vhd failed with 1 errors.
+# Compile of proc.vhd was successful.
+# Compile of control_l.vhd was successful.
+# Compile of multi.vhd was successful.
+# Compile of unidad_control.vhd was successful.
+# Compile of datapath.vhd was successful.
+# Compile of regfile.vhd was successful.
+# Compile of alu.vhd was successful.
+# 14 compiles, 1 failed with 1 error. 
+# Compile of async_64Kx16.vhd was successful.
+# Compile of package_timing.vhd was successful.
+# Compile of package_utility.vhd was successful.
+# Compile of test_sisa.vhd was successful with warnings.
+# Compile of sisa.vhd was successful.
+# Compile of MemoryController.vhd was successful.
+# Compile of SRAMController.vhd failed with 1 errors.
+# Compile of proc.vhd was successful.
+# Compile of control_l.vhd was successful.
+# Compile of multi.vhd was successful.
+# Compile of unidad_control.vhd was successful.
+# Compile of datapath.vhd was successful.
+# Compile of regfile.vhd was successful.
+# Compile of alu.vhd was successful.
+# 14 compiles, 1 failed with 1 error. 
+# Compile of async_64Kx16.vhd was successful.
+# Compile of package_timing.vhd was successful.
+# Compile of package_utility.vhd was successful.
+# Compile of test_sisa.vhd was successful with warnings.
+# Compile of sisa.vhd was successful.
+# Compile of MemoryController.vhd was successful.
+# Compile of SRAMController.vhd failed with 1 errors.
+# Compile of proc.vhd was successful.
+# Compile of control_l.vhd was successful.
+# Compile of multi.vhd was successful.
+# Compile of unidad_control.vhd was successful.
+# Compile of datapath.vhd was successful.
+# Compile of regfile.vhd was successful.
+# Compile of alu.vhd was successful.
+# 14 compiles, 1 failed with 1 error. 
+# Compile of async_64Kx16.vhd was successful.
+# Compile of package_timing.vhd was successful.
+# Compile of package_utility.vhd was successful.
+# Compile of test_sisa.vhd was successful with warnings.
+# Compile of sisa.vhd was successful.
+# Compile of MemoryController.vhd was successful.
+# Compile of SRAMController.vhd failed with 1 errors.
+# Compile of proc.vhd was successful.
+# Compile of control_l.vhd was successful.
+# Compile of multi.vhd was successful.
+# Compile of unidad_control.vhd was successful.
+# Compile of datapath.vhd was successful.
+# Compile of regfile.vhd was successful.
+# Compile of alu.vhd was successful.
+# 14 compiles, 1 failed with 1 error. 
+# Compile of async_64Kx16.vhd was successful.
+# Compile of package_timing.vhd was successful.
+# Compile of package_utility.vhd was successful.
+# Compile of test_sisa.vhd was successful with warnings.
+# Compile of sisa.vhd was successful.
+# Compile of MemoryController.vhd was successful.
+# Compile of SRAMController.vhd was successful.
+# Compile of proc.vhd was successful.
+# Compile of control_l.vhd was successful.
+# Compile of multi.vhd was successful.
+# Compile of unidad_control.vhd was successful.
+# Compile of datapath.vhd was successful.
+# Compile of regfile.vhd was successful.
+# Compile of alu.vhd was successful.
+# 14 compiles, 0 failed with no errors. 
+vsim -gui work.test_sisa
+# vsim -gui work.test_sisa 
+# Loading std.standard
+# Loading std.textio(body)
+# Loading ieee.std_logic_1164(body)
+# Loading work.test_sisa(comportament)
+# Loading ieee.std_logic_arith(body)
+# Loading ieee.std_logic_unsigned(body)
+# Loading work.sisa(structure)
+# Loading work.proc(structure)
+# Loading ieee.numeric_std(body)
+# Loading work.datapath(structure)
+# Loading work.regfile(structure)
+# Loading work.alu(structure)
+# Loading work.unidad_control(structure)
+# Loading work.control_l(structure)
+# Loading work.multi(structure)
+# Loading work.memorycontroller(comportament)
+# Loading work.sramcontroller(comportament)
+# Loading ieee.std_logic_textio(body)
+# Loading work.package_timing(body)
+# Loading work.package_utility(body)
+# Loading work.async_64kx16(behave_arch)
+add wave -position end  sim:/test_sisa/SoC/CLOCK_50
+add wave -position end  sim:/test_sisa/SoC/SRAM_ADDR
+add wave -position end  sim:/test_sisa/SoC/SRAM_DQ
+add wave -position end  sim:/test_sisa/SoC/SRAM_UB_N
+add wave -position end  sim:/test_sisa/SoC/SRAM_LB_N
+add wave -position end  sim:/test_sisa/SoC/SRAM_CE_N
+add wave -position end  sim:/test_sisa/SoC/SRAM_OE_N
+add wave -position end  sim:/test_sisa/SoC/SRAM_WE_N
+add wave -position end  sim:/test_sisa/SoC/SW
+add wave -position end  sim:/test_sisa/SoC/s_word_byte
+add wave -position end  sim:/test_sisa/SoC/s_wr_m
+add wave -position end  sim:/test_sisa/SoC/s_addr_m
+add wave -position end  sim:/test_sisa/SoC/s_data_wr
+add wave -position end  sim:/test_sisa/SoC/s_rd_data
+add wave -position end  sim:/test_sisa/SoC/s_reg_divisor
+add wave -position end  sim:/test_sisa/SoC/memctrl0/sramctrl0/clk
+add wave -position end  sim:/test_sisa/SoC/memctrl0/sramctrl0/SRAM_ADDR
+add wave -position end  sim:/test_sisa/SoC/memctrl0/sramctrl0/SRAM_DQ
+add wave -position end  sim:/test_sisa/SoC/memctrl0/sramctrl0/SRAM_UB_N
+add wave -position end  sim:/test_sisa/SoC/memctrl0/sramctrl0/SRAM_LB_N
+add wave -position end  sim:/test_sisa/SoC/memctrl0/sramctrl0/SRAM_CE_N
+add wave -position end  sim:/test_sisa/SoC/memctrl0/sramctrl0/SRAM_OE_N
+add wave -position end  sim:/test_sisa/SoC/memctrl0/sramctrl0/SRAM_WE_N
+add wave -position end  sim:/test_sisa/SoC/memctrl0/sramctrl0/address
+add wave -position end  sim:/test_sisa/SoC/memctrl0/sramctrl0/dataReaded
+add wave -position end  sim:/test_sisa/SoC/memctrl0/sramctrl0/dataToWrite
+add wave -position end  sim:/test_sisa/SoC/memctrl0/sramctrl0/WR
+add wave -position end  sim:/test_sisa/SoC/memctrl0/sramctrl0/byte_m
+add wave -position end  sim:/test_sisa/SoC/memctrl0/sramctrl0/s_state
+add wave -position end  sim:/test_sisa/SoC/memctrl0/sramctrl0/s_valid_counter
+run 1000ns
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 0 ps  Iteration: 0  Instance: /test_sisa/SoC/memctrl0
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 0 ps  Iteration: 0  Instance: /test_sisa/SoC/proc0/dp/reg
+# ** Warning: CONV_INTEGER: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, and it has been converted to 0.
+#    Time: 0 ps  Iteration: 0  Instance: /test_sisa/SoC/proc0/dp/reg
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 0 ps  Iteration: 0  Instance: /test_sisa/SoC/proc0/dp/reg
+# ** Warning: CONV_INTEGER: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, and it has been converted to 0.
+#    Time: 0 ps  Iteration: 0  Instance: /test_sisa/SoC/proc0/dp/reg
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 0 ps  Iteration: 1  Instance: /test_sisa/SoC/memctrl0
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 0 ps  Iteration: 1  Instance: /test_sisa/SoC/proc0/dp/al
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 0 ps  Iteration: 2  Instance: /test_sisa/SoC/proc0/dp/al
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 390 ns  Iteration: 4  Instance: /test_sisa/SoC/proc0/dp/reg
+# ** Warning: CONV_INTEGER: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, and it has been converted to 0.
+#    Time: 390 ns  Iteration: 4  Instance: /test_sisa/SoC/proc0/dp/reg
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 390 ns  Iteration: 4  Instance: /test_sisa/SoC/proc0/dp/reg
+# ** Warning: CONV_INTEGER: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, and it has been converted to 0.
+#    Time: 390 ns  Iteration: 4  Instance: /test_sisa/SoC/proc0/dp/reg
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 390 ns  Iteration: 5  Instance: /test_sisa/SoC/proc0/dp/al
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 390 ns  Iteration: 7  Instance: /test_sisa/SoC/memctrl0
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 710 ns  Iteration: 4  Instance: /test_sisa/SoC/memctrl0
+# Compile of async_64Kx16.vhd was successful.
+# Compile of package_timing.vhd was successful.
+# Compile of package_utility.vhd was successful.
+# Compile of test_sisa.vhd was successful with warnings.
+# Compile of sisa.vhd was successful.
+# Compile of MemoryController.vhd was successful.
+# Compile of SRAMController.vhd was successful.
+# Compile of proc.vhd was successful.
+# Compile of control_l.vhd was successful.
+# Compile of multi.vhd was successful.
+# Compile of unidad_control.vhd was successful.
+# Compile of datapath.vhd was successful.
+# Compile of regfile.vhd was successful.
+# Compile of alu.vhd was successful.
+# 14 compiles, 0 failed with no errors. 
+restart -f && run 1000ns
+# Loading work.test_sisa(comportament)
+# Loading work.sisa(structure)
+# Loading work.proc(structure)
+# Loading work.datapath(structure)
+# Loading work.regfile(structure)
+# Loading work.alu(structure)
+# Loading work.unidad_control(structure)
+# Loading work.control_l(structure)
+# Loading work.multi(structure)
+# Loading work.memorycontroller(comportament)
+# Loading work.sramcontroller(comportament)
+# Loading work.package_timing(body)
+# Loading work.package_utility(body)
+# Loading work.async_64kx16(behave_arch)
+run 1000ns
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 0 ps  Iteration: 0  Instance: /test_sisa/SoC/memctrl0
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 0 ps  Iteration: 0  Instance: /test_sisa/SoC/proc0/dp/reg
+# ** Warning: CONV_INTEGER: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, and it has been converted to 0.
+#    Time: 0 ps  Iteration: 0  Instance: /test_sisa/SoC/proc0/dp/reg
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 0 ps  Iteration: 0  Instance: /test_sisa/SoC/proc0/dp/reg
+# ** Warning: CONV_INTEGER: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, and it has been converted to 0.
+#    Time: 0 ps  Iteration: 0  Instance: /test_sisa/SoC/proc0/dp/reg
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 0 ps  Iteration: 1  Instance: /test_sisa/SoC/memctrl0
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 0 ps  Iteration: 1  Instance: /test_sisa/SoC/proc0/dp/al
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 0 ps  Iteration: 2  Instance: /test_sisa/SoC/proc0/dp/al
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 390 ns  Iteration: 4  Instance: /test_sisa/SoC/proc0/dp/reg
+# ** Warning: CONV_INTEGER: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, and it has been converted to 0.
+#    Time: 390 ns  Iteration: 4  Instance: /test_sisa/SoC/proc0/dp/reg
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 390 ns  Iteration: 4  Instance: /test_sisa/SoC/proc0/dp/reg
+# ** Warning: CONV_INTEGER: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, and it has been converted to 0.
+#    Time: 390 ns  Iteration: 4  Instance: /test_sisa/SoC/proc0/dp/reg
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 390 ns  Iteration: 5  Instance: /test_sisa/SoC/proc0/dp/al
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 390 ns  Iteration: 7  Instance: /test_sisa/SoC/memctrl0
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 710 ns  Iteration: 4  Instance: /test_sisa/SoC/memctrl0
+add wave -position end  sim:/test_sisa/SoC/proc0/clk

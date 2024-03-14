@@ -9,3 +9,4 @@
 .altera.quartus/
 .modelsim
 .hdl_checker/
+*work/

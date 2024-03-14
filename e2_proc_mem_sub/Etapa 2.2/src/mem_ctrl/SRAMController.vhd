@@ -5,7 +5,7 @@ use ieee.std_logic_unsigned.all;
 
 entity SRAMController is
     port (clk         : in    std_logic; -- Va a 50MHZ. Esto lo tenemos que aprovechar
-          -- seÔøΩales para la placa de desarrollo
+          -- senales para la placa de desarrollo
           SRAM_ADDR   : out   std_logic_vector(17 downto 0);
           SRAM_DQ     : inout std_logic_vector(15 downto 0);
           SRAM_UB_N   : out   std_logic;
@@ -13,7 +13,7 @@ entity SRAMController is
           SRAM_CE_N   : out   std_logic := '1';
           SRAM_OE_N   : out   std_logic := '1';
           SRAM_WE_N   : out   std_logic := '1';
-          -- seÔøΩales internas del procesador
+          -- senales internas del procesador
           address     : in    std_logic_vector(15 downto 0) := "0000000000000000";
           dataReaded  : out   std_logic_vector(15 downto 0);
           dataToWrite : in    std_logic_vector(15 downto 0);
@@ -23,26 +23,33 @@ end SRAMController;
 
 architecture comportament of SRAMController is
 
-    type State_t is (IDLE, READ, VALID); -- TODO: A√±adir m√°s estados
+    type State_t is (IDLE, READ, VALID); -- TODO: AÒadir m·s estados
     signal s_state: State_t := IDLE;
+	signal s_valid_counter: integer := 0;
 begin
--- As√≠ pues, las entradas de la SRAMController son:
---   - clk: La se√±al de reloj.
---   - address: Es la direcci√≥n de memoria a la que el procesador SISA desea acceder (de 16 bits).
---   - dataToWrite: Es el valor procedente del procesador que se escribir√° en la memoria en el caso de hacer un store.
---   - WR: Se√±al que le indica a la memoria si debe leer o escribir un valor.
---   - byte_m: Se√±al que le indica a la memoria si ha de realizar un acceso a un word o debe realizar un acceso a un byte y extenderlo de signo.
+-- AsÌ pues, las entradas de la SRAMController son:
+--   - clk: La seÒal de reloj.
+--   - address: Es la direcciÛn de memoria a la que el procesador SISA desea acceder (de 16 bits).
+--   - dataToWrite: Es el valor procedente del procesador que se escribir· en la memoria en el caso de hacer un store.
+--   - WR: SeÒal que le indica a la memoria si debe leer o escribir un valor.
+--   - byte_m: SeÒal que le indica a la memoria si ha de realizar un acceso a un word o debe realizar un acceso a un byte y extenderlo de signo.
 
 -- Las salidas de la SRAMController son:
---   - SRAM_UB_N, SRAM_LB_N, SRAM_CE_N, SRAM_OE_N y SRAM_WE_N: Son las se√±ales de control de la memoria descritas en el datasheet del fabricante.
+--   - SRAM_UB_N, SRAM_LB_N, SRAM_CE_N, SRAM_OE_N y SRAM_WE_N: Son las seÒales de control de la memoria descritas en el datasheet del fabricante.
 --   - SRAM_ADDR: Es el bus de direcciones correspondiente al chip de memoria. Su valor depende de donde hayamos mapeado los 64KB de memoria del
 --     procesador SISA. Su ancho depende del modelo de placa de desarrollo que estemos usando.
---   - dataReaded: Es el valor que se ha le√≠do de la memoria. En caso de que se hubiese le√≠do un byte se habr√≠a extendido el signo.
+--   - dataReaded: Es el valor que se ha leÌdo de la memoria. En caso de que se hubiese leÌdo un byte se habrÌa extendido el signo.
 
 -- El bus SRAM_DQ es un bus bidireccional (de entrada y salida) de la SRAMController por el que van los datos hacia y
--- desde el chip de memoria. Al ser un bus bidireccional implica que diversos componentes pondr√°n datos en √©l en distintos
--- momentos. Hemos de garantizar en el dise√±o que dos componentes nunca pongan un valor en el bus de forma simult√°nea.
--- Por ello, cuando un componente no desee escribir en el bus deber√° poner sus salidas en alta impedancia (High-Z)
+-- desde el chip de memoria. Al ser un bus bidireccional implica que diversos componentes pondr·n datos en Èl en distintos
+-- momentos. Hemos de garantizar en el diseÒo que dos componentes nunca pongan un valor en el bus de forma simult·nea.
+-- Por ello, cuando un componente no desee escribir en el bus deber· poner sus salidas en alta impedancia (High-Z)
+
+
+	SRAM_ADDR <= "00" & address;
+	SRAM_CE_N <= '0';
+	SRAM_OE_N <= '0';
+
 
     next_state: process(clk) is
         variable v_valid_counter: integer;
@@ -53,16 +60,16 @@ begin
             case (s_state) is
                 when IDLE =>
                     v_state := READ;
-                    -- TODO: Aqu√≠ hay que hacer un if, para ver si se lee o se escribe
+                    -- TODO: AquÌ hay que hacer un if, para ver si se lee o se escribe
                     -- se puede hacer ese if con WE, que nos marca cuando queremos
                     -- hacer escritura, y cuando lectura
                 when READ =>
-                    v_valid_counter := 7;
+                    s_valid_counter <= 5;
                     v_state := VALID;
                 when VALID =>
-                    if v_valid_counter > 0 then
+                    if s_valid_counter > 0 then
                         v_state := VALID;
-                        v_valid_counter := v_valid_counter - 1;
+                        s_valid_counter <= s_valid_counter - 1;
                     else
                         v_state := IDLE;
                     end if;
@@ -76,25 +83,25 @@ begin
         if rising_edge(clk) then
             case (s_state) is
                 when IDLE =>
-                    SRAM_UB_N <= '1';
+                    SRAM_UB_N <= '0';
                     SRAM_LB_N <= '0';
-                    SRAM_CE_N <= '0';
-                    SRAM_OE_N <= '0';
-                    SRAM_WE_N <= '0';
+                    SRAM_WE_N <= '1';
                     -- if next state is gona be READ, hacer las cosaas de read
                     -- COMO EN MP XD
-                    SRAM_ADDR <= "00" & address;
 
                 when READ =>
-                    -- Read cycle no. 1 en el datasheet
+					--aquÌ ya tenemos el dato v·lido, vamos a esperar
 
-                when VALID => 
-                    SRAM_UB_N <= '1';
-                    SRAM_LB_N <= '0';
-                    SRAM_CE_N <= '0';
-                    SRAM_OE_N <= '0';
-                    SRAM_WE_N <= '0';
-                    dataReaded <= SRAM_DQ;
+                when VALID =>
+					if s_valid_counter = 0 then
+						-- next_state: IDLE
+						SRAM_UB_N <= '1';
+						SRAM_LB_N <= '1';
+						SRAM_DQ <= (others => 'Z');
+					else
+						-- seguimos en
+						dataReaded <= SRAM_DQ;
+					end if;
             end case;
         end if;
     end process; -- output_logic
