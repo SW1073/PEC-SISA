@@ -23,9 +23,8 @@ end SRAMController;
 
 architecture comportament of SRAMController is
 
-    type State_t is (IDLE, READ, VALID); -- TODO: Añadir más estados
+    type State_t is (IDLE); -- TODO: Añadir más estados
     signal s_state: State_t := IDLE;
-	signal s_valid_counter: integer := 0;
 begin
 -- Así pues, las entradas de la SRAMController son:
 --   - clk: La señal de reloj.
@@ -49,6 +48,7 @@ begin
 	SRAM_ADDR <= "00" & address;
 	SRAM_CE_N <= '0';
 	SRAM_OE_N <= '0';
+	dataReaded <= SRAM_DQ;
 
 
     next_state: process(clk) is
@@ -59,20 +59,7 @@ begin
             v_state := s_state;
             case (s_state) is
                 when IDLE =>
-                    v_state := READ;
-                    -- TODO: Aquí hay que hacer un if, para ver si se lee o se escribe
-                    -- se puede hacer ese if con WE, que nos marca cuando queremos
-                    -- hacer escritura, y cuando lectura
-                when READ =>
-                    s_valid_counter <= 5;
-                    v_state := VALID;
-                when VALID =>
-                    if s_valid_counter > 0 then
-                        v_state := VALID;
-                        s_valid_counter <= s_valid_counter - 1;
-                    else
-                        v_state := IDLE;
-                    end if;
+                    v_state := IDLE;
             end case;
             s_state <= v_state;
         end if;
@@ -86,22 +73,9 @@ begin
                     SRAM_UB_N <= '0';
                     SRAM_LB_N <= '0';
                     SRAM_WE_N <= '1';
+					SRAM_DQ <= (others => 'Z');
                     -- if next state is gona be READ, hacer las cosaas de read
                     -- COMO EN MP XD
-
-                when READ =>
-					--aquí ya tenemos el dato válido, vamos a esperar
-
-                when VALID =>
-					if s_valid_counter = 0 then
-						-- next_state: IDLE
-						SRAM_UB_N <= '1';
-						SRAM_LB_N <= '1';
-						SRAM_DQ <= (others => 'Z');
-					else
-						-- seguimos en
-						dataReaded <= SRAM_DQ;
-					end if;
             end case;
         end if;
     end process; -- output_logic
