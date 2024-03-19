@@ -66,10 +66,24 @@ begin
             case (s_state) is
                 when READ =>
 					if WR = '1' then
-						SRAM_UB_N <= byte_m;
-						SRAM_LB_N <= '0';
+						if byte_m = '0' and address(0) = '0' then
+							SRAM_UB_N <= '0';
+							SRAM_LB_N <= '0';
+							SRAM_DQ <= dataToWrite;
+						elsif byte_m = '0' and address(0) = '1' then
+							SRAM_UB_N <= 'W';
+							SRAM_LB_N <= 'W';
+							SRAM_DQ <= dataToWrite;
+						elsif byte_m = '1' and address(0) = '0' then
+							SRAM_UB_N <= '1';
+							SRAM_LB_N <= '0';
+							SRAM_DQ <= dataToWrite;
+						else -- byte_m = '1' and address(0) = '1'
+							SRAM_UB_N <= '0';
+							SRAM_LB_N <= '1';
+							SRAM_DQ <= dataToWrite(7 downto 0) & x"00";
+						end if;
 						SRAM_WE_N <= '0';
-						SRAM_DQ <= dataToWrite;
 					else
 						SRAM_UB_N <= '0';
 						SRAM_LB_N <= '0';
@@ -78,9 +92,9 @@ begin
 					end if;
 
 				when WRITE_SETUP =>
-					SRAM_WE_N <= '1';
-					SRAM_LB_N <= '1';
 					SRAM_UB_N <= '1';
+					SRAM_LB_N <= '1';
+					SRAM_WE_N <= '1';
 
 				when WRITE =>
 					if WR= '0' then
