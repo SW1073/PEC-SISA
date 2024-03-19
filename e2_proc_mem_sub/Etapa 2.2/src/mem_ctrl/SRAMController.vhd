@@ -28,7 +28,7 @@ architecture comportament of SRAMController is
 
 begin
 
-	SRAM_ADDR <= "00" & address;
+	SRAM_ADDR <= "000" & address(15 downto 1);
 	SRAM_CE_N <= '0';
 	SRAM_OE_N <= '0';
 	dataReaded <= SRAM_DQ;

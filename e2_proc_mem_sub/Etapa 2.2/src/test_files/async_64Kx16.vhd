@@ -68,8 +68,8 @@ SIGNAL mem_array: mem_array_type;
         -- Open File in Read Mode
         file romfile   :text open read_mode is "contingut.memoria.hexa16.rom";
         variable lbuf  :line;
-        variable i     :integer := 49152;  -- X"C000" ==> 49152 adreca inicial S.O.
-        --variable i     :integer := 24576;  -- X"C000" ==> 49152 adreca inicial S.O., pero como la memoria se direcciona a nivel de word (dos bytes) ==>  X"6000" ==> 24576 es la direccion inicial del S.O.
+        -- variable i     :integer := 49152;  -- X"C000" ==> 49152 adreca inicial S.O.
+        variable i     :integer := 24576;  -- X"C000" ==> 49152 adreca inicial S.O., pero como la memoria se direcciona a nivel de word (dos bytes) ==>  X"6000" ==> 24576 es la direccion inicial del S.O.
         variable fdata :std_logic_vector (15 downto 0);
     begin
         while not endfile(romfile) loop
