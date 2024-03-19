@@ -1,7 +1,6 @@
-library ieee;
-use ieee.std_logic_1164.all;
-use ieee.std_logic_arith.all;
-use ieee.std_logic_unsigned.all;
+LIBRARY ieee;
+USE ieee.std_logic_1164.all;
+USE ieee.numeric_std.all;
 
 entity SRAMController is
     port (clk         : in    std_logic; -- Va a 50MHZ. Esto lo tenemos que aprovechar
@@ -31,7 +30,7 @@ begin
 	SRAM_ADDR <= "000" & address(15 downto 1);
 	SRAM_CE_N <= '0';
 	SRAM_OE_N <= '0';
-	dataReaded <= SRAM_DQ;
+	dataReaded <= std_logic_vector(resize(signed(SRAM_DQ(7 downto 0)), dataReaded'length)) when byte_m = '1' else SRAM_DQ;
 
 
     next_state: process(clk) is
