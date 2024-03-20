@@ -49,6 +49,9 @@ set_global_assignment -name ERROR_CHECK_FREQUENCY_DIVISOR 1
 set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
 set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
+set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 200 LFPM AIRFLOW"
+set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
+set_global_assignment -name VHDL_FILE ../src/driver7Segmentos.vhd
 set_global_assignment -name VHDL_FILE ../src/sisa.vhd
 set_global_assignment -name VHDL_FILE ../src/mem_ctrl/SRAMController.vhd
 set_global_assignment -name VHDL_FILE ../src/mem_ctrl/MemoryController.vhd
@@ -59,6 +62,4 @@ set_global_assignment -name VHDL_FILE ../src/proc/uc/unidad_control.vhd
 set_global_assignment -name VHDL_FILE ../src/proc/uc/multi.vhd
 set_global_assignment -name VHDL_FILE ../src/proc/uc/control_l.vhd
 set_global_assignment -name VHDL_FILE ../src/proc/proc.vhd
-set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 200 LFPM AIRFLOW"
-set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
