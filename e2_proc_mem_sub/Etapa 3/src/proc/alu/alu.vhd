@@ -18,20 +18,26 @@ BEGIN
 
     with op select w <=
             y                               when '0'&x"0",  -- MOVI
-            y(7 downto 0) & x(7 downto 0)   when '0'&x"2",  -- MOVHI
-            x+y                             when '0'&x"3",  -- ADD
-            y                               when '0'&x"4",  -- 
-            y                               when '0'&x"5",
-            y                               when '0'&x"6",
-            y                               when '0'&x"7",
-            y                               when '0'&x"8",
-            y                               when '0'&x"9",
-            y                               when '0'&x"a",
-            y                               when '0'&x"b",
-            y                               when '0'&x"c",
-            y                               when '0'&x"d",
-            y                               when '0'&x"e",
-            y                               when '0'&x"f",
-            y                               when others;    -- Undefined Behaviour
+            y(7 downto 0) & x(7 downto 0)   when '0'&x"1",  -- MOVHI
+            y                               when '0'&x"2",  -- CMPLT
+            y                               when '0'&x"3",  -- CMPLE
+            y                               when '0'&x"4",  -- CMPEQ
+            y                               when '0'&x"5",  -- COMPLTU
+            y                               when '0'&x"6",  -- COMPLEU
+            y                               when '0'&x"7",  -- ADDI
+            y                               when '0'&x"8",  -- AND
+            y                               when '0'&x"9",  -- OR
+            y                               when '0'&x"a",  -- XOR
+            y                               when '0'&x"b",  -- NOT
+            x+y                             when '0'&x"c",  -- ADD
+            y                               when '0'&x"d",  -- SUB
+            y                               when '0'&x"e",  -- SHA
+            y                               when '0'&x"f",  -- SHL
+            y                               when '1'&x"0",  -- MUL
+            y                               when '1'&x"1",  -- MULH
+            y                               when '1'&x"2",  -- MULHU
+            y                               when '1'&x"3",  -- DIV
+            y                               when '1'&x"4",  -- DIVU
+            y                               when others;    -- Not Implemented. Undefined Behaviour
 
 END Structure;
