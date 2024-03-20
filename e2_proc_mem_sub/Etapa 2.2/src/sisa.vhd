@@ -12,7 +12,11 @@ ENTITY sisa IS
           SRAM_CE_N : out   std_logic := '1';
           SRAM_OE_N : out   std_logic := '1';
           SRAM_WE_N : out   std_logic := '1';
-          SW        : in std_logic_vector(9 downto 9));
+          SW        : in std_logic_vector(9 downto 9);
+		  HEX0		: out STD_LOGIC_VECTOR(6 DOWNTO 0);
+		  HEX1		: out STD_LOGIC_VECTOR(6 DOWNTO 0);
+		  HEX2		: out STD_LOGIC_VECTOR(6 DOWNTO 0);
+		  HEX3		: out STD_LOGIC_VECTOR(6 DOWNTO 0));
 END sisa;
 
 ARCHITECTURE Structure OF sisa IS
@@ -24,7 +28,8 @@ ARCHITECTURE Structure OF sisa IS
 				addr_m		: OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
 				data_wr		: OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
 				wr_m			: OUT STD_LOGIC;
-				word_byte	: OUT STD_LOGIC);
+				word_byte	: OUT STD_LOGIC;
+				dbg_pc		: OUT STD_LOGIC_VECTOR(15 DOWNTO 0));
 	END COMPONENT;
 	
 	COMPONENT MemoryController is
@@ -43,6 +48,11 @@ ARCHITECTURE Structure OF sisa IS
 				SRAM_OE_N : out   std_logic := '1';
 				SRAM_WE_N : out   std_logic := '1');
 	end COMPONENT;
+
+	COMPONENT driver7Segmentos IS
+		PORT( codigoCaracter : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+				bitsCaracter : OUT STD_LOGIC_VECTOR(6 DOWNTO 0));
+	END COMPONENT;
 	
 	-- Senyals per conectar les dues entitats
 	-- Que surten de PROC
@@ -55,6 +65,9 @@ ARCHITECTURE Structure OF sisa IS
 	
 	-- Registre del divisor de rellotge
 	signal s_reg_divisor: std_logic_vector(2 downto 0) := "000";
+
+	-- Senyals de debug
+	signal s_dbg_pc: std_logic_vector(15 downto 0);
 BEGIN
 	
 	clk_divider: process(CLOCK_50) is
@@ -73,7 +86,8 @@ BEGIN
 		word_byte	=> s_word_byte,
 		wr_m			=> s_wr_m,
 		addr_m		=> s_addr_m,
-		data_wr		=> s_data_wr
+		data_wr		=> s_data_wr,
+		dbg_pc => s_dbg_pc
 	);
 
 	memctrl0: MemoryController port map(
@@ -93,6 +107,24 @@ BEGIN
 		SRAM_WE_N => SRAM_WE_N
 	);
 
+	driver3: driver7Segmentos port map(
+			codigoCaracter => s_dbg_pc(15 downto 12),
+			bitsCaracter => HEX3
+	);
+
+	driver2: driver7Segmentos port map(
+			codigoCaracter => s_dbg_pc(11 downto 8),
+			bitsCaracter => HEX2
+	);
 	
+	driver1: driver7Segmentos port map(
+			codigoCaracter => s_dbg_pc(7 downto 4),
+			bitsCaracter => HEX1
+	);
+
+	driver0: driver7Segmentos port map(
+			codigoCaracter => s_dbg_pc(3 downto 0),
+			bitsCaracter => HEX0
+	);
 
 END Structure;

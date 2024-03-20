@@ -8,7 +8,8 @@ ENTITY proc IS
 			addr_m		: OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
 			data_wr		: OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
 			wr_m		: OUT STD_LOGIC;
-			word_byte	: OUT STD_LOGIC);
+			word_byte	: OUT STD_LOGIC;
+			dbg_pc		: OUT STD_LOGIC_VECTOR(15 DOWNTO 0));
 END proc;
 
 
@@ -107,5 +108,7 @@ BEGIN
 		wr_m		=> wr_m,
 		word_byte	=> word_byte
 	);
+
+	dbg_pc <= s_pc;
 
 END Structure;
