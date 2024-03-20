@@ -30,7 +30,9 @@ begin
 	SRAM_ADDR <= "000" & address(15 downto 1);
 	SRAM_CE_N <= '0';
 	SRAM_OE_N <= '0';
-	dataReaded <= std_logic_vector(resize(signed(SRAM_DQ(7 downto 0)), dataReaded'length)) when byte_m = '1' else SRAM_DQ;
+	dataReaded <= std_logic_vector(resize(signed(SRAM_DQ(7 downto 0)), dataReaded'length)) when byte_m = '1' and address(0) = '0'
+					else std_logic_vector(resize(signed(SRAM_DQ(15 downto 8)), dataReaded'length)) when byte_m = '1' and address(0) = '1'
+					else SRAM_DQ;
 
 
     next_state: process(clk) is
