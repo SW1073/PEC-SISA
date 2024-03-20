@@ -28,7 +28,7 @@ ARCHITECTURE Structure OF datapath IS
 	COMPONENT alu IS
 		PORT (x  : IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
 			  y  : IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
-			  op : IN  STD_LOGIC_VECTOR(1 DOWNTO 0);
+			  op : IN  STD_LOGIC_VECTOR(4 DOWNTO 0);
 			  w  : OUT STD_LOGIC_VECTOR(15 DOWNTO 0));
 	END COMPONENT;
 
@@ -71,7 +71,7 @@ BEGIN
 	);
 
 	al: alu port map(
-		op => op,
+		op => "000"&op,
 		x => s_regout_a,
 		y => s_y,
 		w => s_aluout
