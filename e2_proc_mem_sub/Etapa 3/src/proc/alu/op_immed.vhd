@@ -25,5 +25,6 @@ BEGIN
             x-y								when "101",  -- SUB
             y                               when "110",  -- SHA
             y                               when "111",  -- SHL
+            y                               when others;
 
 END Structure;

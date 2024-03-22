@@ -55,6 +55,7 @@ ARCHITECTURE Structure OF alu IS
 	signal s_w_comp: std_logic_vector(15 downto 0);
 	signal s_w_ext_arit: std_logic_vector(15 downto 0);
 	signal s_w_immed: std_logic_vector(15 downto 0);
+	signal s_w_movs: std_logic_vector(15 downto 0);
 
 BEGIN
 
@@ -82,7 +83,7 @@ BEGIN
 		w => s_w_ext_arit
 	);
 
-	ext_arit: op_immed port map (
+	immeds: op_immed port map (
 		x => x,
 		y => y,
 		op => s_sub_op,
@@ -97,11 +98,11 @@ BEGIN
 	);
 
 	with s_op select w <=
-		s_w_arit_log when "000",
-		s_w_comp when "001",
-		s_w_ext_arit when "010",
-		s_w_op_immed when "011",
-		s_w_movs when "100",
-		y when others;
+		s_w_arit_log        when "000",
+		s_w_comp            when "001",
+		s_w_ext_arit        when "010",
+		s_w_immed           when "011",
+		s_w_movs            when "100",
+		y                   when others;
 
 END Structure;

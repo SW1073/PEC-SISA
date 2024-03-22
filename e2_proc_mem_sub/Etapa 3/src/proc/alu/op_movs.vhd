@@ -19,5 +19,6 @@ BEGIN
     with op select w <=
             y                               when "000",  -- MOVI
             y(7 downto 0) & x(7 downto 0)   when "001",  -- MOVHI
+            y                               when others;
 
 END Structure;

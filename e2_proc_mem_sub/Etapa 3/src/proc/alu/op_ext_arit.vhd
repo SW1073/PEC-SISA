@@ -18,10 +18,10 @@ BEGIN
 
     with op select w <=
             y                               when "000",  -- MUL
-            y                               when "000",  -- MULH
-            y                               when "000",  -- MULHU
-            y                               when "000",  -- DIV
-            y                               when "000",  -- DIVU
+            y                               when "001",  -- MULH
+            y                               when "010",  -- MULHU
+            y                               when "100",  -- DIV
+            y                               when "101",  -- DIVU
 			y								when others;
 
 END Structure;
