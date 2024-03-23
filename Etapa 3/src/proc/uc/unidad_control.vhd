@@ -7,7 +7,8 @@ ENTITY unidad_control IS
 	PORT (boot		: IN STD_LOGIC;
 		  clk		: IN STD_LOGIC;
 		  datard_m	: IN STD_LOGIC_VECTOR(15 DOWNTO 0);
-		  op		: OUT STD_LOGIC_VECTOR(5 DOWNTO 0);
+		  op		: OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
+          f         : OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
 		  wrd		: OUT STD_LOGIC;
 		  addr_a	: OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
 		  addr_b	: OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
@@ -25,20 +26,21 @@ ARCHITECTURE Structure OF unidad_control IS
 
 	-- Declaracion de las entidades que vamos a usar
 	-- Control Logic
-	COMPONENT control_l IS
-		PORT(ir			: IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
-             op		    : OUT STD_LOGIC_VECTOR(5 DOWNTO 0);
-			 ldpc		: OUT STD_LOGIC;
-			 wrd		: OUT STD_LOGIC;
-			 addr_a		: OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
-			 addr_b		: OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
-			 addr_d		: OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
-			 immed		: OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
-			 wr_m		: OUT STD_LOGIC;
-			 in_d		: OUT STD_LOGIC;
-			 immed_x2 	: OUT STD_LOGIC;
-			 word_byte 	: OUT STD_LOGIC);
-	END COMPONENT;
+    COMPONENT control_l IS
+        PORT (ir            : IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
+              op            : OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
+              f				: OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
+              ldpc			: OUT STD_LOGIC;
+              wrd 			: OUT STD_LOGIC;
+              addr_a        : OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
+              addr_b        : OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
+              addr_d        : OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
+              immed         : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
+              wr_m 			: OUT STD_LOGIC;
+              in_d 			: OUT STD_LOGIC;
+              immed_x2 	    : OUT STD_LOGIC;
+              word_byte     : OUT STD_LOGIC);
+    END COMPONENT;
 
 	-- Multi
 	COMPONENT multi IS
@@ -80,6 +82,7 @@ BEGIN
 		ir			=> s_reg_ir, -- instruction register
 		-- ouputs
 		op			=> op,
+        f           => f,
 		ldpc		=> s_ldpc,
 		wrd			=> s_wrd,
 		addr_a		=> addr_a,

@@ -4,7 +4,8 @@ USE ieee.numeric_std.all;
 
 ENTITY control_l IS
 	PORT (ir				: IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
-            op		        : OUT STD_LOGIC_VECTOR(5 DOWNTO 0);
+            op		        : OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
+            f				: OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
 			ldpc			: OUT STD_LOGIC;
 			wrd 			: OUT STD_LOGIC;
 			addr_a 		    : OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
@@ -40,7 +41,7 @@ BEGIN
 
 	-- Operacion de ALU
 
-    with s_opcode select op(5 downto 3) <=
+    with s_opcode select op <=
         "000"   when "0000",    -- ARITMETICO LOGICAS
         "000"   when "1011",    -- LD
         "000"   when "1100",    -- ST
@@ -52,7 +53,7 @@ BEGIN
         "100"   when "0101",    -- MOVS
         "000"   when others;
 
-    op(2 downto 0) <= "00"&s_op when s_opcode = "0101"
+    f <= "00"&s_op when s_opcode = "0101"
                         else "100" when s_opcode = "0011" or s_opcode = "0100" or s_opcode = "1101" or s_opcode = "1110"
                         else s_sub_op;
 	-- op <= ("0" & s_op) when s_opcode = "0101" else "10"; -- Se suma solo si no son MoviS
