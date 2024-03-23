@@ -1,6 +1,6 @@
 add wave -divider SoC
 add wave -position end  sim:/test_sisa/SoC/CLOCK_50
-add wave -position end  sim:/test_sisa/SoC/SRAM_ADDR
+add wave -position end  sim:/test_sisa/SoC/SRAM_ADDR -radix hex
 add wave -position end  sim:/test_sisa/SoC/SRAM_DQ
 add wave -position end  sim:/test_sisa/SoC/SRAM_UB_N
 add wave -position end  sim:/test_sisa/SoC/SRAM_LB_N
