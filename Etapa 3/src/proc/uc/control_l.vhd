@@ -52,8 +52,8 @@ BEGIN
         "100"   when "0101",    -- MOVS
         "000"   when others;
 
-    op(2 downto 0) <= "00"&s_op when s_opcode = "0101" 
-                        else "100" when s_opcode = "1011" or s_opcode = "1100" or s_opcode = "1101" or s_opcode = "1110" 
+    op(2 downto 0) <= "00"&s_op when s_opcode = "0101"
+                        else "100" when s_opcode = "0011" or s_opcode = "0100" or s_opcode = "1101" or s_opcode = "1110"
                         else s_sub_op;
 	-- op <= ("0" & s_op) when s_opcode = "0101" else "10"; -- Se suma solo si no son MoviS
 
