@@ -31,5 +31,5 @@ vcom -93 -work work {../proc/proc.vhd}
 
 vsim work.test_sisa
 
-do wave.do
+do wave.tcl
 run 12100ns
