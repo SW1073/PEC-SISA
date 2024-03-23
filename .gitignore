@@ -10,3 +10,8 @@
 .modelsim
 .hdl_checker/
 *work/
+**/transcript
+**.mpf
+**.mti
+**/transcript
+**.wlf
