@@ -2,6 +2,7 @@ LIBRARY ieee;
 USE ieee.std_logic_1164.all;
 USE ieee.numeric_std.all;
 USE ieee.std_logic_unsigned.all;
+USE work.package_alu.all;
 
 ENTITY alu IS
 	PORT (x  : IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
@@ -14,40 +15,33 @@ END alu;
 
 ARCHITECTURE Structure OF alu IS
 
-	COMPONENT op_arit_log IS
+	COMPONENT alu_arit_log IS
 		PORT (x  : IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
 			  y  : IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
 			  op : IN  STD_LOGIC_VECTOR(2 DOWNTO 0);
 			  w  : OUT STD_LOGIC_VECTOR(15 DOWNTO 0));
 	END COMPONENT; -- op_arit_log
 
-	COMPONENT op_comp IS
+	COMPONENT alu_comp IS
 		PORT (x  : IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
 			  y  : IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
 			  op : IN  STD_LOGIC_VECTOR(2 DOWNTO 0);
 			  w  : OUT STD_LOGIC_VECTOR(15 DOWNTO 0));
 	END COMPONENT; -- op_comp
 
-	COMPONENT op_ext_arit IS
+	COMPONENT alu_ext_arit IS
 		PORT (x  : IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
 			  y  : IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
 			  op : IN  STD_LOGIC_VECTOR(2 DOWNTO 0);
 			  w  : OUT STD_LOGIC_VECTOR(15 DOWNTO 0));
 	END COMPONENT; -- op_ext_arit
 
-	COMPONENT op_immed IS
+	COMPONENT alu_misc IS
 		PORT (x  : IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
 			  y  : IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
 			  op : IN  STD_LOGIC_VECTOR(2 DOWNTO 0);
 			  w  : OUT STD_LOGIC_VECTOR(15 DOWNTO 0));
-	END COMPONENT; -- op_immed
-
-	COMPONENT op_movs IS
-		PORT (x  : IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
-			  y  : IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
-			  op : IN  STD_LOGIC_VECTOR(2 DOWNTO 0);
-			  w  : OUT STD_LOGIC_VECTOR(15 DOWNTO 0));
-	END COMPONENT; -- op_movs
+	END COMPONENT; -- op_misc
 
 	signal s_w_arit_log: std_logic_vector(15 downto 0);
 	signal s_w_comp: std_logic_vector(15 downto 0);
@@ -55,37 +49,38 @@ ARCHITECTURE Structure OF alu IS
 	signal s_w_immed: std_logic_vector(15 downto 0);
 	signal s_w_movs: std_logic_vector(15 downto 0);
 
+    signal s_immed_ext: std_logic_vector(15 downto 0);
+    signal s_y_arit_log: std_logic_vector(15 downto 0);
+    signal s_f_arit_log: std_logic_vector(2 downto 0);
+
 BEGIN
 
-	arit_log: op_arit_log port map (
+    -- extend immediate value
+    s_y_arit_log <= std_logic_vector(resize(signed(y(7 downto 0)), s_y_arit_log'length)) when op = OP_IMMED else y;
+    s_f_arit_log <= F_ARIT_LOG_ADD when op = OP_IMMED else f;
+
+	arit_log: alu_arit_log port map (
 		x => x,
-		y => y,
-		op => f,
+        y => s_y_arit_log,
+        op => s_f_arit_log,
 		w => s_w_arit_log
 	);
 
-	comp: op_comp port map (
+	comp: alu_comp port map (
 		x => x,
 		y => y,
 		op => f,
 		w => s_w_comp
 	);
 
-	ext_arit: op_ext_arit port map (
+	ext_arit: alu_ext_arit port map (
 		x => x,
 		y => y,
 		op => f,
 		w => s_w_ext_arit
 	);
 
-	immeds: op_immed port map (
-		x => x,
-		y => y,
-		op => f,
-		w => s_w_immed
-	);
-
-	movs: op_movs port map (
+	movs: alu_misc port map (
 		x => x,
 		y => y,
 		op => f,
@@ -93,11 +88,11 @@ BEGIN
 	);
 
 	with op select w <=
-		s_w_arit_log        when "000",
-		s_w_comp            when "001",
-		s_w_ext_arit        when "010",
-		s_w_immed           when "011",
-		s_w_movs            when "100",
-		y                   when others;
+		s_w_arit_log        when OP_ARIT_LOG,
+		s_w_arit_log        when OP_IMMED,
+		s_w_comp            when OP_CMPS,
+		s_w_ext_arit        when OP_EXT_ARIT,
+		s_w_movs            when OP_MOVS,
+		s_w_arit_log        when others;
 
 END Structure;

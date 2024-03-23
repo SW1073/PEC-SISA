@@ -1,13 +1,14 @@
 vcom -93 -work work {./package_timing.vhd}
 vcom -93 -work work {./package_utility.vhd}
+vcom -93 -work work {../proc/packages/package_opcodes.vhd}
+vcom -93 -work work {../proc/packages/package_alu.vhd}
 vcom -93 -work work {./async_64Kx16.vhd}
 vcom -93 -work work {./test_sisa.vhd}
 
-vcom -93 -work work {../proc/alu/op_arit_log.vhd}
-vcom -93 -work work {../proc/alu/op_comp.vhd}
-vcom -93 -work work {../proc/alu/op_ext_arit.vhd}
-vcom -93 -work work {../proc/alu/op_immed.vhd}
-vcom -93 -work work {../proc/alu/op_movs.vhd}
+vcom -93 -work work {../proc/alu/alu_arit_log.vhd}
+vcom -93 -work work {../proc/alu/alu_comp.vhd}
+vcom -93 -work work {../proc/alu/alu_ext_arit.vhd}
+vcom -93 -work work {../proc/alu/alu_misc.vhd}
 vcom -93 -work work {../driver7Segmentos.vhd}
 vcom -93 -work work {../sisa.vhd}
 vcom -93 -work work {../mem_ctrl/SRAMController.vhd}
