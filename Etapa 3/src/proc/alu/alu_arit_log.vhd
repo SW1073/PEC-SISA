@@ -15,10 +15,8 @@ END alu_arit_log ;
 ARCHITECTURE Structure OF alu_arit_log IS
 BEGIN
 
-	-- Aqui iria la definicion del comportamiento de la ALU
-
-    with op select w <=
-            x and y							when F_ARIT_LOG_AND,  -- AND
+    with op select 
+    w <=    x and y							when F_ARIT_LOG_AND,  -- AND
             x or y							when F_ARIT_LOG_OR,  -- OR
             x xor y							when F_ARIT_LOG_XOR,  -- XOR
             not y							when F_ARIT_LOG_NOT,  -- NOT

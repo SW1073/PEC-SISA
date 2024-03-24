@@ -13,16 +13,17 @@ END alu_comp;
 
 
 ARCHITECTURE Structure OF alu_comp IS
+    signal s_w : boolean;
 BEGIN
 
-	-- Aqui iria la definicion del comportamiento de la ALU
+    with op select 
+    s_w <=  signed(x) < signed(y)       when F_CMP_LT,  -- CMPLT
+            signed(x) <= signed(y)      when F_CMP_LE,  -- CMPLE
+            x = y                       when F_CMP_EQ,  -- CMPEQ
+            x < y                       when F_CMP_LTU,  -- COMPLTU
+            x <= y                      when F_CMP_LEU,  -- COMPLEU
+            x = y              when others;
 
-    with op select w <=
-            -- x < y       when F_CMP_LT,  -- CMPLT
-            -- x <= y      when F_CMP_LE,  -- CMPLE
-            -- x = y                       when F_CMP_EQ,  -- CMPEQ
-            -- x < y                       when F_CMP_LTU,  -- COMPLTU
-            -- x <= y                      when F_CMP_LEU,  -- COMPLEU
-            "XXXXXXXXXXXXXXXX"              when others;
+    w(0) <= '1' when s_w = true else '0';
 
 END Structure;

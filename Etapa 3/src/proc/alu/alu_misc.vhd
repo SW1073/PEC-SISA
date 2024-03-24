@@ -15,8 +15,6 @@ END alu_misc;
 ARCHITECTURE Structure OF alu_misc IS
 BEGIN
 
-	-- Aqui iria la definicion del comportamiento de la ALU
-
     with op select w <=
             y                               when F_MISC_MOVI,  -- MOVI
             y(7 downto 0) & x(7 downto 0)   when F_MISC_MOVHI,  -- MOVHI
