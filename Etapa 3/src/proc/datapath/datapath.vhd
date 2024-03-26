@@ -17,7 +17,8 @@ ENTITY datapath IS
           pc:          IN STD_LOGIC_VECTOR(15 DOWNTO 0);
           in_d:        IN STD_LOGIC;
           addr_m:      OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
-          data_wr:     OUT STD_LOGIC_VECTOR(15 DOWNTO 0));
+          data_wr:     OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
+          b_or_immed:  IN  STD_LOGIC);
 END datapath;
 
 ARCHITECTURE Structure OF datapath IS
@@ -51,6 +52,7 @@ ARCHITECTURE Structure OF datapath IS
 	signal s_aluout: std_logic_vector(15 downto 0);
 
 	signal s_data: std_logic_vector(15 downto 0);
+	signal s_immed_real: std_logic_vector(15 downto 0);
 	signal s_y: std_logic_vector(15 downto 0);
 
 BEGIN
@@ -59,7 +61,8 @@ BEGIN
 	-- En los esquemas de la documentacion a la instancia del banco de registros le hemos llamado reg0 y a la de la alu le hemos llamado alu0
 
     s_data <= datard_m when in_d = '1' else s_aluout;
-    s_y <= immed when immed_x2 = '0' else (immed(14 DOWNTO 0) & '0');
+    s_immed_real <= immed when immed_x2 = '0' else (immed(14 DOWNTO 0) & '0');
+    s_y <= s_regout_b when b_or_immed = '1' else s_immed_real;
 
 	reg: regfile port map(
 		clk => clk,

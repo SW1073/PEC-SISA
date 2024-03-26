@@ -34,7 +34,8 @@ ARCHITECTURE Structure OF proc IS
 			  pc:          IN STD_LOGIC_VECTOR(15 DOWNTO 0);
 			  in_d:        IN STD_LOGIC;
 			  addr_m:      OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
-			  data_wr:     OUT STD_LOGIC_VECTOR(15 DOWNTO 0));
+			  data_wr:     OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
+              b_or_immed:  IN  STD_LOGIC);
 	END COMPONENT;
 
 	COMPONENT unidad_control IS
@@ -53,7 +54,8 @@ ARCHITECTURE Structure OF proc IS
 		  in_d		: OUT STD_LOGIC;
 		  immed_x2	: OUT STD_LOGIC;
 		  wr_m		: OUT STD_LOGIC;
-		  word_byte : OUT STD_LOGIC);
+		  word_byte : OUT STD_LOGIC;
+          b_or_immed: OUT STD_LOGIC);
 	END COMPONENT;
 
 	signal s_op: std_logic_vector (2 downto 0);
@@ -67,6 +69,7 @@ ARCHITECTURE Structure OF proc IS
 	signal s_ins_dad: std_logic;
 	signal s_in_d: std_logic;
 	signal s_immed_x2: std_logic;
+    signal s_b_or_immed: std_logic;
 
 BEGIN
 
@@ -88,6 +91,7 @@ BEGIN
 		ins_dad     => s_ins_dad,
 		pc          => s_pc,
 		in_d        => s_in_d,
+        b_or_immed  => s_b_or_immed,
 		-- outputs
 		addr_m      => addr_m,
 		data_wr		=> data_wr
@@ -111,7 +115,8 @@ BEGIN
 		in_d		=> s_in_d,
 		immed_x2	=> s_immed_x2,
 		wr_m		=> wr_m,
-		word_byte	=> word_byte
+		word_byte	=> word_byte,
+        b_or_immed  => s_b_or_immed
 	);
 
 	dbg_pc <= s_pc;

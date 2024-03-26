@@ -19,7 +19,8 @@ ENTITY unidad_control IS
 		  in_d		: OUT STD_LOGIC;
 		  immed_x2	: OUT STD_LOGIC;
 		  wr_m		: OUT STD_LOGIC;
-		  word_byte : OUT STD_LOGIC);
+		  word_byte : OUT STD_LOGIC;
+          b_or_immed: OUT STD_LOGIC);
 END unidad_control;
 
 ARCHITECTURE Structure OF unidad_control IS
@@ -39,7 +40,8 @@ ARCHITECTURE Structure OF unidad_control IS
               wr_m 			: OUT STD_LOGIC;
               in_d 			: OUT STD_LOGIC;
               immed_x2 	    : OUT STD_LOGIC;
-              word_byte     : OUT STD_LOGIC);
+              word_byte     : OUT STD_LOGIC;
+              b_or_immed    : OUT STD_LOGIC);
     END COMPONENT;
 
 	-- Multi
@@ -58,13 +60,13 @@ ARCHITECTURE Structure OF unidad_control IS
 			 word_byte : OUT STD_LOGIC);
 	END COMPONENT;
 
-	-- Señales para conectar control_l con multi
+	-- Seï¿½ales para conectar control_l con multi
 	signal s_ldpc: std_logic;
 	signal s_word_byte: std_logic;
 	signal s_wr_m: std_logic;
 	signal s_wrd: std_logic;
 
-	-- Señales útiles que salen del multi y usamos dentro de la uc
+	-- Seï¿½ales ï¿½tiles que salen del multi y usamos dentro de la uc
 	signal s_multi_ldpc: std_logic;
 	signal s_multi_ldir: std_logic;
 
@@ -92,7 +94,8 @@ BEGIN
 		wr_m		=> s_wr_m,
 		in_d		=> in_d,
 		immed_x2 	=> immed_x2,
-		word_byte 	=> s_word_byte
+		word_byte 	=> s_word_byte,
+        b_or_immed  => b_or_immed
 	);
 
 	multi0: multi port map(

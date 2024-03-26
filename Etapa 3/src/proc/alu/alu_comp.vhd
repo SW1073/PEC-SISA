@@ -16,7 +16,7 @@ ARCHITECTURE Structure OF alu_comp IS
     signal s_w : boolean;
 BEGIN
 
-    with op select 
+    with op select
     s_w <=  signed(x) < signed(y)       when F_CMP_LT,  -- CMPLT
             signed(x) <= signed(y)      when F_CMP_LE,  -- CMPLE
             x = y                       when F_CMP_EQ,  -- CMPEQ
@@ -24,6 +24,6 @@ BEGIN
             x <= y                      when F_CMP_LEU,  -- COMPLEU
             x = y              when others;
 
-    w(0) <= '1' when s_w = true else '0';
+    w <= x"0001" when s_w = true else x"0000";
 
 END Structure;
