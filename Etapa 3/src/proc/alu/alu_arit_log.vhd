@@ -18,11 +18,11 @@ ARCHITECTURE Structure OF alu_arit_log IS
 BEGIN
 
     s_shift_sha <= std_logic_vector(shift_left(signed(x), to_integer(signed(y)))) when signed(y) >= 0
-                   else std_logic_vector(shift_right(signed(x), to_integer(signed(y))));
+                   else std_logic_vector(shift_right(signed(x), to_integer(-signed(y))));
 
     s_shift_shl <= std_logic_vector(shift_left(unsigned(x), to_integer(signed(y))));
 
-    with op select 
+    with op select
     w <=    x and y							when F_ARIT_LOG_AND,  -- AND
             x or y							when F_ARIT_LOG_OR,  -- OR
             x xor y							when F_ARIT_LOG_XOR,  -- XOR
