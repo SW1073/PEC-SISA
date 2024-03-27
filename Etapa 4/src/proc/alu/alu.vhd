@@ -9,7 +9,8 @@ ENTITY alu IS
 		  y  : IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
 		  op : IN  STD_LOGIC_VECTOR(2 DOWNTO 0);
 		  f  : IN  STD_LOGIC_VECTOR(2 DOWNTO 0);
-		  w  : OUT STD_LOGIC_VECTOR(15 DOWNTO 0));
+		  w  : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
+          z  : OUT STD_LOGIC);
 END alu;
 
 
@@ -54,6 +55,9 @@ ARCHITECTURE Structure OF alu IS
     signal s_f_arit_log: std_logic_vector(2 downto 0);
 
 BEGIN
+
+    -- Check if y is 0
+    z <= '1' when y = x"0000" else '0';
 
     -- extend immediate value
     s_y_arit_log <= std_logic_vector(resize(signed(y(7 downto 0)), s_y_arit_log'length)) when op = OP_IMMED else y;

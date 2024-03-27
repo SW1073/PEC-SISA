@@ -7,6 +7,7 @@ ENTITY unidad_control IS
 	PORT (boot		: IN STD_LOGIC;
 		  clk		: IN STD_LOGIC;
 		  datard_m	: IN STD_LOGIC_VECTOR(15 DOWNTO 0);
+          z         : IN STD_LOGIC;
 		  op		: OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
           f         : OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
 		  wrd		: OUT STD_LOGIC;
@@ -60,13 +61,13 @@ ARCHITECTURE Structure OF unidad_control IS
 			 word_byte : OUT STD_LOGIC);
 	END COMPONENT;
 
-	-- Se�ales para conectar control_l con multi
+	-- Senales para conectar control_l con multi
 	signal s_ldpc: std_logic;
 	signal s_word_byte: std_logic;
 	signal s_wr_m: std_logic;
 	signal s_wrd: std_logic;
 
-	-- Se�ales �tiles que salen del multi y usamos dentro de la uc
+	-- Senales utiles que salen del multi y usamos dentro de la uc
 	signal s_multi_ldpc: std_logic;
 	signal s_multi_ldir: std_logic;
 

@@ -18,7 +18,8 @@ ENTITY datapath IS
           in_d:        IN STD_LOGIC;
           addr_m:      OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
           data_wr:     OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
-          b_or_immed:  IN  STD_LOGIC);
+          b_or_immed:  IN  STD_LOGIC;
+          z:           OUT STD_LOGIC);
 END datapath;
 
 ARCHITECTURE Structure OF datapath IS
@@ -32,7 +33,8 @@ ARCHITECTURE Structure OF datapath IS
 			  y  : IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
 			  op : IN  STD_LOGIC_VECTOR(2 DOWNTO 0);
 			  f  : IN  STD_LOGIC_VECTOR(2 DOWNTO 0);
-			  w  : OUT STD_LOGIC_VECTOR(15 DOWNTO 0));
+			  w  : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
+              z  : OUT STD_LOGIC);
 	END COMPONENT;
 
 
@@ -80,7 +82,8 @@ BEGIN
         f => f,
 		x => s_regout_a,
 		y => s_y,
-		w => s_aluout
+		w => s_aluout,
+        z => z
 	);
 
 	addr_m <= s_aluout when ins_dad = '1' else pc;
