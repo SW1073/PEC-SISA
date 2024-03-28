@@ -60,11 +60,6 @@ constant F_JUMP_CALLS       : std_logic_vector(2 downto 0) := "111";
 constant F_MISC_MOVI        : std_logic_vector(2 downto 0) := "000";
 constant F_MISC_MOVHI       : std_logic_vector(2 downto 0) := "001";
 
--- DE MOMENTO AQUI. MEJOR CREAR UN PACKAGE A PARTE
-constant TKNBR_NOT_TAKEN    : std_logic_vector(1 downto 0) := "00";
-constant TKNBR_BRANCH       : std_logic_vector(1 downto 0) := "01";
-constant TKNBR_JUMP         : std_logic_vector(1 downto 0) := "10";
-
 end package_alu;
 
 

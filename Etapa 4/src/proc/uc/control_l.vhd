@@ -1,6 +1,7 @@
 LIBRARY ieee;
 USE ieee.std_logic_1164.all;
 USE ieee.numeric_std.all;
+USE work.package_control.all;
 USE work.package_opcodes.all;
 USE work.package_alu.all;
 
@@ -16,7 +17,7 @@ ENTITY control_l IS
 			addr_d 		    : OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
 			immed 		    : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
 			wr_m 			: OUT STD_LOGIC;
-			in_d 			: OUT STD_LOGIC;
+			in_d 			: OUT STD_LOGIC_VECTOR(1 DOWNTO 0);
 			immed_x2 	    : OUT STD_LOGIC;
 			word_byte 	    : OUT STD_LOGIC;
             tknbr           : OUT STD_LOGIC_VECTOR(1 DOWNTO 0);
@@ -91,7 +92,7 @@ BEGIN
 	ldpc <= '0' when ir = x"FFFF" else '1';
 
 	-- Permiso de escritura en el Banco de registros
-    s_wrd_jump <=   '1' when (s_f = F_JUMP_JAL or s_f = F_JUMP_CALLS)
+    s_wrd_jump <=   '1' when (s_f_jumps = F_JUMP_JAL or s_f_jumps = F_JUMP_CALLS)
                     else '0';
 
     with s_opcode select wrd <=
@@ -142,9 +143,10 @@ BEGIN
 
 	-- 1 when MEM, 0 when ALU (permiso para el banco de registros)
 	with s_opcode select in_d <=
-        '1' when OPCODE_LOAD, -- Cuando LD o LDB
-        '1' when OPCODE_LOADB, -- Cuando LD o LDB
-		'0' when others;
+        IN_D_DATAMEM    when OPCODE_LOAD, -- Cuando LD o LDB
+        IN_D_DATAMEM    when OPCODE_LOADB, -- Cuando LD o LDB
+        IN_D_PC         when OPCODE_JUMPS, -- ESTO IGNORA SI ES JAL O CALLS, LE ENTRA PC+2 AL BANCO DE REGS SIEMPRE.
+		IN_D_ALUOUT     when others;
 
 	-- La señal que determina si hay que desplazar el inmediato o no
 	with s_opcode select immed_x2 <=

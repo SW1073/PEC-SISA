@@ -1,6 +1,8 @@
 LIBRARY ieee;
 USE ieee.std_logic_1164.all;
 USE ieee.numeric_std.all;
+USE ieee.std_logic_unsigned.all;
+USE work.package_control.all;
 
 ENTITY datapath IS
     PORT (clk:         IN STD_LOGIC;
@@ -15,7 +17,7 @@ ENTITY datapath IS
           datard_m:    IN STD_LOGIC_VECTOR(15 DOWNTO 0);
           ins_dad:     IN STD_LOGIC;
           pc:          IN STD_LOGIC_VECTOR(15 DOWNTO 0);
-          in_d:        IN STD_LOGIC;
+          in_d:        IN STD_LOGIC_VECTOR(1 DOWNTO 0);
           b_or_immed:  IN  STD_LOGIC;
           addr_m:      OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
           data_wr:     OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
@@ -58,12 +60,22 @@ ARCHITECTURE Structure OF datapath IS
 	signal s_immed_real: std_logic_vector(15 downto 0);
 	signal s_y: std_logic_vector(15 downto 0);
 
+    signal s_pc: std_logic_vector(15 downto 0);
+
 BEGIN
 
 	-- Aqui iria la declaracion del "mapeo" (PORT MAP) de los nombres de las entradas/salidas de los componentes
 	-- En los esquemas de la documentacion a la instancia del banco de registros le hemos llamado reg0 y a la de la alu le hemos llamado alu0
 
-    s_data <= datard_m when in_d = '1' else s_aluout;
+    s_pc <= pc + x"0002";
+
+    with in_d select
+        s_data <=   s_aluout when IN_D_ALUOUT,
+                    datard_m when IN_D_DATAMEM,
+                    s_pc when IN_D_PC,
+                    s_aluout when others;
+
+    -- s_data <= datard_m when in_d = '1' else s_aluout;
     s_immed_real <= immed when immed_x2 = '0' else (immed(14 DOWNTO 0) & '0');
     s_y <= s_regout_b when b_or_immed = '1' else s_immed_real;
     regout_a <= s_regout_a;

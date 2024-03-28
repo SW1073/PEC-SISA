@@ -3,6 +3,7 @@ USE ieee.std_logic_1164.all;
 USE ieee.numeric_std.all;
 USE ieee.std_logic_unsigned.all;
 USE work.package_alu.all;
+USE work.package_control.all;
 
 ENTITY unidad_control IS
 	PORT (boot		: IN STD_LOGIC;
@@ -19,7 +20,7 @@ ENTITY unidad_control IS
 		  immed		: OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
 		  pc		: OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
 		  ins_dad	: OUT STD_LOGIC;
-		  in_d		: OUT STD_LOGIC;
+		  in_d		: OUT STD_LOGIC_VECTOR(1 DOWNTO 0);
 		  immed_x2	: OUT STD_LOGIC;
 		  wr_m		: OUT STD_LOGIC;
 		  word_byte : OUT STD_LOGIC;
@@ -42,7 +43,7 @@ ARCHITECTURE Structure OF unidad_control IS
               addr_d        : OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
               immed         : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
               wr_m 			: OUT STD_LOGIC;
-              in_d 			: OUT STD_LOGIC;
+              in_d 			: OUT STD_LOGIC_VECTOR(1 DOWNTO 0);
               immed_x2 	    : OUT STD_LOGIC;
               word_byte     : OUT STD_LOGIC;
               tknbr         : OUT STD_LOGIC_VECTOR(1 DOWNTO 0);
