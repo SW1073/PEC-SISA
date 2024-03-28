@@ -49,11 +49,11 @@ constant F_BRANCH_BNZ       : std_logic := '1';
 constant F_JUMP_JZ          : std_logic_vector(2 downto 0) := "000";
 constant F_JUMP_JNZ         : std_logic_vector(2 downto 0) := "001";
     --
-constant F_JUMP_JMP         : std_logic_vector(2 downto 0) := "100";
-constant F_JUMP_JAL         : std_logic_vector(2 downto 0) := "101";
+constant F_JUMP_JMP         : std_logic_vector(2 downto 0) := "011";
+constant F_JUMP_JAL         : std_logic_vector(2 downto 0) := "100";
     --
     --
-constant F_JUMP_CALLS       : std_logic_vector(2 downto 0) := "110";
+constant F_JUMP_CALLS       : std_logic_vector(2 downto 0) := "111";
 
 
 -- MISC

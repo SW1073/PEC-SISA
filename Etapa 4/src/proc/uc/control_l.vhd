@@ -27,6 +27,7 @@ END control_l;
 ARCHITECTURE Structure OF control_l IS
 	signal s_opcode: std_logic_vector(3 downto 0);
 	signal s_f: std_logic_vector(2 downto 0);
+	signal s_f_jumps: std_logic_vector(2 downto 0);
 	signal s_first_reg:  std_logic_vector(2 downto 0);
 	signal s_second_reg: std_logic_vector(2 downto 0);
 	signal s_third_reg: std_logic_vector(2 downto 0);
@@ -38,6 +39,7 @@ BEGIN
 
 	s_opcode <= ir(15 downto 12);
 	s_f <= ir(5 downto 3);
+	s_f_jumps <= ir(2 downto 0);
 	s_first_reg <= ir(11 downto 9);
 	s_second_reg <= ir(8 downto 6); -- Esto siempre corresponde a Ra
     s_third_reg <= ir(2 downto 0);
@@ -77,10 +79,10 @@ BEGIN
     -- falta el 11 para cuando falla el TLB
     tknbr <=    TKNBR_BRANCH    when s_opcode = OPCODE_BRANCHES and s_op = F_BRANCH_BZ and z = '1' else
                 TKNBR_BRANCH    when s_opcode = OPCODE_BRANCHES and s_op = F_BRANCH_BNZ and z = '0' else
-                TKNBR_JUMP      when s_opcode = OPCODE_JUMPS and s_f = F_JUMP_JZ and z = '1' else
-                TKNBR_JUMP      when s_opcode = OPCODE_JUMPS and s_f = F_JUMP_JNZ and z = '0' else 
-                TKNBR_JUMP      when s_opcode = OPCODE_JUMPS and s_f = F_JUMP_JMP else
-                TKNBR_JUMP      when s_opcode = OPCODE_JUMPS and s_f = F_JUMP_JAL else
+                TKNBR_JUMP      when s_opcode = OPCODE_JUMPS and s_f_jumps = F_JUMP_JZ and z = '1' else
+                TKNBR_JUMP      when s_opcode = OPCODE_JUMPS and s_f_jumps = F_JUMP_JNZ and z = '0' else 
+                TKNBR_JUMP      when s_opcode = OPCODE_JUMPS and s_f_jumps = F_JUMP_JMP else
+                TKNBR_JUMP      when s_opcode = OPCODE_JUMPS and s_f_jumps = F_JUMP_JAL else
                 TKNBR_NOT_TAKEN;
 
 	-- op <= ("0" & s_op) when s_opcode = "0101" else "10"; -- Se suma solo si no son MoviS
