@@ -36,6 +36,7 @@ ARCHITECTURE Structure OF proc IS
               b_or_immed:  IN  STD_LOGIC;
 			  addr_m:      OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
 			  data_wr:     OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
+              regout_a:    OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
               z:           OUT STD_LOGIC);
 	END COMPONENT;
 
@@ -44,6 +45,7 @@ ARCHITECTURE Structure OF proc IS
 		  clk		: IN STD_LOGIC;
           z         : IN STD_LOGIC;
 		  datard_m	: IN STD_LOGIC_VECTOR(15 DOWNTO 0);
+          regout_a  : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
           op        : OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
           f         : OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
 		  wrd		: OUT STD_LOGIC;
@@ -73,6 +75,7 @@ ARCHITECTURE Structure OF proc IS
 	signal s_immed_x2: std_logic;
     signal s_b_or_immed: std_logic;
     signal s_z: std_logic;
+    signal s_regout_a: std_logic_vector(15 downto 0);
 
 BEGIN
 
@@ -98,6 +101,7 @@ BEGIN
 		-- outputs
 		addr_m      => addr_m,
 		data_wr		=> data_wr,
+        regout_a    => s_regout_a,
         z           => s_z
 	);
 
@@ -106,6 +110,7 @@ BEGIN
 		boot		=> boot,
 		clk			=> clk,
 		datard_m	=> datard_m,
+        regout_a    => s_regout_a,
         z           => s_z,
 		-- outputs
 		op			=> s_op,

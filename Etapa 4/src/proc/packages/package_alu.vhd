@@ -22,12 +22,12 @@ constant F_ARIT_LOG_SHA     : std_logic_vector(2 downto 0) := "110";
 constant F_ARIT_LOG_SHL     : std_logic_vector(2 downto 0) := "111";
 
 -- COMPARACIONES
-constant F_CMP_LT          : std_logic_vector(2 downto 0) := "000";
-constant F_CMP_LE          : std_logic_vector(2 downto 0) := "001";
+constant F_CMP_LT           : std_logic_vector(2 downto 0) := "000";
+constant F_CMP_LE           : std_logic_vector(2 downto 0) := "001";
     --
-constant F_CMP_EQ          : std_logic_vector(2 downto 0) := "011";
-constant F_CMP_LTU         : std_logic_vector(2 downto 0) := "100";
-constant F_CMP_LEU         : std_logic_vector(2 downto 0) := "101";
+constant F_CMP_EQ           : std_logic_vector(2 downto 0) := "011";
+constant F_CMP_LTU          : std_logic_vector(2 downto 0) := "100";
+constant F_CMP_LEU          : std_logic_vector(2 downto 0) := "101";
     --
     --
 
@@ -36,14 +36,34 @@ constant F_EXT_ARIT_MUL     : std_logic_vector(2 downto 0) := "000";
 constant F_EXT_ARIT_MULH    : std_logic_vector(2 downto 0) := "001";
 constant F_EXT_ARIT_MULHU   : std_logic_vector(2 downto 0) := "010";
     --
-constant F_EXT_ARIT_DIV  : std_logic_vector(2 downto 0) := "100";
-constant F_EXT_ARIT_DIVU : std_logic_vector(2 downto 0) := "101";
+constant F_EXT_ARIT_DIV     : std_logic_vector(2 downto 0) := "100";
+constant F_EXT_ARIT_DIVU    : std_logic_vector(2 downto 0) := "101";
     --
     --
+
+-- BRANCHES
+constant F_BRANCH_BZ        : std_logic := '0';
+constant F_BRANCH_BNZ       : std_logic := '1';
+
+-- JUMPS
+constant F_JUMP_JZ          : std_logic_vector(2 downto 0) := "000";
+constant F_JUMP_JNZ         : std_logic_vector(2 downto 0) := "001";
+    --
+constant F_JUMP_JMP         : std_logic_vector(2 downto 0) := "100";
+constant F_JUMP_JAL         : std_logic_vector(2 downto 0) := "101";
+    --
+    --
+constant F_JUMP_CALLS       : std_logic_vector(2 downto 0) := "110";
+
 
 -- MISC
 constant F_MISC_MOVI        : std_logic_vector(2 downto 0) := "000";
 constant F_MISC_MOVHI       : std_logic_vector(2 downto 0) := "001";
+
+-- DE MOMENTO AQUI. MEJOR CREAR UN PACKAGE A PARTE
+constant TKNBR_NOT_TAKEN    : std_logic_vector(1 downto 0) := "00";
+constant TKNBR_BRANCH       : std_logic_vector(1 downto 0) := "01";
+constant TKNBR_JUMP         : std_logic_vector(1 downto 0) := "10";
 
 end package_alu;
 

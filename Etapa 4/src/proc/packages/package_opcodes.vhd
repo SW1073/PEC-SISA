@@ -14,6 +14,8 @@ constant    OPCODE_STORE        :   std_logic_vector(3 downto 0) := "0100";
 constant    OPCODE_LOADB        :   std_logic_vector(3 downto 0) := "1101";
 constant    OPCODE_STOREB       :   std_logic_vector(3 downto 0) := "1110";
 constant    OPCODE_MOVS         :   std_logic_vector(3 downto 0) := "0101";
+constant    OPCODE_BRANCHES     :   std_logic_vector(3 downto 0) := "0110";
+constant    OPCODE_JUMPS        :   std_logic_vector(3 downto 0) := "1010";
 
 end package_opcodes;
 

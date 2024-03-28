@@ -16,9 +16,10 @@ ENTITY datapath IS
           ins_dad:     IN STD_LOGIC;
           pc:          IN STD_LOGIC_VECTOR(15 DOWNTO 0);
           in_d:        IN STD_LOGIC;
+          b_or_immed:  IN  STD_LOGIC;
           addr_m:      OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
           data_wr:     OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
-          b_or_immed:  IN  STD_LOGIC;
+          regout_a:    OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
           z:           OUT STD_LOGIC);
 END datapath;
 
@@ -65,6 +66,7 @@ BEGIN
     s_data <= datard_m when in_d = '1' else s_aluout;
     s_immed_real <= immed when immed_x2 = '0' else (immed(14 DOWNTO 0) & '0');
     s_y <= s_regout_b when b_or_immed = '1' else s_immed_real;
+    regout_a <= s_regout_a;
 
 	reg: regfile port map(
 		clk => clk,
