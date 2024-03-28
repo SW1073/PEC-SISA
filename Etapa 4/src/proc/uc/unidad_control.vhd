@@ -75,12 +75,13 @@ ARCHITECTURE Structure OF unidad_control IS
 	signal s_multi_ldpc: std_logic;
 	signal s_multi_ldir: std_logic;
 
+    signal s_immed: std_logic_vector(15 downto 0);
     signal s_tknbr: std_logic_vector(1 downto 0);
-	-- Registros de valores que tienen que mantenerse entre clock cycles
     signal s_pc_mas_dos: std_logic_vector(15 downto 0);
     signal s_immed_multiplicado_por_2: std_logic_vector(15 downto 0);
     signal s_pc_mas_immed: std_logic_vector(15 downto 0);
 
+	-- Registros de valores que tienen que mantenerse entre clock cycles
 	signal s_reg_pc: std_logic_vector(15 downto 0); -- pc register
 	signal s_reg_ir: std_logic_vector(15 downto 0); -- instruction register
 BEGIN
@@ -88,8 +89,8 @@ BEGIN
 	-- Aqui iria la declaracion del "mapeo" (PORT MAP) de los nombres de las entradas/salidas de los componentes
 	-- En los esquemas de la documentacion a la instancia de la logica de control le hemos llamado c0
 	-- Aqui iria la definicion del comportamiento de la unidad de control y la gestion del PC
-    s_pc_mas_dos <= std_logic_vector(unsigned(s_reg_pc) + 2);
-    s_immed_multiplicado_por_2 <= s_reg_pc(14 downto 0) & '0';
+    s_pc_mas_dos <= s_reg_pc + 2;
+    s_immed_multiplicado_por_2 <= s_immed(14 downto 0) & '0';
     s_pc_mas_immed <= s_immed_multiplicado_por_2 + s_pc_mas_dos;
 
 	control_l0: control_l port map(
@@ -104,7 +105,7 @@ BEGIN
 		addr_a		=> addr_a,
 		addr_b		=> addr_b,
 		addr_d		=> addr_d,
-		immed		=> immed,
+		immed		=> s_immed,
 		wr_m		=> s_wr_m,
 		in_d		=> in_d,
 		immed_x2 	=> immed_x2,
@@ -162,5 +163,6 @@ BEGIN
 	end process; -- cp_and_ir
 
 	pc <= s_reg_pc;
+    immed <= s_immed;
 
 END Structure;

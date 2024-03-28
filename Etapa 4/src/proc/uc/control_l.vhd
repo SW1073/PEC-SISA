@@ -112,6 +112,7 @@ BEGIN
         addr_b <= s_first_reg when OPCODE_STORE,
                   s_first_reg when OPCODE_STOREB,
                   s_first_reg when OPCODE_BRANCHES,
+                  s_first_reg when OPCODE_JUMPS,
                   s_third_reg when others;
 
     -- siempre pasa esto
@@ -121,6 +122,8 @@ BEGIN
         b_or_immed <= '1' when OPCODE_CMPS,
                       '1' when OPCODE_ARIT_LOG,
                       '1' when OPCODE_EXT_ARIT,
+                      '1' when OPCODE_BRANCHES,
+                      '1' WHEN OPCODE_JUMPS,
                       '0' when others;
 
 	-- Valor inmediato con extension de signo extraido de la instruccion.
