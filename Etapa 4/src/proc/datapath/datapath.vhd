@@ -1,28 +1,29 @@
 LIBRARY ieee;
-USE ieee.std_logic_1164.all;
-USE ieee.numeric_std.all;
-USE ieee.std_logic_unsigned.all;
-USE work.package_control.all;
+USE ieee.std_logic_1164.ALL;
+USE ieee.numeric_std.ALL;
+USE ieee.std_logic_unsigned.ALL;
+USE work.package_control.ALL;
 
 ENTITY datapath IS
-    PORT (clk:         IN STD_LOGIC;
-          op:          IN STD_LOGIC_VECTOR(2 DOWNTO 0);
-          f:           IN STD_LOGIC_VECTOR(2 DOWNTO 0);
-          wrd:         IN STD_LOGIC;
-          addr_a:      IN STD_LOGIC_VECTOR(2 DOWNTO 0);
-          addr_b:      IN STD_LOGIC_VECTOR(2 DOWNTO 0);
-          addr_d:      IN STD_LOGIC_VECTOR(2 DOWNTO 0);
-          immed:       IN STD_LOGIC_VECTOR(15 DOWNTO 0);
-          immed_x2:    IN STD_LOGIC;
-          datard_m:    IN STD_LOGIC_VECTOR(15 DOWNTO 0);
-          ins_dad:     IN STD_LOGIC;
-          pc:          IN STD_LOGIC_VECTOR(15 DOWNTO 0);
-          in_d:        IN STD_LOGIC_VECTOR(1 DOWNTO 0);
-          b_or_immed:  IN  STD_LOGIC;
-          addr_m:      OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
-          data_wr:     OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
-          regout_a:    OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
-          z:           OUT STD_LOGIC);
+	PORT (
+		clk        : IN  std_logic;
+		op         : IN  std_logic_vector(2 DOWNTO 0);
+		f          : IN  std_logic_vector(2 DOWNTO 0);
+		wrd        : IN  std_logic;
+		addr_a     : IN  std_logic_vector(2 DOWNTO 0);
+		addr_b     : IN  std_logic_vector(2 DOWNTO 0);
+		addr_d     : IN  std_logic_vector(2 DOWNTO 0);
+		immed      : IN  std_logic_vector(15 DOWNTO 0);
+		immed_x2   : IN  std_logic;
+		datard_m   : IN  std_logic_vector(15 DOWNTO 0);
+		ins_dad    : IN  std_logic;
+		pc         : IN  std_logic_vector(15 DOWNTO 0);
+		in_d       : IN  std_logic_vector(1 DOWNTO 0);
+		b_or_immed : IN  std_logic;
+		addr_m     : OUT std_logic_vector(15 DOWNTO 0);
+		data_wr    : OUT std_logic_vector(15 DOWNTO 0);
+		regout_a   : OUT std_logic_vector(15 DOWNTO 0);
+		z          : OUT std_logic);
 END datapath;
 
 ARCHITECTURE Structure OF datapath IS
@@ -32,75 +33,76 @@ ARCHITECTURE Structure OF datapath IS
 	-- Tambien crearemos los cables/buses (signals) necesarios para unir las entidades
 
 	COMPONENT alu IS
-		PORT (x  : IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
-			  y  : IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
-			  op : IN  STD_LOGIC_VECTOR(2 DOWNTO 0);
-			  f  : IN  STD_LOGIC_VECTOR(2 DOWNTO 0);
-			  w  : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
-              z  : OUT STD_LOGIC);
+		PORT (
+			x  : IN  std_logic_vector(15 DOWNTO 0);
+			y  : IN  std_logic_vector(15 DOWNTO 0);
+			op : IN  std_logic_vector(2 DOWNTO 0);
+			f  : IN  std_logic_vector(2 DOWNTO 0);
+			w  : OUT std_logic_vector(15 DOWNTO 0);
+			z  : OUT std_logic);
 	END COMPONENT;
-
-
 	COMPONENT regfile IS
-		PORT (clk    : IN  STD_LOGIC;
-			  wrd    : IN  STD_LOGIC;
-			  d      : IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
-			  addr_a : IN  STD_LOGIC_VECTOR(2 DOWNTO 0);
-			  addr_b : IN  STD_LOGIC_VECTOR(2 DOWNTO 0);
-			  addr_d : IN  STD_LOGIC_VECTOR(2 DOWNTO 0);
-			  a      : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
-			  b      : OUT STD_LOGIC_VECTOR(15 DOWNTO 0));
+		PORT (
+			clk    : IN  std_logic;
+			wrd    : IN  std_logic;
+			d      : IN  std_logic_vector(15 DOWNTO 0);
+			addr_a : IN  std_logic_vector(2 DOWNTO 0);
+			addr_b : IN  std_logic_vector(2 DOWNTO 0);
+			addr_d : IN  std_logic_vector(2 DOWNTO 0);
+			a      : OUT std_logic_vector(15 DOWNTO 0);
+			b      : OUT std_logic_vector(15 DOWNTO 0));
 	END COMPONENT;
 
-	signal s_regout_a: std_logic_vector(15 downto 0);
-	signal s_regout_b: std_logic_vector(15 downto 0);
-	signal s_aluout: std_logic_vector(15 downto 0);
+	SIGNAL s_regout_a : std_logic_vector(15 DOWNTO 0);
+	SIGNAL s_regout_b : std_logic_vector(15 DOWNTO 0);
+	SIGNAL s_aluout   : std_logic_vector(15 DOWNTO 0);
 
-	signal s_data: std_logic_vector(15 downto 0);
-	signal s_immed_real: std_logic_vector(15 downto 0);
-	signal s_y: std_logic_vector(15 downto 0);
+	SIGNAL s_data       : std_logic_vector(15 DOWNTO 0);
+	SIGNAL s_immed_real : std_logic_vector(15 DOWNTO 0);
+	SIGNAL s_y          : std_logic_vector(15 DOWNTO 0);
 
-    signal s_pc: std_logic_vector(15 downto 0);
+	SIGNAL s_pc : std_logic_vector(15 DOWNTO 0);
 
 BEGIN
 
 	-- Aqui iria la declaracion del "mapeo" (PORT MAP) de los nombres de las entradas/salidas de los componentes
 	-- En los esquemas de la documentacion a la instancia del banco de registros le hemos llamado reg0 y a la de la alu le hemos llamado alu0
 
-    s_pc <= pc + x"0002";
+	s_pc <= pc + x"0002";
 
-    with in_d select
-        s_data <=   s_aluout when IN_D_ALUOUT,
-                    datard_m when IN_D_DATAMEM,
-                    s_pc when IN_D_PC,
-                    s_aluout when others;
+	WITH in_d SELECT
+        s_data <= s_aluout WHEN IN_D_ALUOUT,
+                  datard_m WHEN IN_D_DATAMEM,
+                  s_pc     WHEN IN_D_PC,
+                  s_aluout WHEN OTHERS;
 
-    -- s_data <= datard_m when in_d = '1' else s_aluout;
-    s_immed_real <= immed when immed_x2 = '0' else (immed(14 DOWNTO 0) & '0');
-    s_y <= s_regout_b when b_or_immed = '1' else s_immed_real;
-    regout_a <= s_regout_a;
+	-- s_data <= datard_m when in_d = '1' else s_aluout;
+	s_immed_real <= immed WHEN immed_x2 = '0' ELSE (immed(14 DOWNTO 0) & '0');
+	s_y          <= s_regout_b WHEN b_or_immed = '1' ELSE s_immed_real;
+	regout_a     <= s_regout_a;
 
-	reg: regfile port map(
-		clk => clk,
-		wrd => wrd,
-		d => s_data,
+	reg : regfile PORT MAP(
+		clk    => clk,
+		wrd    => wrd,
+		d      => s_data,
 		addr_a => addr_a,
 		addr_b => addr_b,
 		addr_d => addr_d,
-		a => s_regout_a,
-		b => s_regout_b
+		a      => s_regout_a,
+		b      => s_regout_b
 	);
 
-	al: alu port map(
+	al : alu PORT MAP(
 		op => op,
-        f => f,
-		x => s_regout_a,
-		y => s_y,
-		w => s_aluout,
-        z => z
+		f  => f,
+		x  => s_regout_a,
+		y  => s_y,
+		w  => s_aluout,
+		z  => z
 	);
 
-	addr_m <= s_aluout when ins_dad = '1' else pc;
+	addr_m  <= s_aluout WHEN ins_dad = '1' ELSE pc;
 	data_wr <= s_regout_b;
 
 END Structure;
+

@@ -1,24 +1,25 @@
 LIBRARY ieee;
-USE ieee.std_logic_1164.all;
-USE ieee.numeric_std.all;
-USE ieee.std_logic_unsigned.all;
+USE ieee.std_logic_1164.ALL;
+USE ieee.numeric_std.ALL;
+USE ieee.std_logic_unsigned.ALL;
 
-package package_opcodes is
+PACKAGE package_opcodes IS
 
-constant    OPCODE_ARIT_LOG     :   std_logic_vector(3 downto 0) := "0000";
-constant    OPCODE_CMPS         :   std_logic_vector(3 downto 0) := "0001";
-constant    OPCODE_IMMED        :   std_logic_vector(3 downto 0) := "0010";
-constant    OPCODE_EXT_ARIT     :   std_logic_vector(3 downto 0) := "1000";
-constant    OPCODE_LOAD         :   std_logic_vector(3 downto 0) := "0011";
-constant    OPCODE_STORE        :   std_logic_vector(3 downto 0) := "0100";
-constant    OPCODE_LOADB        :   std_logic_vector(3 downto 0) := "1101";
-constant    OPCODE_STOREB       :   std_logic_vector(3 downto 0) := "1110";
-constant    OPCODE_MOVS         :   std_logic_vector(3 downto 0) := "0101";
-constant    OPCODE_BRANCHES     :   std_logic_vector(3 downto 0) := "0110";
-constant    OPCODE_JUMPS        :   std_logic_vector(3 downto 0) := "1010";
+	CONSTANT OPCODE_ARIT_LOG : std_logic_vector(3 DOWNTO 0) := "0000";
+	CONSTANT OPCODE_CMPS     : std_logic_vector(3 DOWNTO 0) := "0001";
+	CONSTANT OPCODE_IMMED    : std_logic_vector(3 DOWNTO 0) := "0010";
+	CONSTANT OPCODE_EXT_ARIT : std_logic_vector(3 DOWNTO 0) := "1000";
+	CONSTANT OPCODE_LOAD     : std_logic_vector(3 DOWNTO 0) := "0011";
+	CONSTANT OPCODE_STORE    : std_logic_vector(3 DOWNTO 0) := "0100";
+	CONSTANT OPCODE_LOADB    : std_logic_vector(3 DOWNTO 0) := "1101";
+	CONSTANT OPCODE_STOREB   : std_logic_vector(3 DOWNTO 0) := "1110";
+	CONSTANT OPCODE_MOVS     : std_logic_vector(3 DOWNTO 0) := "0101";
+	CONSTANT OPCODE_BRANCHES : std_logic_vector(3 DOWNTO 0) := "0110";
+	CONSTANT OPCODE_JUMPS    : std_logic_vector(3 DOWNTO 0) := "1010";
 
-end package_opcodes;
+END package_opcodes;
 
-package body package_opcodes is
+PACKAGE BODY package_opcodes IS
 
-end package_opcodes;
+END package_opcodes;
+
