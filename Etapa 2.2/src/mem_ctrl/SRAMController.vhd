@@ -1,112 +1,110 @@
 LIBRARY ieee;
-USE ieee.std_logic_1164.all;
-USE ieee.numeric_std.all;
+USE ieee.std_logic_1164.ALL;
+USE ieee.numeric_std.ALL;
 
-entity SRAMController is
-    port (clk         : in    std_logic; -- Va a 50MHZ. Esto lo tenemos que aprovechar
-          -- senales para la placa de desarrollo
-          SRAM_ADDR   : out   std_logic_vector(17 downto 0);
-          SRAM_DQ     : inout std_logic_vector(15 downto 0);
-          SRAM_UB_N   : out   std_logic;
-          SRAM_LB_N   : out   std_logic;
-          SRAM_CE_N   : out   std_logic := '1';
-          SRAM_OE_N   : out   std_logic := '1';
-          SRAM_WE_N   : out   std_logic := '1';
-          -- senales internas del procesador
-          address     : in    std_logic_vector(15 downto 0) := "0000000000000000";
-          dataReaded  : out   std_logic_vector(15 downto 0);
-          dataToWrite : in    std_logic_vector(15 downto 0);
-          WR          : in    std_logic;
-          byte_m      : in    std_logic := '0');
-end SRAMController;
+ENTITY SRAMController IS
+	PORT (
+		clk : IN std_logic; -- Va a 50MHZ. Esto lo tenemos que aprovechar
+		-- senales para la placa de desarrollo
+		SRAM_ADDR : OUT   std_logic_vector(17 DOWNTO 0);
+		SRAM_DQ   : INOUT std_logic_vector(15 DOWNTO 0);
+		SRAM_UB_N : OUT   std_logic;
+		SRAM_LB_N : OUT   std_logic;
+		SRAM_CE_N : OUT   std_logic := '1';
+		SRAM_OE_N : OUT   std_logic := '1';
+		SRAM_WE_N : OUT   std_logic := '1';
+		-- senales internas del procesador
+		address     : IN  std_logic_vector(15 DOWNTO 0) := "0000000000000000";
+		dataReaded  : OUT std_logic_vector(15 DOWNTO 0);
+		dataToWrite : IN  std_logic_vector(15 DOWNTO 0);
+		WR          : IN  std_logic;
+		byte_m      : IN  std_logic := '0');
+END SRAMController;
 
-architecture comportament of SRAMController is
+ARCHITECTURE comportament OF SRAMController IS
 
-    type State_t is (READ, WRITE_SETUP, WRITE);
-    signal s_state: State_t := READ;
+	TYPE State_t IS (READ, WRITE_SETUP, WRITE);
+	SIGNAL s_state : State_t := READ;
 
-begin
+BEGIN
 
-	SRAM_ADDR <= "000" & address(15 downto 1);
-	SRAM_CE_N <= '0';
-	SRAM_OE_N <= '0';
-	dataReaded <= std_logic_vector(resize(signed(SRAM_DQ(7 downto 0)), dataReaded'length)) when byte_m = '1' and address(0) = '0'
-					else std_logic_vector(resize(signed(SRAM_DQ(15 downto 8)), dataReaded'length)) when byte_m = '1' and address(0) = '1'
-					else SRAM_DQ;
-
-
-    next_state: process(clk) is
-        variable v_valid_counter: integer;
-        variable v_state: State_t;
-    begin
-        if rising_edge(clk) then
-            v_state := s_state;
-            case (s_state) is
-                when READ =>
-					if WR = '1' then
+	SRAM_ADDR  <= "000" & address(15 DOWNTO 1);
+	SRAM_CE_N  <= '0';
+	SRAM_OE_N  <= '0';
+	dataReaded <= std_logic_vector(resize(signed(SRAM_DQ(7 DOWNTO 0)), dataReaded'length)) WHEN byte_m = '1' AND address(0) = '0'
+		ELSE std_logic_vector(resize(signed(SRAM_DQ(15 DOWNTO 8)), dataReaded'length)) WHEN byte_m = '1' AND address(0) = '1'
+		ELSE SRAM_DQ;
+	next_state : PROCESS (clk) IS
+		VARIABLE v_valid_counter : integer;
+		VARIABLE v_state         : State_t;
+	BEGIN
+		IF rising_edge(clk) THEN
+			v_state := s_state;
+			CASE (s_state) IS
+				WHEN READ =>
+					IF WR = '1' THEN
 						v_state := WRITE_SETUP;
-					end if;
+					END IF;
 
-				when WRITE_SETUP =>
+				WHEN WRITE_SETUP =>
 					v_state := WRITE;
 
-				when WRITE =>
-					if WR = '0' then
+				WHEN WRITE =>
+					IF WR = '0' THEN
 						v_state := READ;
-					end if;
+					END IF;
 
-            end case;
-            s_state <= v_state;
-        end if;
-    end process; -- next_state
-
-
-    output_logic: process(clk) is
-    begin
-        if rising_edge(clk) then
-            case (s_state) is
-                when READ =>
-					if WR = '1' then
-						if byte_m = '0' and address(0) = '0' then
+			END CASE;
+			s_state <= v_state;
+		END IF;
+	END PROCESS; -- next_state
+	output_logic : PROCESS (clk) IS
+	BEGIN
+		IF rising_edge(clk) THEN
+			CASE (s_state) IS
+				WHEN READ =>
+					IF WR = '1' THEN
+						IF byte_m = '0' AND address(0) = '0' THEN
 							SRAM_UB_N <= '0';
 							SRAM_LB_N <= '0';
-							SRAM_DQ <= dataToWrite;
-						elsif byte_m = '0' and address(0) = '1' then
+							SRAM_DQ   <= dataToWrite;
+						ELSIF byte_m = '0' AND address(0) = '1' THEN
 							SRAM_UB_N <= 'W';
 							SRAM_LB_N <= 'W';
-							SRAM_DQ <= dataToWrite;
-						elsif byte_m = '1' and address(0) = '0' then
+							SRAM_DQ   <= dataToWrite;
+						ELSIF byte_m = '1' AND address(0) = '0' THEN
 							SRAM_UB_N <= '1';
 							SRAM_LB_N <= '0';
-							SRAM_DQ <= dataToWrite;
-						else -- byte_m = '1' and address(0) = '1'
+							SRAM_DQ   <= dataToWrite;
+						ELSE -- byte_m = '1' and address(0) = '1'
 							SRAM_UB_N <= '0';
 							SRAM_LB_N <= '1';
-							SRAM_DQ <= dataToWrite(7 downto 0) & x"00";
-						end if;
+							SRAM_DQ   <= dataToWrite(7 DOWNTO 0) & x"00";
+						END IF;
 						SRAM_WE_N <= '0';
-					else
+					ELSE
 						SRAM_UB_N <= '0';
 						SRAM_LB_N <= '0';
 						SRAM_WE_N <= '1';
-						SRAM_DQ <= (others => 'Z');
-					end if;
+						SRAM_DQ   <= (OTHERS => 'Z');
+					END IF;
 
-				when WRITE_SETUP =>
+				WHEN WRITE_SETUP =>
 					SRAM_UB_N <= '1';
 					SRAM_LB_N <= '1';
 					SRAM_WE_N <= '1';
 
-				when WRITE =>
-					if WR= '0' then
+				WHEN WRITE =>
+					IF WR = '0' THEN
 						SRAM_UB_N <= '0';
 						SRAM_LB_N <= '0';
 						SRAM_WE_N <= '1';
-						SRAM_DQ <= (others => 'Z');
-					end if;
+						SRAM_DQ   <= (OTHERS => 'Z');
+					END IF;
 
-            end case;
-        end if;
-    end process; -- output_logic
+			END CASE;
+		END IF;
+	END PROCESS; -- output_logic
 
-end comportament;
+END comportament;
+

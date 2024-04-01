@@ -112,3 +112,4 @@ BEGIN
 	dbg_pc <= s_pc;
 
 END Structure;
+

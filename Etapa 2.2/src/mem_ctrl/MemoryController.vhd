@@ -1,68 +1,69 @@
-library ieee;
-use ieee.std_logic_1164.all;
-use ieee.std_logic_arith.all;
-use ieee.std_logic_unsigned.all;
+LIBRARY ieee;
+USE ieee.std_logic_1164.ALL;
+USE ieee.std_logic_arith.ALL;
+USE ieee.std_logic_unsigned.ALL;
 
-entity MemoryController is
-    port (CLOCK_50  : in  std_logic;
-	      addr      : in  std_logic_vector(15 downto 0);
-          wr_data   : in  std_logic_vector(15 downto 0);
-          rd_data   : out std_logic_vector(15 downto 0);
-          we        : in  std_logic;
-          byte_m    : in  std_logic;
-          -- se�ales para la placa de desarrollo
-          SRAM_ADDR : out   std_logic_vector(17 downto 0);
-          SRAM_DQ   : inout std_logic_vector(15 downto 0);
-          SRAM_UB_N : out   std_logic;
-          SRAM_LB_N : out   std_logic;
-          SRAM_CE_N : out   std_logic := '1';
-          SRAM_OE_N : out   std_logic := '1';
-          SRAM_WE_N : out   std_logic := '1');
-end MemoryController;
+ENTITY MemoryController IS
+	PORT (
+		CLOCK_50  : IN    std_logic;
+		addr      : IN    std_logic_vector(15 DOWNTO 0);
+		wr_data   : IN    std_logic_vector(15 DOWNTO 0);
+		rd_data   : OUT   std_logic_vector(15 DOWNTO 0);
+		we        : IN    std_logic;
+		byte_m    : IN    std_logic;
+		-- se�ales para la placa de desarrollo
+		SRAM_ADDR : OUT   std_logic_vector(17 DOWNTO 0);
+		SRAM_DQ   : INOUT std_logic_vector(15 DOWNTO 0);
+		SRAM_UB_N : OUT   std_logic;
+		SRAM_LB_N : OUT   std_logic;
+		SRAM_CE_N : OUT   std_logic := '1';
+		SRAM_OE_N : OUT   std_logic := '1';
+		SRAM_WE_N : OUT   std_logic := '1');
+END MemoryController;
 
-architecture comportament of MemoryController is
-    COMPONENT SRAMController is
-        port (clk         : in    std_logic;
-            -- se�ales para la placa de desarrollo
-            SRAM_ADDR   : out   std_logic_vector(17 downto 0);
-            SRAM_DQ     : inout std_logic_vector(15 downto 0);
-            SRAM_UB_N   : out   std_logic;
-            SRAM_LB_N   : out   std_logic;
-            SRAM_CE_N   : out   std_logic := '1';
-            SRAM_OE_N   : out   std_logic := '1';
-            SRAM_WE_N   : out   std_logic := '1';
-            -- se�ales internas del procesador
-            address     : in    std_logic_vector(15 downto 0) := "0000000000000000";
-            dataReaded  : out   std_logic_vector(15 downto 0);
-            dataToWrite : in    std_logic_vector(15 downto 0);
-            WR          : in    std_logic;
-            byte_m      : in    std_logic := '0');
-    end COMPONENT;
+ARCHITECTURE comportament OF MemoryController IS
+	COMPONENT SRAMController IS
+		PORT (
+			clk         : IN    std_logic;
+			-- se�ales para la placa de desarrollo
+			SRAM_ADDR   : OUT   std_logic_vector(17 DOWNTO 0);
+			SRAM_DQ     : INOUT std_logic_vector(15 DOWNTO 0);
+			SRAM_UB_N   : OUT   std_logic;
+			SRAM_LB_N   : OUT   std_logic;
+			SRAM_CE_N   : OUT   std_logic                    := '1';
+			SRAM_OE_N   : OUT   std_logic                    := '1';
+			SRAM_WE_N   : OUT   std_logic                    := '1';
+			-- se�ales internas del procesador
+			address     : IN    std_logic_vector(15 DOWNTO 0) := "0000000000000000";
+			dataReaded  : OUT   std_logic_vector(15 DOWNTO 0);
+			dataToWrite : IN    std_logic_vector(15 DOWNTO 0);
+			WR          : IN    std_logic;
+			byte_m      : IN    std_logic := '0');
+	END COMPONENT;
+	SIGNAL s_sram_data_readed : std_logic_vector(15 DOWNTO 0);
+	SIGNAL s_sram_wr          : std_logic;
+BEGIN
+	-- Por ahora, toda lectura es siempre de la SRAM, per en un futuro aquí habrá que multiplexar
+	rd_data   <= s_sram_data_readed;
+	s_sram_wr <= we WHEN (addr < x"C000") ELSE '0';
 
+	sramctrl0 : SRAMController PORT MAP(
+		clk         => CLOCK_50,
+		-- se�ales para la placa de desarrollo
+		SRAM_ADDR   => SRAM_ADDR,
+		SRAM_DQ     => SRAM_DQ,
+		SRAM_UB_N   => SRAM_UB_N,
+		SRAM_LB_N   => SRAM_LB_N,
+		SRAM_CE_N   => SRAM_CE_N,
+		SRAM_OE_N   => SRAM_OE_N,
+		SRAM_WE_N   => SRAM_WE_N,
+		-- se�ales internas del procesador
+		address     => addr,
+		dataReaded  => s_sram_data_readed,
+		dataToWrite => wr_data,
+		WR          => s_sram_wr,
+		byte_m      => byte_m
+	);
 
-    signal s_sram_data_readed: std_logic_vector(15 downto 0);
-    signal s_sram_wr: std_logic;
-begin
-    -- Por ahora, toda lectura es siempre de la SRAM, per en un futuro aquí habrá que multiplexar
-    rd_data <= s_sram_data_readed;
-    s_sram_wr <= we when (addr < x"C000") else '0';
+END comportament;
 
-    sramctrl0: SRAMController port map(
-        clk         => CLOCK_50,
-        -- se�ales para la placa de desarrollo
-        SRAM_ADDR   => SRAM_ADDR,
-        SRAM_DQ     => SRAM_DQ,
-        SRAM_UB_N   => SRAM_UB_N,
-        SRAM_LB_N   => SRAM_LB_N,
-        SRAM_CE_N   => SRAM_CE_N,
-        SRAM_OE_N   => SRAM_OE_N,
-        SRAM_WE_N   => SRAM_WE_N,
-        -- se�ales internas del procesador
-        address     => addr,
-        dataReaded  => s_sram_data_readed,
-        dataToWrite => wr_data,
-        WR          => s_sram_wr,
-        byte_m      => byte_m
-    );
-
-end comportament;
