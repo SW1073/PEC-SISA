@@ -22,14 +22,14 @@ BEGIN
 	s_shift_shl <= std_logic_vector(shift_left(unsigned(x), to_integer(signed(y))));
 
 	WITH op SELECT
-		w <= x AND y WHEN F_ARIT_LOG_AND,      -- AND
-             x OR y WHEN F_ARIT_LOG_OR,        -- OR
-             x XOR y WHEN F_ARIT_LOG_XOR,      -- XOR
-             NOT x WHEN F_ARIT_LOG_NOT,        -- NOT
-             x + y WHEN F_ARIT_LOG_ADD,        -- ADD
-             x - y WHEN F_ARIT_LOG_SUB,        -- SUB
-             s_shift_sha WHEN F_ARIT_LOG_SHA,  -- SHA
-             s_shift_shl WHEN F_ARIT_LOG_SHL,  -- SHL
+		w <= x AND y            WHEN F_ARIT_LOG_AND,    -- AND
+             x OR y             WHEN F_ARIT_LOG_OR,     -- OR
+             x XOR y            WHEN F_ARIT_LOG_XOR,    -- XOR
+             NOT x              WHEN F_ARIT_LOG_NOT,    -- NOT
+             x + y              WHEN F_ARIT_LOG_ADD,    -- ADD
+             x - y              WHEN F_ARIT_LOG_SUB,    -- SUB
+             s_shift_sha        WHEN F_ARIT_LOG_SHA,    -- SHA
+             s_shift_shl        WHEN F_ARIT_LOG_SHL,    -- SHL
              "XXXXXXXXXXXXXXXX" WHEN OTHERS;
 
 END Structure;

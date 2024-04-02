@@ -16,12 +16,12 @@ ARCHITECTURE Structure OF alu_comp IS
 BEGIN
 
 	WITH op SELECT
-		s_w <= signed(x) < signed(y) WHEN F_CMP_LT,  -- CMPLT
-               signed(x) <= signed(y) WHEN F_CMP_LE, -- CMPLE
-               x = y WHEN F_CMP_EQ,                  -- CMPEQ
-               x < y WHEN F_CMP_LTU,                 -- COMPLTU
-               x <= y WHEN F_CMP_LEU,                -- COMPLEU
-               x = y WHEN OTHERS;
+		s_w <= signed(x) < signed(y)    WHEN F_CMP_LT,  -- CMPLT
+               signed(x) <= signed(y)   WHEN F_CMP_LE,  -- CMPLE
+               x = y                    WHEN F_CMP_EQ,  -- CMPEQ
+               x < y                    WHEN F_CMP_LTU, -- COMPLTU
+               x <= y                   WHEN F_CMP_LEU, -- COMPLEU
+               x = y                    WHEN OTHERS;
 
 	w <= x"0001" WHEN s_w = true ELSE x"0000";
 
