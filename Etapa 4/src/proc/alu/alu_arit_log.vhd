@@ -14,12 +14,15 @@ END alu_arit_log;
 ARCHITECTURE Structure OF alu_arit_log IS
 	SIGNAL s_shift_sha : std_logic_vector(15 DOWNTO 0);
 	SIGNAL s_shift_shl : std_logic_vector(15 DOWNTO 0);
+    SIGNAL s_y : std_logic_vector(4 DOWNTO 0);
 BEGIN
 
-	s_shift_sha <= std_logic_vector(shift_left(signed(x), to_integer(signed(y)))) WHEN signed(y) >= 0
-		ELSE std_logic_vector(shift_right(signed(x), to_integer(-signed(y))));
+    s_y <= y(4 DOWNTO 0);
 
-	s_shift_shl <= std_logic_vector(shift_left(unsigned(x), to_integer(signed(y))));
+	s_shift_sha <= std_logic_vector(shift_left(signed(x), to_integer(signed(s_y)))) WHEN signed(s_y) >= 0
+		ELSE std_logic_vector(shift_right(signed(x), to_integer(-signed(s_y))));
+
+	s_shift_shl <= std_logic_vector(shift_left(unsigned(x), to_integer(signed(s_y))));
 
 	WITH op SELECT
 		w <= x AND y            WHEN F_ARIT_LOG_AND,    -- AND
