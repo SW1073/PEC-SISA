@@ -1,0 +1,136 @@
+LIBRARY ieee;
+USE ieee.std_logic_1164.ALL;
+
+ENTITY proc IS
+	PORT (
+		clk       : IN  std_logic;
+		boot      : IN  std_logic;
+		datard_m  : IN  std_logic_vector(15 DOWNTO 0);
+		addr_m    : OUT std_logic_vector(15 DOWNTO 0);
+		data_wr   : OUT std_logic_vector(15 DOWNTO 0);
+		wr_m      : OUT std_logic;
+		word_byte : OUT std_logic;
+		dbg_pc    : OUT std_logic_vector(15 DOWNTO 0));
+END proc;
+ARCHITECTURE Structure OF proc IS
+
+	-- Aqui iria la declaracion de las entidades que vamos a usar
+	-- Usaremos la palabra reservada COMPONENT ...
+	-- Tambien crearemos los cables/buses (signals) necesarios para unir las entidades
+
+	COMPONENT datapath IS
+		PORT (
+			clk        : IN  std_logic;
+			op         : IN  std_logic_vector(2 DOWNTO 0);
+			f          : IN  std_logic_vector(2 DOWNTO 0);
+			wrd        : IN  std_logic;
+			addr_a     : IN  std_logic_vector(2 DOWNTO 0);
+			addr_b     : IN  std_logic_vector(2 DOWNTO 0);
+			addr_d     : IN  std_logic_vector(2 DOWNTO 0);
+			immed      : IN  std_logic_vector(15 DOWNTO 0);
+			immed_x2   : IN  std_logic;
+			datard_m   : IN  std_logic_vector(15 DOWNTO 0);
+			ins_dad    : IN  std_logic;
+			pc         : IN  std_logic_vector(15 DOWNTO 0);
+			in_d       : IN  std_logic_vector(1 DOWNTO 0);
+			b_or_immed : IN  std_logic;
+			addr_m     : OUT std_logic_vector(15 DOWNTO 0);
+			data_wr    : OUT std_logic_vector(15 DOWNTO 0);
+			regout_a   : OUT std_logic_vector(15 DOWNTO 0);
+			z          : OUT std_logic);
+	END COMPONENT;
+
+	COMPONENT unidad_control IS
+		PORT (
+			boot       : IN  std_logic;
+			clk        : IN  std_logic;
+			z          : IN  std_logic;
+			datard_m   : IN  std_logic_vector(15 DOWNTO 0);
+			regout_a   : IN  std_logic_vector(15 DOWNTO 0);
+			op         : OUT std_logic_vector(2 DOWNTO 0);
+			f          : OUT std_logic_vector(2 DOWNTO 0);
+			wrd        : OUT std_logic;
+			addr_a     : OUT std_logic_vector(2 DOWNTO 0);
+			addr_b     : OUT std_logic_vector(2 DOWNTO 0);
+			addr_d     : OUT std_logic_vector(2 DOWNTO 0);
+			immed      : OUT std_logic_vector(15 DOWNTO 0);
+			pc         : OUT std_logic_vector(15 DOWNTO 0);
+			ins_dad    : OUT std_logic;
+			in_d       : OUT std_logic_vector(1 DOWNTO 0);
+			immed_x2   : OUT std_logic;
+			wr_m       : OUT std_logic;
+			word_byte  : OUT std_logic;
+			b_or_immed : OUT std_logic);
+	END COMPONENT;
+
+	SIGNAL s_op         : std_logic_vector (2 DOWNTO 0);
+	SIGNAL s_f          : std_logic_vector (2 DOWNTO 0);
+	SIGNAL s_wrd        : std_logic;
+	SIGNAL s_addr_a     : std_logic_vector (2 DOWNTO 0);
+	SIGNAL s_addr_b     : std_logic_vector (2 DOWNTO 0);
+	SIGNAL s_addr_d     : std_logic_vector (2 DOWNTO 0);
+	SIGNAL s_immed      : std_logic_vector (15 DOWNTO 0);
+	SIGNAL s_pc         : std_logic_vector(15 DOWNTO 0);
+	SIGNAL s_ins_dad    : std_logic;
+	SIGNAL s_in_d       : std_logic_vector(1 DOWNTO 0);
+	SIGNAL s_immed_x2   : std_logic;
+	SIGNAL s_b_or_immed : std_logic;
+	SIGNAL s_z          : std_logic;
+	SIGNAL s_regout_a   : std_logic_vector(15 DOWNTO 0);
+
+BEGIN
+
+	-- Aqui iria la declaracion del "mapeo" (PORT MAP) de los nombres de las entradas/salidas de los componentes
+	-- En los esquemas de la documentacion a la instancia del DATAPATH le hemos llamado e0 y a la de la unidad de control le hemos llamado c0
+
+	dp : datapath PORT MAP(
+		-- inpus
+		clk        => clk,
+		op         => s_op,
+		f          => s_f,
+		wrd        => s_wrd,
+		addr_a     => s_addr_a,
+		addr_b     => s_addr_b,
+		addr_d     => s_addr_d,
+		immed      => s_immed,
+		immed_x2   => s_immed_x2,
+		datard_m   => datard_m,
+		ins_dad    => s_ins_dad,
+		pc         => s_pc,
+		in_d       => s_in_d,
+		b_or_immed => s_b_or_immed,
+		-- outputs
+		addr_m     => addr_m,
+		data_wr    => data_wr,
+		regout_a   => s_regout_a,
+		z          => s_z
+	);
+
+	uc : unidad_control PORT MAP(
+		-- inputs
+		boot       => boot,
+		clk        => clk,
+		datard_m   => datard_m,
+		regout_a   => s_regout_a,
+		z          => s_z,
+		-- outputs
+		op         => s_op,
+		f          => s_f,
+		wrd        => s_wrd,
+		addr_a     => s_addr_a,
+		addr_b     => s_addr_b,
+		addr_d     => s_addr_d,
+		immed      => s_immed,
+		pc         => s_pc,
+		ins_dad    => s_ins_dad,
+		in_d       => s_in_d,
+		immed_x2   => s_immed_x2,
+		wr_m       => wr_m,
+		word_byte  => word_byte,
+		b_or_immed => s_b_or_immed
+	);
+
+	dbg_pc <= s_pc;
+
+END Structure;
+
