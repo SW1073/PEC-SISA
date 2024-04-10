@@ -33,7 +33,11 @@ ARCHITECTURE Structure OF sisa IS
 			data_wr   : OUT std_logic_vector(15 DOWNTO 0);
 			wr_m      : OUT std_logic;
 			word_byte : OUT std_logic;
-			dbg_pc    : OUT std_logic_vector(15 DOWNTO 0));
+            dbg_pc    : OUT std_logic_vector(15 DOWNTO 0);
+            addr_io   : OUT STD_LOGIC_VECTOR(7  DOWNTO 0);
+            rd_io     : IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
+            wr_out    : OUT STD_LOGIC;
+            rd_in     : OUT STD_LOGIC);
 	END COMPONENT;
 
 	COMPONENT MemoryController IS
@@ -80,7 +84,6 @@ ARCHITECTURE Structure OF sisa IS
 	SIGNAL s_addr_m      : std_logic_vector(15 DOWNTO 0);
 	SIGNAL s_data_wr     : std_logic_vector(15 DOWNTO 0);
     SIGNAL s_addr_io     : std_logic_vector(7 DOWNTO 0);
-    SIGNAL s_wr_io       : std_logic_vector(15 DOWNTO 0);
     SIGNAL s_rd_io       : std_logic_vector(15 DOWNTO 0);
     SIGNAL s_wr_out      : std_logic;
     SIGNAL s_rd_in       : std_logic;
@@ -102,13 +105,15 @@ BEGIN
 	END PROCESS; -- clk_divider
 
     io: controladores_IO PORT MAP(
+        -- inputs
         boot        => SW(9),
         CLOCK_50    => CLOCK_50,
-        addr_io     => s_addr_io,
-        wr_io       => s_wr_io,
-        rd_io       => s_rd_io,
-        wr_out      => s_wr_out,
-        rd_in       => s_rd_in,
+        addr_io     => s_addr_io, -- address
+        wr_io       => s_data_wr, -- write data
+        wr_out      => s_wr_out,  -- write eanble
+        rd_in       => s_rd_in,   -- read enable
+        -- outputs
+        rd_io       => s_rd_io,   -- read data
         led_verdes  => LEDG,
         led_rojos   => LEDR
     );
@@ -119,12 +124,16 @@ BEGIN
 		boot      => SW(9),
 		clk       => s_reg_divisor(2),
 		datard_m  => s_rd_data,
+        rd_io     => s_rd_io,
 		-- outputs
 		word_byte => s_word_byte,
 		wr_m      => s_wr_m,
 		addr_m    => s_addr_m,
 		data_wr   => s_data_wr,
-		dbg_pc    => s_dbg_pc
+		dbg_pc    => s_dbg_pc,
+        addr_io   => s_addr_io,
+        wr_out    => s_wr_out,
+        rd_in     => s_rd_in
 	);
 
 	memctrl0 : MemoryController PORT MAP(

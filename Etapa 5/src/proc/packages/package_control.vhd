@@ -12,6 +12,7 @@ PACKAGE package_control IS
 	CONSTANT IN_D_ALUOUT     : std_logic_vector(1 DOWNTO 0) := "00";
 	CONSTANT IN_D_DATAMEM    : std_logic_vector(1 DOWNTO 0) := "01";
 	CONSTANT IN_D_PC         : std_logic_vector(1 DOWNTO 0) := "10";
+	CONSTANT IN_D_IO         : std_logic_vector(1 DOWNTO 0) := "11";
 
 END package_control;
 

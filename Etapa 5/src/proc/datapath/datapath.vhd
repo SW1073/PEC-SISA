@@ -20,6 +20,7 @@ ENTITY datapath IS
 		pc         : IN  std_logic_vector(15 DOWNTO 0);
 		in_d       : IN  std_logic_vector(1 DOWNTO 0);
 		b_or_immed : IN  std_logic;
+        rd_io      : IN  std_logic_vector(15 downto 0);
 		addr_m     : OUT std_logic_vector(15 DOWNTO 0);
 		data_wr    : OUT std_logic_vector(15 DOWNTO 0);
 		regout_a   : OUT std_logic_vector(15 DOWNTO 0);
@@ -74,7 +75,7 @@ BEGIN
         s_data <= s_aluout WHEN IN_D_ALUOUT,
                   datard_m WHEN IN_D_DATAMEM,
                   s_pc     WHEN IN_D_PC,
-                  s_aluout WHEN OTHERS;
+                  rd_io    WHEN IN_D_IO;
 
 	-- s_data <= datard_m when in_d = '1' else s_aluout;
 	s_immed_real <= immed WHEN immed_x2 = '0' ELSE (immed(14 DOWNTO 0) & '0');

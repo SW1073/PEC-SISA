@@ -22,8 +22,12 @@ ENTITY control_l IS
 		immed_x2   : OUT std_logic;
 		word_byte  : OUT std_logic;
 		tknbr      : OUT std_logic_vector(1 DOWNTO 0);
-		b_or_immed : OUT std_logic);
+		b_or_immed : OUT std_logic;
+        addr_io    : OUT STD_LOGIC_VECTOR(7  DOWNTO 0);
+        wr_out     : OUT STD_LOGIC;
+        rd_in      : OUT STD_LOGIC);
 END control_l;
+
 ARCHITECTURE Structure OF control_l IS
 	SIGNAL s_opcode      : std_logic_vector(3 DOWNTO 0);
 	SIGNAL s_f           : std_logic_vector(2 DOWNTO 0);
@@ -35,6 +39,7 @@ ARCHITECTURE Structure OF control_l IS
 	SIGNAL s_long_immed  : signed(7 DOWNTO 0);
 	SIGNAL s_op          : std_logic;
 	SIGNAL s_wrd_jump    : std_logic;
+	SIGNAL s_wrd_io      : std_logic;
 BEGIN
 
 	s_opcode      <= ir(15 DOWNTO 12);
@@ -47,10 +52,7 @@ BEGIN
 	s_long_immed  <= signed(ir(7 DOWNTO 0));
 	s_op          <= ir(8);
 
-	-- Aqui iria la generacion de las senales de control del datapath
-
 	-- Operacion de ALU
-
 	WITH s_opcode SELECT
         op <= OP_ARIT_LOG WHEN OPCODE_ARIT_LOG, -- ARITMETICO LOGICAS
               OP_ARIT_LOG WHEN OPCODE_LOAD,     -- LD
@@ -62,10 +64,6 @@ BEGIN
               OP_IMMED    WHEN OPCODE_IMMED,    -- IMMED (addi)
               OP_MOVS     WHEN OPCODE_MOVS,     -- MOVS
               OP_ARIT_LOG WHEN OTHERS;
-
-	-- f <= "00"&s_op when s_opcode = "0101"
-	-- else "100" when s_opcode = "0011" or s_opcode = "0100" or s_opcode = "1101" or s_opcode = "1110"
-	-- else s_f;
 
 	WITH s_opcode SELECT
         f <= "00" & s_op     WHEN OPCODE_MOVS,
@@ -94,6 +92,8 @@ BEGIN
 	s_wrd_jump <= '1' WHEN (s_f_jumps = F_JUMP_JAL OR s_f_jumps = F_JUMP_CALLS) ELSE
                   '0';
 
+    s_wrd_io <= '1' when s_op = F_OUTPUT else '0';
+
 	WITH s_opcode SELECT
         wrd <= '1'         WHEN OPCODE_MOVS,  -- Cuando MOVS
                '1'         WHEN OPCODE_LOAD,  -- Cuando LD
@@ -103,6 +103,7 @@ BEGIN
                '1'         WHEN OPCODE_EXT_ARIT,
                '1'         WHEN OPCODE_IMMED,
                s_wrd_jump  WHEN OPCODE_JUMPS,
+               s_wrd_io    WHEN OPCODE_IO,
                '0'         WHEN OTHERS;
 
 	-- Direcciones de registros
@@ -115,6 +116,7 @@ BEGIN
                   s_first_reg WHEN OPCODE_STOREB,
                   s_first_reg WHEN OPCODE_BRANCHES,
                   s_first_reg WHEN OPCODE_JUMPS,
+                  s_first_reg WHEN OPCODE_IO,
                   s_third_reg WHEN OTHERS;
 
 	-- siempre pasa esto
@@ -144,7 +146,8 @@ BEGIN
 	WITH s_opcode SELECT
         in_d <= IN_D_DATAMEM WHEN OPCODE_LOAD,  -- Cuando LD o LDB
                 IN_D_DATAMEM WHEN OPCODE_LOADB, -- Cuando LD o LDB
-                IN_D_PC      WHEN OPCODE_JUMPS,      -- ESTO IGNORA SI ES JAL O CALLS, LE ENTRA PC+2 AL BANCO DE REGS SIEMPRE.
+                IN_D_PC      WHEN OPCODE_JUMPS, -- ESTO IGNORA SI ES JAL O CALLS, LE ENTRA PC+2 AL BANCO DE REGS SIEMPRE.
+                IN_D_IO      WHEN OPCODE_IO,    -- Cuando operamos con IO
                 IN_D_ALUOUT  WHEN OTHERS;
 
 	-- La señal que determina si hay que desplazar el inmediato o no
@@ -158,6 +161,15 @@ BEGIN
         word_byte <= '1' WHEN OPCODE_LOADB,  -- Cuando LDB o STB
                      '1' WHEN OPCODE_STOREB, -- Cuando LDB o STB
                      '0' WHEN OTHERS;
+
+    -- Dirección del modulo de input output
+    addr_io <= std_logic_vector(resize(s_long_immed, addr_io'length));
+
+    -- Enable de excritura en el módulo io
+    wr_out <= '1' when s_opcode = OPCODE_IO and s_op = F_OUTPUT else '0';
+
+    -- Enable de lectura en el módulo io
+    rd_in  <= '1' when s_opcode = OPCODE_IO and s_op = F_INPUT else '0';
 
 END Structure;
 

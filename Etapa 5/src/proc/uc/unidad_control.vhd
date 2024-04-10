@@ -25,7 +25,10 @@ ENTITY unidad_control IS
 		immed_x2   : OUT std_logic;
 		wr_m       : OUT std_logic;
 		word_byte  : OUT std_logic;
-		b_or_immed : OUT std_logic);
+        b_or_immed : OUT std_logic;
+        addr_io    : OUT STD_LOGIC_VECTOR(7  DOWNTO 0);
+        wr_out     : OUT STD_LOGIC;
+        rd_in      : OUT STD_LOGIC);
 END unidad_control;
 
 ARCHITECTURE Structure OF unidad_control IS
@@ -49,7 +52,10 @@ ARCHITECTURE Structure OF unidad_control IS
 			immed_x2   : OUT std_logic;
 			word_byte  : OUT std_logic;
 			tknbr      : OUT std_logic_vector(1 DOWNTO 0);
-			b_or_immed : OUT std_logic);
+            b_or_immed : OUT std_logic;
+            addr_io    : OUT STD_LOGIC_VECTOR(7  DOWNTO 0);
+            wr_out     : OUT STD_LOGIC;
+            rd_in      : OUT STD_LOGIC);
 	END COMPONENT;
 
 	-- Multi
@@ -114,8 +120,11 @@ BEGIN
 		in_d       => in_d,
 		immed_x2   => immed_x2,
 		word_byte  => s_word_byte,
+		tknbr      => s_tknbr,
 		b_or_immed => b_or_immed,
-		tknbr      => s_tknbr
+        addr_io    => addr_io,
+        wr_out     => wr_out,
+        rd_in      => rd_in
 	);
 
 	multi0 : multi PORT MAP(

@@ -10,7 +10,11 @@ ENTITY proc IS
 		data_wr   : OUT std_logic_vector(15 DOWNTO 0);
 		wr_m      : OUT std_logic;
 		word_byte : OUT std_logic;
-		dbg_pc    : OUT std_logic_vector(15 DOWNTO 0));
+		dbg_pc    : OUT std_logic_vector(15 DOWNTO 0);
+        addr_io   : OUT STD_LOGIC_VECTOR(7  DOWNTO 0);
+        rd_io     : IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
+        wr_out    : OUT STD_LOGIC;
+        rd_in     : OUT STD_LOGIC);
 END proc;
 ARCHITECTURE Structure OF proc IS
 
@@ -34,6 +38,7 @@ ARCHITECTURE Structure OF proc IS
 			pc         : IN  std_logic_vector(15 DOWNTO 0);
 			in_d       : IN  std_logic_vector(1 DOWNTO 0);
 			b_or_immed : IN  std_logic;
+            rd_io      : IN  std_logic_vector(15 downto 0);
 			addr_m     : OUT std_logic_vector(15 DOWNTO 0);
 			data_wr    : OUT std_logic_vector(15 DOWNTO 0);
 			regout_a   : OUT std_logic_vector(15 DOWNTO 0);
@@ -60,7 +65,10 @@ ARCHITECTURE Structure OF proc IS
 			immed_x2   : OUT std_logic;
 			wr_m       : OUT std_logic;
 			word_byte  : OUT std_logic;
-			b_or_immed : OUT std_logic);
+            b_or_immed : OUT std_logic;
+            addr_io    : OUT STD_LOGIC_VECTOR(7  DOWNTO 0);
+            wr_out     : OUT STD_LOGIC;
+            rd_in      : OUT STD_LOGIC);
 	END COMPONENT;
 
 	SIGNAL s_op         : std_logic_vector (2 DOWNTO 0);
@@ -99,6 +107,7 @@ BEGIN
 		pc         => s_pc,
 		in_d       => s_in_d,
 		b_or_immed => s_b_or_immed,
+        rd_io      => rd_io,
 		-- outputs
 		addr_m     => addr_m,
 		data_wr    => data_wr,
@@ -127,7 +136,10 @@ BEGIN
 		immed_x2   => s_immed_x2,
 		wr_m       => wr_m,
 		word_byte  => word_byte,
-		b_or_immed => s_b_or_immed
+		b_or_immed => s_b_or_immed,
+        addr_io    => addr_io,
+        wr_out     => wr_out,
+        rd_in      => rd_in
 	);
 
 	dbg_pc <= s_pc;
