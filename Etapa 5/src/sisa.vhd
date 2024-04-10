@@ -17,7 +17,9 @@ ENTITY sisa IS
 		HEX0      : OUT   std_logic_vector(6 DOWNTO 0);
 		HEX1      : OUT   std_logic_vector(6 DOWNTO 0);
 		HEX2      : OUT   std_logic_vector(6 DOWNTO 0);
-		HEX3      : OUT   std_logic_vector(6 DOWNTO 0));
+		HEX3      : OUT   std_logic_vector(6 DOWNTO 0);
+        LEDG      : OUT   std_logic_vector(7 DOWNTO 0);
+        LEDR      : OUT   std_logic_vector(7 DOWNTO 0));
 END sisa;
 
 ARCHITECTURE Structure OF sisa IS
@@ -52,6 +54,19 @@ ARCHITECTURE Structure OF sisa IS
 			SRAM_WE_N : OUT   std_logic := '1');
 	END COMPONENT;
 
+    COMPONENT controladores_IO IS
+        PORT (
+            boot       : IN  STD_LOGIC;
+            CLOCK_50   : IN  STD_LOGIC;
+            addr_io    : IN  STD_LOGIC_VECTOR(7  DOWNTO 0);
+            wr_io      : IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
+            rd_io      : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
+            wr_out     : IN  STD_LOGIC;
+            rd_in      : IN  STD_LOGIC;
+            led_verdes : OUT STD_LOGIC_VECTOR(7 DOWNTO 0);
+            led_rojos  : OUT STD_LOGIC_VECTOR(7 DOWNTO 0));
+    END COMPONENT;
+
 	COMPONENT driver7Segmentos IS
 		PORT (
 			codigoCaracter : IN  std_logic_vector(3 DOWNTO 0);
@@ -64,6 +79,11 @@ ARCHITECTURE Structure OF sisa IS
 	SIGNAL s_wr_m        : std_logic;
 	SIGNAL s_addr_m      : std_logic_vector(15 DOWNTO 0);
 	SIGNAL s_data_wr     : std_logic_vector(15 DOWNTO 0);
+    SIGNAL s_addr_io     : std_logic_vector(7 DOWNTO 0);
+    SIGNAL s_wr_io       : std_logic_vector(15 DOWNTO 0);
+    SIGNAL s_rd_io       : std_logic_vector(15 DOWNTO 0);
+    SIGNAL s_wr_out      : std_logic;
+    SIGNAL s_rd_in       : std_logic;
 	-- Que surten de MEMCTRL
 	SIGNAL s_rd_data     : std_logic_vector(15 DOWNTO 0);
 
@@ -80,6 +100,19 @@ BEGIN
 			s_reg_divisor <= s_reg_divisor + 1;
 		END IF;
 	END PROCESS; -- clk_divider
+
+    io: controladores_IO PORT MAP(
+        boot        => SW(9),
+        CLOCK_50    => CLOCK_50,
+        addr_io     => s_addr_io,
+        wr_io       => s_wr_io,
+        rd_io       => s_rd_io,
+        wr_out      => s_wr_out,
+        rd_in       => s_rd_in,
+        led_verdes  => LEDG,
+        led_rojos   => LEDR
+    );
+
 
 	proc0 : proc PORT MAP(
 		-- inputs
