@@ -2,6 +2,7 @@ LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 USE ieee.std_logic_arith.ALL;
 USE ieee.std_logic_unsigned.ALL;
+USE work.package_records.ALL;
 
 ENTITY sisa IS
 	PORT (
@@ -13,7 +14,8 @@ ENTITY sisa IS
 		SRAM_CE_N : OUT   std_logic := '1';
 		SRAM_OE_N : OUT   std_logic := '1';
 		SRAM_WE_N : OUT   std_logic := '1';
-		SW        : IN    std_logic_vector(9 DOWNTO 9);
+		SW        : IN    std_logic_vector(9 DOWNTO 0);
+        KEY       : IN    std_logic_vector(3 downto 0);
 		HEX0      : OUT   std_logic_vector(6 DOWNTO 0);
 		HEX1      : OUT   std_logic_vector(6 DOWNTO 0);
 		HEX2      : OUT   std_logic_vector(6 DOWNTO 0);
@@ -77,6 +79,13 @@ ARCHITECTURE Structure OF sisa IS
 			bitsCaracter   : OUT std_logic_vector(6 DOWNTO 0));
 	END COMPONENT;
 
+    COMPONENT debugger IS
+        PORT (
+            i_dbg      : IN t_dbg;
+            i_selector : IN std_logic_vector(1 downto 0);
+            o_data     : OUT std_logic_vector(15 downto 0));
+    END COMPONENT;
+
 	-- Senyals per conectar les dues entitats
 	-- Que surten de PROC
 	SIGNAL s_word_byte   : std_logic;
@@ -95,19 +104,51 @@ ARCHITECTURE Structure OF sisa IS
 
 	-- Senyals de debug
 	SIGNAL s_dbg_pc      : std_logic_vector(15 DOWNTO 0);
+
+    SIGNAL s_dbg : t_dbg := c_DBG_INIT;
+    SIGNAL s_o_debugger  : std_logic_vector(15 downto 0);
+    SIGNAL s_o_io_hex    : std_logic_vector(15 downto 0) := x"0000";
+    SIGNAL s_hex_output  : std_logic_vector(15 downto 0);
+
+    -- Selectors, i senyals de control
+    SIGNAL s_boot        : std_logic;
+    SIGNAL s_run_mode    : std_logic;
+
+    -- Clocks
+    signal s_clk_50      : std_logic;
+    signal s_clk_6_25    : std_logic;
 BEGIN
 
-	clk_divider : PROCESS (CLOCK_50) IS
+    s_boot <= SW(9);
+    s_run_mode <= SW(8);
+
+    WITH s_run_mode SELECT
+        s_clk_50 <= KEY(0)   when RUN_MODE_DEBUG,
+                    CLOCK_50 when RUN_MODE_NORMAL,
+                    CLOCK_50 when others;
+
+    s_clk_6_25 <= s_reg_divisor(2);
+
+    s_dbg.pc <= s_dbg_pc;
+    s_dbg.mem_addr <= s_addr_m;
+    s_dbg.mem_data <= s_rd_data;
+
+    WITH s_run_mode SELECT
+        s_hex_output <= s_o_debugger when RUN_MODE_DEBUG,
+                        s_o_io_hex   when RUN_MODE_NORMAL,
+                        s_o_debugger when others;
+
+	clk_divider : PROCESS (s_clk_50) IS
 	BEGIN
-		IF rising_edge(CLOCK_50) THEN
+		IF rising_edge(s_clk_50) THEN
 			s_reg_divisor <= s_reg_divisor + 1;
 		END IF;
 	END PROCESS; -- clk_divider
 
     io: controladores_IO PORT MAP(
         -- inputs
-        boot        => SW(9),
-        CLOCK_50    => CLOCK_50,
+        boot        => s_boot,
+        CLOCK_50    => s_clk_50,
         addr_io     => s_addr_io, -- address
         wr_io       => s_data_wr, -- write data
         wr_out      => s_wr_out,  -- write eanble
@@ -121,8 +162,8 @@ BEGIN
 
 	proc0 : proc PORT MAP(
 		-- inputs
-		boot      => SW(9),
-		clk       => s_reg_divisor(2),
+		boot      => s_boot,
+		clk       => s_clk_6_25,
 		datard_m  => s_rd_data,
         rd_io     => s_rd_io,
 		-- outputs
@@ -137,7 +178,7 @@ BEGIN
 	);
 
 	memctrl0 : MemoryController PORT MAP(
-		CLOCK_50  => CLOCK_50,
+		CLOCK_50  => s_clk_50,
 		addr      => s_addr_m,
 		wr_data   => s_data_wr,
 		rd_data   => s_rd_data,
@@ -153,23 +194,29 @@ BEGIN
 		SRAM_WE_N => SRAM_WE_N
 	);
 
+    debugger0: debugger PORT MAP(
+        i_dbg => s_dbg,
+        i_selector => SW(1 downto 0),
+        o_data => s_o_debugger
+    );
+
 	driver3 : driver7Segmentos PORT MAP(
-		codigoCaracter => s_dbg_pc(15 DOWNTO 12),
+		codigoCaracter => s_hex_output(15 DOWNTO 12),
 		bitsCaracter   => HEX3
 	);
 
 	driver2 : driver7Segmentos PORT MAP(
-		codigoCaracter => s_dbg_pc(11 DOWNTO 8),
+		codigoCaracter => s_hex_output(11 DOWNTO 8),
 		bitsCaracter   => HEX2
 	);
 
 	driver1 : driver7Segmentos PORT MAP(
-		codigoCaracter => s_dbg_pc(7 DOWNTO 4),
+		codigoCaracter => s_hex_output(7 DOWNTO 4),
 		bitsCaracter   => HEX1
 	);
 
 	driver0 : driver7Segmentos PORT MAP(
-		codigoCaracter => s_dbg_pc(3 DOWNTO 0),
+		codigoCaracter => s_hex_output(3 DOWNTO 0),
 		bitsCaracter   => HEX0
 	);
 
