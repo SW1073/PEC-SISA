@@ -61,18 +61,22 @@ ARCHITECTURE Structure OF unidad_control IS
 	-- Multi
 	COMPONENT multi IS
 		PORT (
-			clk       : IN  std_logic;
-			boot      : IN  std_logic;
-			ldpc_l    : IN  std_logic;
-			wrd_l     : IN  std_logic;
-			wr_m_l    : IN  std_logic;
-			w_b       : IN  std_logic;
-			ldpc      : OUT std_logic;
-			wrd       : OUT std_logic;
-			wr_m      : OUT std_logic;
-			ldir      : OUT std_logic;
-			ins_dad   : OUT std_logic;
-			word_byte : OUT std_logic);
+            clk       : IN  std_logic;
+            boot      : IN  std_logic;
+            ldpc_l    : IN  std_logic;
+            wrd_l     : IN  std_logic;
+            wr_m_l    : IN  std_logic;
+            rd_in_l   : IN  std_logic;
+            wr_out_l  : IN  std_logic;
+            w_b       : IN  std_logic;
+            ldpc      : OUT std_logic;
+            wrd       : OUT std_logic;
+            wr_m      : OUT std_logic;
+            rd_in     : OUT std_logic;
+            wr_out    : OUT std_logic;
+            ldir      : OUT std_logic;
+            ins_dad   : OUT std_logic;
+            word_byte : OUT std_logic);
 	END COMPONENT;
 
 	-- Senales para conectar control_l con multi
@@ -94,6 +98,9 @@ ARCHITECTURE Structure OF unidad_control IS
 	-- Registros de valores que tienen que mantenerse entre clock cycles
 	SIGNAL s_reg_pc : std_logic_vector(15 DOWNTO 0); -- pc register
 	SIGNAL s_reg_ir : std_logic_vector(15 DOWNTO 0); -- instruction register
+
+    SIGNAL s_rd_in  : std_logic;
+    SIGNAL s_wr_out : std_logic;
 BEGIN
 
 	-- Aqui iria la declaracion del "mapeo" (PORT MAP) de los nombres de las entradas/salidas de los componentes
@@ -123,8 +130,8 @@ BEGIN
 		tknbr      => s_tknbr,
 		b_or_immed => b_or_immed,
         addr_io    => addr_io,
-        wr_out     => wr_out,
-        rd_in      => rd_in
+        wr_out     => s_wr_out,
+        rd_in      => s_rd_in
 	);
 
 	multi0 : multi PORT MAP(
@@ -134,11 +141,15 @@ BEGIN
 		ldpc_l => s_ldpc,
 		wrd_l  => s_wrd,
 		wr_m_l => s_wr_m,
+        rd_in_l => s_rd_in,
+        wr_out_l => s_wr_out,
 		w_b    => s_word_byte,
 		-- outputs
 		ldpc      => s_multi_ldpc,
 		wrd       => wrd,
 		wr_m      => wr_m,
+        rd_in     => rd_in,
+        wr_out    => wr_out,
 		ldir      => s_multi_ldir,
 		ins_dad   => ins_dad,
 		word_byte => word_byte

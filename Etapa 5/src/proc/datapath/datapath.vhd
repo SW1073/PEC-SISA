@@ -75,7 +75,8 @@ BEGIN
         s_data <= s_aluout WHEN IN_D_ALUOUT,
                   datard_m WHEN IN_D_DATAMEM,
                   s_pc     WHEN IN_D_PC,
-                  rd_io    WHEN IN_D_IO;
+                  rd_io    WHEN IN_D_IO,
+                  s_aluout WHEN others;
 
 	-- s_data <= datard_m when in_d = '1' else s_aluout;
 	s_immed_real <= immed WHEN immed_x2 = '0' ELSE (immed(14 DOWNTO 0) & '0');

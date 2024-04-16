@@ -10,6 +10,9 @@ vcom -93 -work work {../proc/alu/alu_arit_log.vhd}
 vcom -93 -work work {../proc/alu/alu_comp.vhd}
 vcom -93 -work work {../proc/alu/alu_ext_arit.vhd}
 vcom -93 -work work {../proc/alu/alu_misc.vhd}
+
+vcom -93 -work work {../io_ctrl/controladores_io.vhd}
+
 vcom -93 -work work {../driver7Segmentos.vhd}
 vcom -93 -work work {../sisa.vhd}
 vcom -93 -work work {../mem_ctrl/SRAMController.vhd}

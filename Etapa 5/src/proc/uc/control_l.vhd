@@ -92,7 +92,7 @@ BEGIN
 	s_wrd_jump <= '1' WHEN (s_f_jumps = F_JUMP_JAL OR s_f_jumps = F_JUMP_CALLS) ELSE
                   '0';
 
-    s_wrd_io <= '1' when s_op = F_OUTPUT else '0';
+    s_wrd_io <= '1' when s_op = F_INPUT else '0';
 
 	WITH s_opcode SELECT
         wrd <= '1'         WHEN OPCODE_MOVS,  -- Cuando MOVS

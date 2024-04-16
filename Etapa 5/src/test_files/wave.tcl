@@ -11,7 +11,9 @@ array set VAR1 {
     "Multi" "sim:/test_sisa/SoC/proc0/uc/multi0/*"
 
     "Memory Controller" "sim:/test_sisa/SoC/memctrl0/*"
-    "SramController" "sim:/test_sisa/SoC/memctrl0/sramctrl0/*"
+    "Sram Controller" "sim:/test_sisa/SoC/memctrl0/sramctrl0/*"
+
+    "IO Controller" "sim:/test_sisa/SoC/io/*"
 }
 
 add wave -label CLOCK_6_25 -radix bin sim:/test_sisa/SoC/proc0/clk

@@ -8,10 +8,14 @@ ENTITY multi IS
 		ldpc_l    : IN  std_logic;
 		wrd_l     : IN  std_logic;
 		wr_m_l    : IN  std_logic;
+        rd_in_l   : IN  std_logic;
+        wr_out_l  : IN  std_logic;
 		w_b       : IN  std_logic;
 		ldpc      : OUT std_logic;
 		wrd       : OUT std_logic;
 		wr_m      : OUT std_logic;
+        rd_in     : OUT std_logic;
+        wr_out    : OUT std_logic;
 		ldir      : OUT std_logic;
 		ins_dad   : OUT std_logic;
 		word_byte : OUT std_logic);
@@ -55,6 +59,9 @@ BEGIN
 	-- DEMW. En el ciclo F debe valer 0 ya que el acceso a la memoria,
 	-- para traerse una instrucci�n, es a nivel de word
 	word_byte <= w_b WHEN s_estado = DEMW ELSE '0';
+
+    rd_in <= rd_in_l WHEN s_estado = DEMW ELSE '0';
+    wr_out <= wr_out_l WHEN s_estado = DEMW ELSE '0';
 
 	-- Esta se�al a 1 le indicar� al datapath que en el bus de direcciones de la memoria deber� poner la
 	-- salida de la ALU y si vale 0 deber� poner el PC. B�sicamente nos dice si estamos al ciclo F o DEMW
