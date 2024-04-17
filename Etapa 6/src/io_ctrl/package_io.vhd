@@ -11,6 +11,8 @@ PACKAGE package_io IS
     CONSTANT PORT_SW            : integer RANGE 0 TO 255 := 8;
     CONSTANT PORT_HEX_OFF       : integer RANGE 0 TO 255 := 9;
     CONSTANT PORT_HEX           : integer RANGE 0 TO 255 := 10;
+    CONSTANT PORT_PS2_DATA      : integer RANGE 0 TO 255 := 15;
+    CONSTANT PORT_PS2_DATA_VALID: integer RANGE 0 TO 255 := 16;
 
 END package_io;
 

@@ -21,7 +21,9 @@ ENTITY sisa IS
 		HEX2      : OUT   std_logic_vector(6 DOWNTO 0);
 		HEX3      : OUT   std_logic_vector(6 DOWNTO 0);
         LEDG      : OUT   std_logic_vector(7 DOWNTO 0);
-        LEDR      : OUT   std_logic_vector(7 DOWNTO 0));
+        LEDR      : OUT   std_logic_vector(7 DOWNTO 0);
+        PS2_CLK   : INOUT std_logic;
+        PS2_DAT   : INOUT std_logic);
 END sisa;
 
 ARCHITECTURE Structure OF sisa IS
@@ -74,7 +76,9 @@ ARCHITECTURE Structure OF sisa IS
             hex        : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
             hex_off    : OUT STD_LOGIC_VECTOR(3 DOWNTO 0);
             led_verdes : OUT STD_LOGIC_VECTOR(7 DOWNTO 0);
-            led_rojos  : OUT STD_LOGIC_VECTOR(7 DOWNTO 0));
+            led_rojos  : OUT STD_LOGIC_VECTOR(7 DOWNTO 0);
+            ps2_clk    : inout STD_LOGIC;
+            ps2_data   : inout STD_LOGIC);
     END COMPONENT;
 
 	COMPONENT driver7Segmentos IS
@@ -120,7 +124,7 @@ ARCHITECTURE Structure OF sisa IS
     SIGNAL s_hex_off     : std_logic_vector(3 DOWNTO 0);
     SIGNAL s_o_io_hex    : std_logic_vector(15 downto 0);
 
-    SIGNAL s_dbg : t_dbg := c_DBG_INIT;
+    SIGNAL s_dbg         : t_dbg := c_DBG_INIT;
     SIGNAL s_o_debugger  : std_logic_vector(15 downto 0);
 
     SIGNAL s_hex_output  : std_logic_vector(15 downto 0);
@@ -132,6 +136,7 @@ ARCHITECTURE Structure OF sisa IS
     -- Clocks
     signal s_clk_50      : std_logic;
     signal s_clk_6_25    : std_logic;
+
 BEGIN
 
     s_boot <= SW(9);
@@ -175,7 +180,9 @@ BEGIN
         hex         => s_o_io_hex,
         hex_off     => s_hex_off, -- vector de cuales hex estan apagados
         led_verdes  => LEDG,
-        led_rojos   => LEDR
+        led_rojos   => LEDR,
+        ps2_clk     => PS2_CLK,
+        ps2_data    => PS2_DAT
     );
 
 
@@ -230,6 +237,7 @@ BEGIN
         i_selector => SW(1 downto 0),
         o_data => s_o_debugger
     );
+
 
 END Structure;
 
