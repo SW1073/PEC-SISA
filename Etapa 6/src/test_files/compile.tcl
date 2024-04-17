@@ -3,6 +3,8 @@ vcom -93 -work work {./package_utility.vhd}
 vcom -93 -work work {../proc/packages/package_opcodes.vhd}
 vcom -93 -work work {../proc/packages/package_alu.vhd}
 vcom -93 -work work {../proc/packages/package_control.vhd}
+vcom -93 -work work {../package_records.vhd}
+vcom -93 -work work {../package_records.vhd}
 vcom -93 -work work {./async_64Kx16.vhd}
 vcom -93 -work work {./test_sisa.vhd}
 
