@@ -109,6 +109,7 @@ ARCHITECTURE Structure OF sisa IS
 
     -- Que surten del controlador_IO
     SIGNAL s_hex_off     : std_logic_vector(3 DOWNTO 0);
+    SIGNAL s_hex         : std_logic_vector(15 DOWNTO 0);
 BEGIN
 
 	clk_divider : PROCESS (CLOCK_50) IS
@@ -130,6 +131,7 @@ BEGIN
         KEY         => KEY(3 downto 0),  -- keys
         -- outputs
         rd_io       => s_rd_io,   -- read data
+        hex         => s_hex,
         hex_off     => s_hex_off, -- vector de cuales hex estan apagados
         led_verdes  => LEDG,
         led_rojos   => LEDR

@@ -15,6 +15,7 @@ ENTITY controladores_IO IS
         rd_in      : IN  STD_LOGIC;
         SW         : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
         KEY        : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+        hex        : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
         hex_off    : OUT STD_LOGIC_VECTOR(3 DOWNTO 0);
         led_verdes : OUT STD_LOGIC_VECTOR(7 DOWNTO 0);
         led_rojos  : OUT STD_LOGIC_VECTOR(7 DOWNTO 0));
@@ -40,6 +41,7 @@ PROCESS (CLOCK_50) IS
     -- Read con enable
     rd_io <= registers(conv_integer(addr_io)) WHEN rd_in = '1' ELSE x"0000";
 
+    hex <= registers(PORT_HEX)(15 downto 0);
     hex_off <= registers(PORT_HEX_OFF)(3 downto 0);
     led_verdes <= registers(PORT_GREEN_LEDS)(7 downto 0);
     led_rojos <= registers(PORT_RED_LEDS)(7 downto 0);
