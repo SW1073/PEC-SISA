@@ -13,7 +13,8 @@ ENTITY sisa IS
 		SRAM_CE_N : OUT   std_logic := '1';
 		SRAM_OE_N : OUT   std_logic := '1';
 		SRAM_WE_N : OUT   std_logic := '1';
-		SW        : IN    std_logic_vector(9 DOWNTO 9);
+		SW        : IN    std_logic_vector(9 DOWNTO 0);
+        KEY       : IN    std_logic_vector(3 DOWNTO 0);
 		HEX0      : OUT   std_logic_vector(6 DOWNTO 0);
 		HEX1      : OUT   std_logic_vector(6 DOWNTO 0);
 		HEX2      : OUT   std_logic_vector(6 DOWNTO 0);
@@ -67,14 +68,24 @@ ARCHITECTURE Structure OF sisa IS
             rd_io      : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
             wr_out     : IN  STD_LOGIC;
             rd_in      : IN  STD_LOGIC;
+            SW         : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
+            KEY        : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+            hex_off    : OUT STD_LOGIC_VECTOR(3 DOWNTO 0);
             led_verdes : OUT STD_LOGIC_VECTOR(7 DOWNTO 0);
             led_rojos  : OUT STD_LOGIC_VECTOR(7 DOWNTO 0));
     END COMPONENT;
 
 	COMPONENT driver7Segmentos IS
 		PORT (
-			codigoCaracter : IN  std_logic_vector(3 DOWNTO 0);
-			bitsCaracter   : OUT std_logic_vector(6 DOWNTO 0));
+            data            : IN  std_logic_vector(15 DOWNTO 0);
+            hex0_off        : IN std_logic;
+            hex1_off        : IN std_logic;
+            hex2_off        : IN std_logic;
+            hex3_off        : IN std_logic;
+            hex0            : OUT std_logic_vector(6 DOWNTO 0);
+            hex1            : OUT std_logic_vector(6 DOWNTO 0);
+            hex2            : OUT std_logic_vector(6 DOWNTO 0);
+            hex3            : OUT std_logic_vector(6 DOWNTO 0));
 	END COMPONENT;
 
 	-- Senyals per conectar les dues entitats
@@ -95,6 +106,9 @@ ARCHITECTURE Structure OF sisa IS
 
 	-- Senyals de debug
 	SIGNAL s_dbg_pc      : std_logic_vector(15 DOWNTO 0);
+
+    -- Que surten del controlador_IO
+    SIGNAL s_hex_off     : std_logic_vector(3 DOWNTO 0);
 BEGIN
 
 	clk_divider : PROCESS (CLOCK_50) IS
@@ -112,8 +126,11 @@ BEGIN
         wr_io       => s_data_wr, -- write data
         wr_out      => s_wr_out,  -- write eanble
         rd_in       => s_rd_in,   -- read enable
+        SW          => SW(7 downto 0),  -- switches
+        KEY         => KEY(3 downto 0),  -- keys
         -- outputs
         rd_io       => s_rd_io,   -- read data
+        hex_off     => s_hex_off, -- vector de cuales hex estan apagados
         led_verdes  => LEDG,
         led_rojos   => LEDR
     );
@@ -153,24 +170,16 @@ BEGIN
 		SRAM_WE_N => SRAM_WE_N
 	);
 
-	driver3 : driver7Segmentos PORT MAP(
-		codigoCaracter => s_dbg_pc(15 DOWNTO 12),
-		bitsCaracter   => HEX3
-	);
-
-	driver2 : driver7Segmentos PORT MAP(
-		codigoCaracter => s_dbg_pc(11 DOWNTO 8),
-		bitsCaracter   => HEX2
-	);
-
-	driver1 : driver7Segmentos PORT MAP(
-		codigoCaracter => s_dbg_pc(7 DOWNTO 4),
-		bitsCaracter   => HEX1
-	);
-
-	driver0 : driver7Segmentos PORT MAP(
-		codigoCaracter => s_dbg_pc(3 DOWNTO 0),
-		bitsCaracter   => HEX0
+	driver7seg : driver7Segmentos PORT MAP(
+		data        => s_dbg_pc(15 DOWNTO 0),
+        hex0        => HEX0,
+        hex1        => HEX1,
+        hex2        => HEX2,
+        hex3        => HEX3,
+        hex0_off    => s_hex_off(0),
+        hex1_off    => s_hex_off(1),
+        hex2_off    => s_hex_off(2),
+        hex3_off    => s_hex_off(3)
 	);
 
 END Structure;
