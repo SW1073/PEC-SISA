@@ -6,22 +6,29 @@ USE work.package_records.ALL;
 
 ENTITY sisa IS
 	PORT (
-		CLOCK_50  : IN    std_logic;
-		SRAM_ADDR : OUT   std_logic_vector(17 DOWNTO 0);
-		SRAM_DQ   : INOUT std_logic_vector(15 DOWNTO 0);
-		SRAM_UB_N : OUT   std_logic;
-		SRAM_LB_N : OUT   std_logic;
-		SRAM_CE_N : OUT   std_logic := '1';
-		SRAM_OE_N : OUT   std_logic := '1';
-		SRAM_WE_N : OUT   std_logic := '1';
-		SW        : IN    std_logic_vector(9 DOWNTO 0);
-        KEY       : IN    std_logic_vector(3 DOWNTO 0);
-		HEX0      : OUT   std_logic_vector(6 DOWNTO 0);
-		HEX1      : OUT   std_logic_vector(6 DOWNTO 0);
-		HEX2      : OUT   std_logic_vector(6 DOWNTO 0);
-		HEX3      : OUT   std_logic_vector(6 DOWNTO 0);
-        LEDG      : OUT   std_logic_vector(7 DOWNTO 0);
-        LEDR      : OUT   std_logic_vector(7 DOWNTO 0);
+		CLOCK_50    : IN    std_logic;
+		SRAM_ADDR   : OUT   std_logic_vector(17 DOWNTO 0);
+		SRAM_DQ     : INOUT std_logic_vector(15 DOWNTO 0);
+		SRAM_UB_N   : OUT   std_logic;
+		SRAM_LB_N   : OUT   std_logic;
+		SRAM_CE_N   : OUT   std_logic := '1';
+		SRAM_OE_N   : OUT   std_logic := '1';
+		SRAM_WE_N   : OUT   std_logic := '1';
+		SW          : IN    std_logic_vector(9 DOWNTO 0);
+        KEY         : IN    std_logic_vector(3 DOWNTO 0);
+		HEX0        : OUT   std_logic_vector(6 DOWNTO 0);
+		HEX1        : OUT   std_logic_vector(6 DOWNTO 0);
+		HEX2        : OUT   std_logic_vector(6 DOWNTO 0);
+		HEX3        : OUT   std_logic_vector(6 DOWNTO 0);
+        LEDG        : OUT   std_logic_vector(7 DOWNTO 0);
+        LEDR        : OUT   std_logic_vector(7 DOWNTO 0);
+        VGA_BLANK_N : OUT std_logic;
+        VGA_SYNC_N  : OUT std_logic;
+        VGA_R       : OUT std_logic_vector(7 downto 0);
+        VGA_G       : OUT std_logic_vector(7 downto 0);
+        VGA_B       : OUT std_logic_vector(7 downto 0);
+        VGA_HS      : OUT std_logic;
+        VGA_VS      : OUT std_logic;
         PS2_CLK   : INOUT std_logic;
         PS2_DAT   : INOUT std_logic);
 END sisa;
@@ -59,7 +66,13 @@ ARCHITECTURE Structure OF sisa IS
 			SRAM_LB_N : OUT   std_logic;
 			SRAM_CE_N : OUT   std_logic := '1';
 			SRAM_OE_N : OUT   std_logic := '1';
-			SRAM_WE_N : OUT   std_logic := '1');
+			SRAM_WE_N : OUT   std_logic := '1';
+            -- senales sobre el vga_controller
+            vga_addr    : out std_logic_vector(12 downto 0);
+            vga_we      : out std_logic;
+            vga_wr_data : out std_logic_vector(15 downto 0);
+            vga_rd_data : in std_logic_vector(15 downto 0);
+            vga_byte_m  : out std_logic);
 	END COMPONENT;
 
     COMPONENT controladores_IO IS
@@ -101,6 +114,27 @@ ARCHITECTURE Structure OF sisa IS
             o_data     : OUT std_logic_vector(15 downto 0));
     END COMPONENT;
 
+    COMPONENT vga_controller is
+        PORT (
+            clk_50mhz           : in  std_logic; -- system clock signal
+            reset               : in  std_logic; -- system reset
+            blank_out           : out std_logic; -- vga control signal
+            csync_out           : out std_logic; -- vga control signal
+            red_out             : out std_logic_vector(7 downto 0); -- vga red pixel value
+            green_out           : out std_logic_vector(7 downto 0); -- vga green pixel value
+            blue_out            : out std_logic_vector(7 downto 0); -- vga blue pixel value
+            horiz_sync_out      : out std_logic; -- vga control signal
+            vert_sync_out       : out std_logic; -- vga control signal
+             --
+            addr_vga            : in std_logic_vector(12 downto 0);
+            we                  : in std_logic;
+            wr_data             : in std_logic_vector(15 downto 0);
+            rd_data             : out std_logic_vector(15 downto 0);
+            byte_m              : in std_logic;
+            vga_cursor          : in std_logic_vector(15 downto 0);  -- simplemente lo ignoramos, este controlador no lo tiene implementado
+            vga_cursor_enable   : in std_logic);                     -- simplemente lo ignoramos, este controlador no lo tiene implementado
+    END COMPONENT;
+
 	-- Senyals per conectar les dues entitats
 	-- Que surten de PROC
 	SIGNAL s_word_byte   : std_logic;
@@ -113,6 +147,11 @@ ARCHITECTURE Structure OF sisa IS
     SIGNAL s_rd_in       : std_logic;
 	-- Que surten de MEMCTRL
 	SIGNAL s_rd_data     : std_logic_vector(15 DOWNTO 0);
+    SIGNAL s_vga_wr_data : std_logic_vector(15 DOWNTO 0);
+    SIGNAL s_vga_rd_data : std_logic_vector(15 DOWNTO 0);
+    SIGNAL s_vga_addr    : std_logic_vector(12 DOWNTO 0);
+    SIGNAL s_vga_we      : std_logic;
+    SIGNAL s_vga_byte_m  : std_logic;
 
 	-- Registre del divisor de rellotge
 	SIGNAL s_reg_divisor : std_logic_vector(2 DOWNTO 0) := "000";
@@ -121,7 +160,7 @@ ARCHITECTURE Structure OF sisa IS
 	SIGNAL s_dbg_pc      : std_logic_vector(15 DOWNTO 0);
 
     -- Que surten del controlador_IO
-    SIGNAL s_hex_on     : std_logic_vector(3 DOWNTO 0);
+    SIGNAL s_hex_on      : std_logic_vector(3 DOWNTO 0);
     SIGNAL s_o_io_hex    : std_logic_vector(15 downto 0);
 
     SIGNAL s_dbg         : t_dbg := c_DBG_INIT;
@@ -217,8 +256,34 @@ BEGIN
 		SRAM_LB_N => SRAM_LB_N,
 		SRAM_CE_N => SRAM_CE_N,
 		SRAM_OE_N => SRAM_OE_N,
-		SRAM_WE_N => SRAM_WE_N
+		SRAM_WE_N => SRAM_WE_N,
+        -- senales sobre el vga_controller
+        vga_addr    => s_vga_addr,
+        vga_we      => s_vga_we,
+        vga_wr_data => s_vga_wr_data,
+        vga_rd_data => s_vga_rd_data,
+        vga_byte_m  => s_vga_byte_m
 	);
+
+    vga_ctrl: vga_controller PORT MAP (
+        clk_50mhz           => s_clk_50,
+        reset               => s_boot,
+        blank_out           => VGA_BLANK_N,
+        csync_out           => VGA_SYNC_N,
+        red_out             => VGA_R,
+        green_out           => VGA_G,
+        blue_out            => VGA_B,
+        horiz_sync_out      => VGA_HS,
+        vert_sync_out       => VGA_VS,
+         --
+        addr_vga            => s_vga_addr,
+        we                  => s_vga_we,
+        wr_data             => s_vga_wr_data,
+        rd_data             => s_vga_rd_data,
+        byte_m              => s_vga_byte_m,
+        vga_cursor          => x"0000",
+        vga_cursor_enable   => '0'
+    );
 
 	driver7seg : driver7Segmentos PORT MAP(
 		data        => s_hex_output,
@@ -237,7 +302,6 @@ BEGIN
         i_selector => SW(1 downto 0),
         o_data => s_o_debugger
     );
-
 
 END Structure;
 

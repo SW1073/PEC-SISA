@@ -54,6 +54,10 @@ set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
 
 set_global_assignment -name VHDL_FILE ../src/Controlador_PS2_Keyboard/ps2_keyboard.vhd
 set_global_assignment -name VHDL_FILE ../src/Controlador_PS2_Keyboard/keyboard_controller.vhd
+set_global_assignment -name VHDL_FILE ../src/Controlador_VGA/Controlador_VGA1/vga_sync.vhd
+set_global_assignment -name VHDL_FILE ../src/Controlador_VGA/Controlador_VGA1/vga_ram_dual.vhd
+set_global_assignment -name VHDL_FILE ../src/Controlador_VGA/Controlador_VGA1/vga_font_rom.vhd
+set_global_assignment -name VHDL_FILE ../src/Controlador_VGA/Controlador_VGA1/vga_controller.vhd
 set_global_assignment -name VHDL_FILE ../src/decoder7Segmentos.vhd
 set_global_assignment -name VHDL_FILE ../src/io_ctrl/package_io.vhd
 set_global_assignment -name VHDL_FILE ../src/debugger.vhd
@@ -78,4 +82,5 @@ set_global_assignment -name VHDL_FILE ../src/proc/uc/multi.vhd
 set_global_assignment -name VHDL_FILE ../src/proc/uc/control_l.vhd
 set_global_assignment -name VHDL_FILE ../src/proc/proc.vhd
 set_global_assignment -name SOURCE_FILE db/sisa.cmp.rdb
+
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
