@@ -4,7 +4,7 @@ vcom -93 -work work {../proc/packages/package_opcodes.vhd}
 vcom -93 -work work {../proc/packages/package_alu.vhd}
 vcom -93 -work work {../proc/packages/package_control.vhd}
 vcom -93 -work work {../package_records.vhd}
-vcom -93 -work work {../package_records.vhd}
+vcom -93 -work work {../io_ctrl/package_io.vhd}
 vcom -93 -work work {./async_64Kx16.vhd}
 vcom -93 -work work {./test_sisa.vhd}
 
@@ -16,6 +16,7 @@ vcom -93 -work work {../proc/alu/alu_misc.vhd}
 vcom -93 -work work {../io_ctrl/controladores_io.vhd}
 
 vcom -93 -work work {../driver7Segmentos.vhd}
+vcom -93 -work work {../debugger.vhd}
 vcom -93 -work work {../sisa.vhd}
 vcom -93 -work work {../mem_ctrl/SRAMController.vhd}
 vcom -93 -work work {../mem_ctrl/MemoryController.vhd}
