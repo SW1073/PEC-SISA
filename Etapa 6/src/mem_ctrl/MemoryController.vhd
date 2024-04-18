@@ -17,13 +17,19 @@ entity MemoryController is
           SRAM_LB_N : out   std_logic;
           SRAM_CE_N : out   std_logic := '1';
           SRAM_OE_N : out   std_logic := '1';
-          SRAM_WE_N : out   std_logic := '1');
+          SRAM_WE_N : out   std_logic := '1';
+            -- senales sobre el vga_controller
+            vga_addr    : out std_logic_vector(12 downto 0);
+            vga_we      : out std_logic;
+            vga_wr_data : out std_logic_vector(15 downto 0);
+            vga_rd_data : in std_logic_vector(15 downto 0);
+            vga_byte_m  : out std_logic);
 end MemoryController;
 
 architecture comportament of MemoryController is
     COMPONENT SRAMController is
         port (clk         : in    std_logic;
-            -- se�ales para la placa de desarrollo
+            -- senales para la placa de desarrollo
             SRAM_ADDR   : out   std_logic_vector(17 downto 0);
             SRAM_DQ     : inout std_logic_vector(15 downto 0);
             SRAM_UB_N   : out   std_logic;
@@ -31,7 +37,7 @@ architecture comportament of MemoryController is
             SRAM_CE_N   : out   std_logic := '1';
             SRAM_OE_N   : out   std_logic := '1';
             SRAM_WE_N   : out   std_logic := '1';
-            -- se�ales internas del procesador
+            -- senales internas del procesador
             address     : in    std_logic_vector(15 downto 0) := "0000000000000000";
             dataReaded  : out   std_logic_vector(15 downto 0);
             dataToWrite : in    std_logic_vector(15 downto 0);
@@ -42,10 +48,19 @@ architecture comportament of MemoryController is
 
     signal s_sram_data_readed: std_logic_vector(15 downto 0);
     signal s_sram_wr: std_logic;
+    signal s_sram_we: std_logic;
+    
+    signal s_proc_addr_menos_vga_base_addr : std_logic_vector(15 downto 0);
+    signal s_is_vga_access : std_logic;
 begin
+    s_is_vga_access <= '1' WHEN (addr >= x"A000") AND (addr <= x"BFFF") ELSE '0';
+    s_proc_addr_menos_vga_base_addr <= addr - x"A000";
+
+    s_sram_we <= '0' WHEN s_is_vga_access = '1' ELSE we;
+
     -- Por ahora, toda lectura es siempre de la SRAM, per en un futuro aquí habrá que multiplexar
-    rd_data <= s_sram_data_readed;
-    s_sram_wr <= we when (addr < x"C000") else '0';
+    rd_data     <= s_sram_data_readed when s_is_vga_access = '0' else vga_rd_data;
+    s_sram_wr   <= s_sram_we when (addr < x"C000") else '0';
 
     sramctrl0: SRAMController port map(
         clk         => CLOCK_50,
@@ -64,5 +79,10 @@ begin
         WR          => s_sram_wr,
         byte_m      => byte_m
     );
+
+    vga_addr    <= s_proc_addr_menos_vga_base_addr(12 downto 0) WHEN s_is_vga_access = '1' ELSE "0000000000000";
+    vga_we      <= we AND s_is_vga_access;
+    vga_wr_data <= wr_data;
+    vga_byte_m  <= byte_m;
 
 end comportament;
