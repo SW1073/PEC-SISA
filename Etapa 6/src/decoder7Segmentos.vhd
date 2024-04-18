@@ -4,7 +4,7 @@ USE ieee.std_logic_1164.ALL;
 ENTITY decoder7Segmentos IS
 	PORT (
 		codigoCaracter  : IN  std_logic_vector(3 DOWNTO 0);
-        esta_apagado    : IN std_logic;
+        encendido       : IN std_logic;
 		bitsCaracter    : OUT std_logic_vector(6 DOWNTO 0));
 END decoder7Segmentos;
 
@@ -31,7 +31,7 @@ BEGIN
                         "0001110" WHEN "1111", -- f
                         "1111111" WHEN OTHERS; -- Apagat when others
 
-    bitsCaracter <= "1111111" WHEN esta_apagado = '1' ELSE s_bitsCaracter;
+    bitsCaracter <= s_bitsCaracter WHEN encendido = '1' ELSE "1111111";
 
 END Structure;
 

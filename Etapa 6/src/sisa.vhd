@@ -74,7 +74,7 @@ ARCHITECTURE Structure OF sisa IS
             SW         : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
             KEY        : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
             hex        : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
-            hex_off    : OUT STD_LOGIC_VECTOR(3 DOWNTO 0);
+            hex_on     : OUT STD_LOGIC_VECTOR(3 DOWNTO 0);
             led_verdes : OUT STD_LOGIC_VECTOR(7 DOWNTO 0);
             led_rojos  : OUT STD_LOGIC_VECTOR(7 DOWNTO 0);
             ps2_clk    : inout STD_LOGIC;
@@ -84,10 +84,10 @@ ARCHITECTURE Structure OF sisa IS
 	COMPONENT driver7Segmentos IS
 		PORT (
             data            : IN  std_logic_vector(15 DOWNTO 0);
-            hex0_off        : IN std_logic;
-            hex1_off        : IN std_logic;
-            hex2_off        : IN std_logic;
-            hex3_off        : IN std_logic;
+            hex0_on         : IN std_logic;
+            hex1_on         : IN std_logic;
+            hex2_on         : IN std_logic;
+            hex3_on         : IN std_logic;
             hex0            : OUT std_logic_vector(6 DOWNTO 0);
             hex1            : OUT std_logic_vector(6 DOWNTO 0);
             hex2            : OUT std_logic_vector(6 DOWNTO 0);
@@ -121,7 +121,7 @@ ARCHITECTURE Structure OF sisa IS
 	SIGNAL s_dbg_pc      : std_logic_vector(15 DOWNTO 0);
 
     -- Que surten del controlador_IO
-    SIGNAL s_hex_off     : std_logic_vector(3 DOWNTO 0);
+    SIGNAL s_hex_on     : std_logic_vector(3 DOWNTO 0);
     SIGNAL s_o_io_hex    : std_logic_vector(15 downto 0);
 
     SIGNAL s_dbg         : t_dbg := c_DBG_INIT;
@@ -178,7 +178,7 @@ BEGIN
         -- outputs
         rd_io       => s_rd_io,   -- read data
         hex         => s_o_io_hex,
-        hex_off     => s_hex_off, -- vector de cuales hex estan apagados
+        hex_on      => s_hex_on, -- vector de cuales hex estan apagados
         led_verdes  => LEDG,
         led_rojos   => LEDR,
         ps2_clk     => PS2_CLK,
@@ -226,10 +226,10 @@ BEGIN
         hex1        => HEX1,
         hex2        => HEX2,
         hex3        => HEX3,
-        hex0_off    => s_hex_off(0),
-        hex1_off    => s_hex_off(1),
-        hex2_off    => s_hex_off(2),
-        hex3_off    => s_hex_off(3)
+        hex0_on     => s_hex_on(0),
+        hex1_on     => s_hex_on(1),
+        hex2_on     => s_hex_on(2),
+        hex3_on     => s_hex_on(3)
 	);
 
     debugger0: debugger PORT MAP(
