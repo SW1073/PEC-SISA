@@ -6,6 +6,7 @@ vcom -93 -work work {../proc/packages/package_control.vhd}
 vcom -93 -work work {../package_records.vhd}
 vcom -93 -work work {../io_ctrl/package_io.vhd}
 vcom -93 -work work {./async_64Kx16.vhd}
+vcom -93 -work work {./ps2_keyboard_emul.vhd}
 vcom -93 -work work {./test_sisa.vhd}
 
 vcom -93 -work work {../proc/alu/alu_arit_log.vhd}

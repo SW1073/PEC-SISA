@@ -54,6 +54,12 @@ architecture comportament of test_sisa is
              PS2_DAT   : INOUT std_logic);
     end component;
 
+    component ps2_keyboard_emul is
+        port (
+            ps2_data : out std_logic;
+            ps2_clk  : in  std_logic
+        );
+    end component;
 
    -- Registres (entrades) i cables
     signal clk           : std_logic := '0';
@@ -73,6 +79,9 @@ architecture comportament of test_sisa is
 
     signal botones      : std_logic_vector(9 downto 0);
 
+    signal s_ps2_clk    : std_logic;
+    signal s_ps2_dat    : std_logic;
+
 
 begin
 
@@ -90,7 +99,9 @@ begin
         SRAM_LB_N   => lb_m,
         SRAM_CE_N   => ce_m,
         SRAM_OE_N   => oe_m,
-        SRAM_WE_N   => we_m
+        SRAM_WE_N   => we_m,
+        PS2_clk     => s_ps2_clk,
+        PS2_DAT     => s_ps2_dat
     );
 
     mem0 : async_64Kx16 port map (
@@ -105,6 +116,11 @@ begin
         BHE_b => ub_m,
 
         boot     => reset_ram
+    );
+
+    keyboard : ps2_keyboard_emul port map (
+        ps2_clk => s_ps2_clk,
+        ps2_data => s_ps2_dat
     );
 
 
