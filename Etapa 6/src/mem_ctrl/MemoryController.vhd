@@ -80,7 +80,7 @@ begin
         byte_m      => byte_m
     );
 
-    vga_addr    <= s_proc_addr_menos_vga_base_addr(12 downto 0) WHEN s_is_vga_access = '1' ELSE "0000000000000";
+    vga_addr    <= s_proc_addr_menos_vga_base_addr(12 downto 0) WHEN s_is_vga_access = '1' ELSE (others => '0');
     vga_we      <= we AND s_is_vga_access;
     vga_wr_data <= wr_data;
     vga_byte_m  <= byte_m;
