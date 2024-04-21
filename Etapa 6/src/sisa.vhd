@@ -259,7 +259,7 @@ BEGIN
         vga_byte_m  => s_vga_byte_m
 	);
 
-    vga_ctrl: vga_controller PORT MAP (
+    vgactrl0: vga_controller PORT MAP (
         clk_50mhz           => s_clk_50,
         reset               => s_boot,
         blank_out           => VGA_BLANK_N,

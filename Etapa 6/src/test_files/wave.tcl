@@ -12,6 +12,8 @@ array set VAR1 {
 
     "Memory Controller" "sim:/test_sisa/SoC/memctrl0/*"
     "Sram Controller" "sim:/test_sisa/SoC/memctrl0/sramctrl0/*"
+    "VGA Controller" "sim:/test_sisa/SoC/vgactrl0/*"
+    "VGA ROM" "sim:/test_sisa/SoC/vgactrl0/u_font_rom/*"
 
     "IO Controller" "sim:/test_sisa/SoC/io/*"
 }
