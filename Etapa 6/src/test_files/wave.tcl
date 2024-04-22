@@ -14,6 +14,7 @@ array set VAR1 {
     "Sram Controller" "sim:/test_sisa/SoC/memctrl0/sramctrl0/*"
 
     "IO Controller" "sim:/test_sisa/SoC/io/*"
+    "PS2 Keyboard" "sim:/test_sisa/keyboard/*"
 }
 
 add wave -label CLOCK_6_25 -radix bin sim:/test_sisa/SoC/proc0/clk
