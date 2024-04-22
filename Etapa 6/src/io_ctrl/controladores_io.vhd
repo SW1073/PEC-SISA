@@ -50,15 +50,18 @@ BEGIN
             registers(PORT_SW)(7 downto 0) <= SW(7 DOWNTO 0);
 
             IF wr_out = '1' AND addr_io /= PORT_KEY AND addr_io /= PORT_SW THEN
-                registers(conv_integer(addr_io)) <= wr_io;
+                if addr_io = PORT_PS2_DATA_VALID THEN
+                    registers(conv_integer(addr_io)) <= x"0000";
+                    s_ps2_clear_char <= '0';
+                ELSE
+                    registers(conv_integer(addr_io)) <= wr_io;
+                END IF;
             END IF;
 
             IF s_ps2_data_ready = '1' THEN
                 registers(PORT_PS2_DATA)(7 downto 0) <= s_ps2_ascii_code;
-                registers(PORT_PS2_DATA_VALID)(0) <= '1';
+                registers(PORT_PS2_DATA_VALID) <= x"FFFF";
                 s_ps2_clear_char <= '1';
-            ELSE
-                s_ps2_clear_char <= '0';
             END IF;
         END IF;
     END PROCESS;
