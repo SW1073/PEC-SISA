@@ -14,6 +14,7 @@ array set VAR1 {
     "Sram Controller" "sim:/test_sisa/SoC/memctrl0/sramctrl0/*"
     "VGA Controller" "sim:/test_sisa/SoC/vgactrl0/*"
     "VGA ROM" "sim:/test_sisa/SoC/vgactrl0/u_font_rom/*"
+    "VGA_RAM" "sim:/test_sisa/SoC/vgactrl0/U_MonitorRam/*"
 
     "IO Controller" "sim:/test_sisa/SoC/io/*"
 }
@@ -30,6 +31,14 @@ foreach name [array name VAR1] {
 
 for {set i 50} {$i >= 0} {incr i -1} {
     add wave -group "Memory Contents" -label "word $i" -radix hex sim:/test_sisa/mem0/mem_array($i)
+}
+
+for {set i 50} {$i >= 0} {incr i -1} {
+    add wave -group "LO VGA RAM Contents" -label "lo byte $i" -radix hex sim:/test_sisa/SoC/vgactrl0/U_MonitorRam/mem0($i)
+}
+
+for {set i 50} {$i >= 0} {incr i -1} {
+    add wave -group "HI VGA RAM Contents" -label "hi byte $i" -radix hex sim:/test_sisa/SoC/vgactrl0/U_MonitorRam/mem1($i)
 }
 
 configure wave -signalnamewidth 1

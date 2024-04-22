@@ -152,6 +152,8 @@ ARCHITECTURE Structure OF sisa IS
     SIGNAL s_vga_addr    : std_logic_vector(12 DOWNTO 0);
     SIGNAL s_vga_we      : std_logic;
     SIGNAL s_vga_byte_m  : std_logic;
+    SIGNAL s_vga_cursor  : std_logic_vector(15 DOWNTO 0) := (others => '0');
+    SIGNAL s_vga_cursor_enable : std_logic := '0';
 
 	-- Registre del divisor de rellotge
 	SIGNAL s_reg_divisor : std_logic_vector(2 DOWNTO 0) := "000";
@@ -281,8 +283,8 @@ BEGIN
         wr_data             => s_vga_wr_data,
         rd_data             => s_vga_rd_data,
         byte_m              => s_vga_byte_m,
-        vga_cursor          => x"0000",
-        vga_cursor_enable   => '0'
+        vga_cursor          => s_vga_cursor,
+        vga_cursor_enable   => s_vga_cursor_enable
     );
 
 	driver7seg : driver7Segmentos PORT MAP(
