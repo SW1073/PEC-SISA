@@ -152,6 +152,8 @@ ARCHITECTURE Structure OF sisa IS
     SIGNAL s_vga_addr    : std_logic_vector(12 DOWNTO 0);
     SIGNAL s_vga_we      : std_logic;
     SIGNAL s_vga_byte_m  : std_logic;
+    SIGNAL s_vga_cursor  : std_logic_vector(15 DOWNTO 0) := (others => '0');
+    SIGNAL s_vga_cursor_enable : std_logic := '0';
 
 	-- Registre del divisor de rellotge
 	SIGNAL s_reg_divisor : std_logic_vector(2 DOWNTO 0) := "000";
@@ -160,13 +162,14 @@ ARCHITECTURE Structure OF sisa IS
 	SIGNAL s_dbg_pc      : std_logic_vector(15 DOWNTO 0);
 
     -- Que surten del controlador_IO
-    SIGNAL s_hex_on      : std_logic_vector(3 DOWNTO 0);
+    SIGNAL s_hex_on_io   : std_logic_vector(3 DOWNTO 0);
     SIGNAL s_o_io_hex    : std_logic_vector(15 downto 0);
 
     SIGNAL s_dbg         : t_dbg := c_DBG_INIT;
     SIGNAL s_o_debugger  : std_logic_vector(15 downto 0);
 
     SIGNAL s_hex_output  : std_logic_vector(15 downto 0);
+    SIGNAL s_hex_on      : std_logic_vector(3 downto 0);
 
     -- Selectors, i senyals de control
     SIGNAL s_boot        : std_logic;
@@ -191,11 +194,17 @@ BEGIN
     s_dbg.pc <= s_dbg_pc;
     s_dbg.mem_addr <= s_addr_m;
     s_dbg.mem_data <= s_rd_data;
+    s_dbg.ir <= "000" & s_vga_addr;
 
     WITH s_run_mode SELECT
         s_hex_output <= s_o_debugger when RUN_MODE_DEBUG,
                         s_o_io_hex   when RUN_MODE_NORMAL,
                         s_o_debugger when others;
+
+    WITH s_run_mode SELECT
+        s_hex_on <= x"F"        when RUN_MODE_DEBUG,
+                    s_hex_on_io when RUN_MODE_NORMAL,
+                    s_hex_on_io when others;
 
 	clk_divider : PROCESS (s_clk_50) IS
 	BEGIN
@@ -217,7 +226,7 @@ BEGIN
         -- outputs
         rd_io       => s_rd_io,   -- read data
         hex         => s_o_io_hex,
-        hex_on      => s_hex_on, -- vector de cuales hex estan apagados
+        hex_on      => s_hex_on_io, -- vector de cuales hex estan apagados
         led_verdes  => LEDG,
         led_rojos   => LEDR,
         ps2_clk     => PS2_CLK,
@@ -265,7 +274,7 @@ BEGIN
         vga_byte_m  => s_vga_byte_m
 	);
 
-    vga_ctrl: vga_controller PORT MAP (
+    vgactrl0: vga_controller PORT MAP (
         clk_50mhz           => s_clk_50,
         reset               => s_boot,
         blank_out           => VGA_BLANK_N,
@@ -281,8 +290,8 @@ BEGIN
         wr_data             => s_vga_wr_data,
         rd_data             => s_vga_rd_data,
         byte_m              => s_vga_byte_m,
-        vga_cursor          => x"0000",
-        vga_cursor_enable   => '0'
+        vga_cursor          => s_vga_cursor,
+        vga_cursor_enable   => s_vga_cursor_enable
     );
 
 	driver7seg : driver7Segmentos PORT MAP(

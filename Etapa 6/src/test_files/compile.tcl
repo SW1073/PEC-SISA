@@ -21,6 +21,10 @@ vcom -93 -work work {../debugger.vhd}
 vcom -93 -work work {../sisa.vhd}
 vcom -93 -work work {../mem_ctrl/SRAMController.vhd}
 vcom -93 -work work {../mem_ctrl/MemoryController.vhd}
+vcom -93 -work work {../Controlador_VGA/Controlador_VGA1/vga_controller.vhd}
+vcom -93 -work work {../Controlador_VGA/Controlador_VGA1/vga_sync.vhd}
+vcom -93 -work work {../Controlador_VGA/Controlador_VGA1/vga_font_rom.vhd}
+vcom -93 -work work {../Controlador_VGA/Controlador_VGA1/vga_ram_dual.vhd}
 vcom -93 -work work {../proc/alu/alu.vhd}
 vcom -93 -work work {../proc/banco_regs/regfile.vhd}
 vcom -93 -work work {../proc/datapath/datapath.vhd}
