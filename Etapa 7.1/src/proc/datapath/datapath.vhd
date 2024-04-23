@@ -10,6 +10,7 @@ ENTITY datapath IS
 		op         : IN  std_logic_vector(2 DOWNTO 0);
 		f          : IN  std_logic_vector(2 DOWNTO 0);
 		wrd        : IN  std_logic;
+        d_sys      : IN  std_logic;
 		addr_a     : IN  std_logic_vector(2 DOWNTO 0);
 		addr_b     : IN  std_logic_vector(2 DOWNTO 0);
 		addr_d     : IN  std_logic_vector(2 DOWNTO 0);
@@ -19,6 +20,7 @@ ENTITY datapath IS
 		ins_dad    : IN  std_logic;
 		pc         : IN  std_logic_vector(15 DOWNTO 0);
 		in_d       : IN  std_logic_vector(1 DOWNTO 0);
+        a_sys      : IN  std_logic;
 		b_or_immed : IN  std_logic;
         rd_io      : IN  std_logic_vector(15 downto 0);
 		addr_m     : OUT std_logic_vector(15 DOWNTO 0);
@@ -54,6 +56,7 @@ ARCHITECTURE Structure OF datapath IS
 			b      : OUT std_logic_vector(15 DOWNTO 0));
 	END COMPONENT;
 
+	SIGNAL s_sys_regout_a : std_logic_vector(15 DOWNTO 0);
 	SIGNAL s_regout_a : std_logic_vector(15 DOWNTO 0);
 	SIGNAL s_regout_b : std_logic_vector(15 DOWNTO 0);
 	SIGNAL s_aluout   : std_logic_vector(15 DOWNTO 0);
@@ -81,7 +84,7 @@ BEGIN
 	-- s_data <= datard_m when in_d = '1' else s_aluout;
 	s_immed_real <= immed WHEN immed_x2 = '0' ELSE (immed(14 DOWNTO 0) & '0');
 	s_y          <= s_regout_b WHEN b_or_immed = '1' ELSE s_immed_real;
-	regout_a     <= s_regout_a;
+	regout_a     <= s_sys_regout_a WHEN a_sys = '1' ELSE s_regout_a;
 
 	reg : regfile PORT MAP(
 		clk    => clk,
@@ -91,7 +94,17 @@ BEGIN
 		addr_b => addr_b,
 		addr_d => addr_d,
 		a      => s_regout_a,
-		b      => s_regout_b
+        b      => s_regout_b
+	);
+
+	sys_reg : regfile PORT MAP(
+		clk    => clk,
+		wrd    => d_sys,
+		d      => s_data,
+		addr_a => addr_a,
+		addr_b => "000",
+		addr_d => addr_d,
+		a      => s_sys_regout_a
 	);
 
 	al : alu PORT MAP(

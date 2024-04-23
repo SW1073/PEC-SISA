@@ -17,9 +17,17 @@ PACKAGE package_opcodes IS
 	CONSTANT OPCODE_BRANCHES : std_logic_vector(3 DOWNTO 0) := "0110";
 	CONSTANT OPCODE_JUMPS    : std_logic_vector(3 DOWNTO 0) := "1010";
     CONSTANT OPCODE_IO       : std_logic_vector(3 DOWNTO 0) := "0111";
+    CONSTANT OPCODE_SYS      : std_logic_vector(3 DOWNTO 0) := "1111";
 
+    -- F de 
     CONSTANT F_INPUT         : std_logic := '0';
     CONSTANT F_OUTPUT        : std_logic := '1';
+
+    CONSTANT F_SYS_READ      : std_logic_vector(5 DOWNTO 0) := "101100";
+    CONSTANT F_SYS_WRITE     : std_logic_vector(5 DOWNTO 0) := "110000";
+    CONSTANT F_SYS_EI        : std_logic_vector(5 DOWNTO 0) := "100000";
+    CONSTANT F_SYS_DI        : std_logic_vector(5 DOWNTO 0) := "100001";
+    CONSTANT F_SYS_RETI      : std_logic_vector(5 DOWNTO 0) := "100100";
 
 END package_opcodes;
 

@@ -55,6 +55,7 @@ ARCHITECTURE Structure OF proc IS
 			op         : OUT std_logic_vector(2 DOWNTO 0);
 			f          : OUT std_logic_vector(2 DOWNTO 0);
 			wrd        : OUT std_logic;
+			d_sys      : OUT std_logic;
 			addr_a     : OUT std_logic_vector(2 DOWNTO 0);
 			addr_b     : OUT std_logic_vector(2 DOWNTO 0);
 			addr_d     : OUT std_logic_vector(2 DOWNTO 0);
@@ -66,6 +67,7 @@ ARCHITECTURE Structure OF proc IS
 			wr_m       : OUT std_logic;
 			word_byte  : OUT std_logic;
             b_or_immed : OUT std_logic;
+            a_sys      : OUT std_logic;
             addr_io    : OUT STD_LOGIC_VECTOR(7  DOWNTO 0);
             wr_out     : OUT STD_LOGIC;
             rd_in      : OUT STD_LOGIC);
@@ -74,6 +76,7 @@ ARCHITECTURE Structure OF proc IS
 	SIGNAL s_op         : std_logic_vector (2 DOWNTO 0);
 	SIGNAL s_f          : std_logic_vector (2 DOWNTO 0);
 	SIGNAL s_wrd        : std_logic;
+    SIGNAL s_d_sys      : std_logic;
 	SIGNAL s_addr_a     : std_logic_vector (2 DOWNTO 0);
 	SIGNAL s_addr_b     : std_logic_vector (2 DOWNTO 0);
 	SIGNAL s_addr_d     : std_logic_vector (2 DOWNTO 0);
@@ -83,6 +86,7 @@ ARCHITECTURE Structure OF proc IS
 	SIGNAL s_in_d       : std_logic_vector(1 DOWNTO 0);
 	SIGNAL s_immed_x2   : std_logic;
 	SIGNAL s_b_or_immed : std_logic;
+    SIGNAL s_a_sys      : std_logic;
 	SIGNAL s_z          : std_logic;
 	SIGNAL s_regout_a   : std_logic_vector(15 DOWNTO 0);
 
@@ -97,6 +101,7 @@ BEGIN
 		op         => s_op,
 		f          => s_f,
 		wrd        => s_wrd,
+        d_sys      => s_d_sys,
 		addr_a     => s_addr_a,
 		addr_b     => s_addr_b,
 		addr_d     => s_addr_d,
@@ -107,6 +112,7 @@ BEGIN
 		pc         => s_pc,
 		in_d       => s_in_d,
 		b_or_immed => s_b_or_immed,
+        a_sys      => s_a_sys,
         rd_io      => rd_io,
 		-- outputs
 		addr_m     => addr_m,
@@ -126,6 +132,7 @@ BEGIN
 		op         => s_op,
 		f          => s_f,
 		wrd        => s_wrd,
+        d_sys      => s_d_sys,
 		addr_a     => s_addr_a,
 		addr_b     => s_addr_b,
 		addr_d     => s_addr_d,
@@ -137,6 +144,7 @@ BEGIN
 		wr_m       => wr_m,
 		word_byte  => word_byte,
 		b_or_immed => s_b_or_immed,
+        a_sys      => s_a_sys,
         addr_io    => addr_io,
         wr_out     => wr_out,
         rd_in      => rd_in

@@ -13,6 +13,7 @@ ENTITY control_l IS
 		f          : OUT std_logic_vector(2 DOWNTO 0);
 		ldpc       : OUT std_logic;
 		wrd        : OUT std_logic;
+        d_sys      : OUT std_logic;
 		addr_a     : OUT std_logic_vector(2 DOWNTO 0);
 		addr_b     : OUT std_logic_vector(2 DOWNTO 0);
 		addr_d     : OUT std_logic_vector(2 DOWNTO 0);
@@ -23,6 +24,7 @@ ENTITY control_l IS
 		word_byte  : OUT std_logic;
 		tknbr      : OUT std_logic_vector(1 DOWNTO 0);
 		b_or_immed : OUT std_logic;
+        a_sys      : OUT std_logic;
         addr_io    : OUT STD_LOGIC_VECTOR(7  DOWNTO 0);
         wr_out     : OUT STD_LOGIC;
         rd_in      : OUT STD_LOGIC);

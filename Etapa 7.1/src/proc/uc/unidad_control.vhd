@@ -7,25 +7,27 @@ USE work.package_control.ALL;
 
 ENTITY unidad_control IS
 	PORT (
-		boot       : IN  std_logic;
-		clk        : IN  std_logic;
-		datard_m   : IN  std_logic_vector(15 DOWNTO 0);
-		z          : IN  std_logic;
-		regout_a   : IN  std_logic_vector(15 DOWNTO 0);
-		op         : OUT std_logic_vector(2 DOWNTO 0);
-		f          : OUT std_logic_vector(2 DOWNTO 0);
-		wrd        : OUT std_logic;
-		addr_a     : OUT std_logic_vector(2 DOWNTO 0);
-		addr_b     : OUT std_logic_vector(2 DOWNTO 0);
-		addr_d     : OUT std_logic_vector(2 DOWNTO 0);
-		immed      : OUT std_logic_vector(15 DOWNTO 0);
-		pc         : OUT std_logic_vector(15 DOWNTO 0);
-		ins_dad    : OUT std_logic;
-		in_d       : OUT std_logic_vector(1 DOWNTO 0);
-		immed_x2   : OUT std_logic;
-		wr_m       : OUT std_logic;
-		word_byte  : OUT std_logic;
+        boot       : IN  std_logic;
+        clk        : IN  std_logic;
+        z          : IN  std_logic;
+        datard_m   : IN  std_logic_vector(15 DOWNTO 0);
+        regout_a   : IN  std_logic_vector(15 DOWNTO 0);
+        op         : OUT std_logic_vector(2 DOWNTO 0);
+        f          : OUT std_logic_vector(2 DOWNTO 0);
+        wrd        : OUT std_logic;
+        d_sys      : OUT std_logic;
+        addr_a     : OUT std_logic_vector(2 DOWNTO 0);
+        addr_b     : OUT std_logic_vector(2 DOWNTO 0);
+        addr_d     : OUT std_logic_vector(2 DOWNTO 0);
+        immed      : OUT std_logic_vector(15 DOWNTO 0);
+        pc         : OUT std_logic_vector(15 DOWNTO 0);
+        ins_dad    : OUT std_logic;
+        in_d       : OUT std_logic_vector(1 DOWNTO 0);
+        immed_x2   : OUT std_logic;
+        wr_m       : OUT std_logic;
+        word_byte  : OUT std_logic;
         b_or_immed : OUT std_logic;
+        a_sys      : OUT std_logic;
         addr_io    : OUT STD_LOGIC_VECTOR(7  DOWNTO 0);
         wr_out     : OUT STD_LOGIC;
         rd_in      : OUT STD_LOGIC);
@@ -43,6 +45,7 @@ ARCHITECTURE Structure OF unidad_control IS
 			f          : OUT std_logic_vector(2 DOWNTO 0);
 			ldpc       : OUT std_logic;
 			wrd        : OUT std_logic;
+            d_sys      : OUT std_logic;
 			addr_a     : OUT std_logic_vector(2 DOWNTO 0);
 			addr_b     : OUT std_logic_vector(2 DOWNTO 0);
 			addr_d     : OUT std_logic_vector(2 DOWNTO 0);
@@ -53,6 +56,7 @@ ARCHITECTURE Structure OF unidad_control IS
 			word_byte  : OUT std_logic;
 			tknbr      : OUT std_logic_vector(1 DOWNTO 0);
             b_or_immed : OUT std_logic;
+            a_sys      : OUT std_logic;
             addr_io    : OUT STD_LOGIC_VECTOR(7  DOWNTO 0);
             wr_out     : OUT STD_LOGIC;
             rd_in      : OUT STD_LOGIC);
@@ -119,6 +123,7 @@ BEGIN
 		f          => f,
 		ldpc       => s_ldpc,
 		wrd        => s_wrd,
+        d_sys      => d_sys,
 		addr_a     => addr_a,
 		addr_b     => addr_b,
 		addr_d     => addr_d,
@@ -129,6 +134,7 @@ BEGIN
 		word_byte  => s_word_byte,
 		tknbr      => s_tknbr,
 		b_or_immed => b_or_immed,
+        a_sys      => a_sys,
         addr_io    => addr_io,
         wr_out     => s_wr_out,
         rd_in      => s_rd_in
