@@ -135,8 +135,8 @@ begin
         ps2_data => s_ps2_dat
     );
 
-    s_ps2_data_to_send <= x"1C";
-    s_ps2_send <= '0', '1' after 50 ns;
+    s_ps2_data_to_send <= x"38";
+    s_ps2_send <= '0', '1' after 400 ns, '0' after 1200 ns;
 
     addr_mem (15 downto 0) <= addr_SOC (15 downto 0);
     botones(9) <= reset_proc;
