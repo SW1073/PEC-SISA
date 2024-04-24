@@ -28,6 +28,7 @@ ARCHITECTURE Structure OF proc IS
 			op         : IN  std_logic_vector(2 DOWNTO 0);
 			f          : IN  std_logic_vector(2 DOWNTO 0);
 			wrd        : IN  std_logic;
+            d_sys      : IN  std_logic;
 			addr_a     : IN  std_logic_vector(2 DOWNTO 0);
 			addr_b     : IN  std_logic_vector(2 DOWNTO 0);
 			addr_d     : IN  std_logic_vector(2 DOWNTO 0);
@@ -38,6 +39,7 @@ ARCHITECTURE Structure OF proc IS
 			pc         : IN  std_logic_vector(15 DOWNTO 0);
 			in_d       : IN  std_logic_vector(1 DOWNTO 0);
 			b_or_immed : IN  std_logic;
+            a_sys      : IN  std_logic;
             rd_io      : IN  std_logic_vector(15 downto 0);
 			addr_m     : OUT std_logic_vector(15 DOWNTO 0);
 			data_wr    : OUT std_logic_vector(15 DOWNTO 0);

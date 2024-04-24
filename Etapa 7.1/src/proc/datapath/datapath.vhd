@@ -49,9 +49,11 @@ ARCHITECTURE Structure OF datapath IS
 			clk    : IN  std_logic;
 			wrd    : IN  std_logic;
 			d      : IN  std_logic_vector(15 DOWNTO 0);
+            d_sys  : IN  std_logic;
 			addr_a : IN  std_logic_vector(2 DOWNTO 0);
 			addr_b : IN  std_logic_vector(2 DOWNTO 0);
 			addr_d : IN  std_logic_vector(2 DOWNTO 0);
+            a_sys  : IN  std_logic;
 			a      : OUT std_logic_vector(15 DOWNTO 0);
 			b      : OUT std_logic_vector(15 DOWNTO 0));
 	END COMPONENT;
@@ -84,27 +86,19 @@ BEGIN
 	-- s_data <= datard_m when in_d = '1' else s_aluout;
 	s_immed_real <= immed WHEN immed_x2 = '0' ELSE (immed(14 DOWNTO 0) & '0');
 	s_y          <= s_regout_b WHEN b_or_immed = '1' ELSE s_immed_real;
-	regout_a     <= s_sys_regout_a WHEN a_sys = '1' ELSE s_regout_a;
+	regout_a     <= s_regout_a;
 
 	reg : regfile PORT MAP(
 		clk    => clk,
 		wrd    => wrd,
 		d      => s_data,
+        d_sys  => d_sys,
 		addr_a => addr_a,
 		addr_b => addr_b,
 		addr_d => addr_d,
+        a_sys  => a_sys,
 		a      => s_regout_a,
         b      => s_regout_b
-	);
-
-	sys_reg : regfile PORT MAP(
-		clk    => clk,
-		wrd    => d_sys,
-		d      => s_data,
-		addr_a => addr_a,
-		addr_b => "000",
-		addr_d => addr_d,
-		a      => s_sys_regout_a
 	);
 
 	al : alu PORT MAP(
