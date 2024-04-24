@@ -13,6 +13,8 @@ PACKAGE package_io IS
     CONSTANT PORT_HEX           : integer RANGE 0 TO 255 := 10;
     CONSTANT PORT_PS2_DATA      : integer RANGE 0 TO 255 := 15;
     CONSTANT PORT_PS2_DATA_VALID: integer RANGE 0 TO 255 := 16;
+    CONSTANT PORT_RAND          : integer RANGE 0 TO 255 := 21;
+    CONSTANT PORT_TIMER         : integer RANGE 0 TO 255 := 21;
 
 END package_io;
 

@@ -41,13 +41,32 @@ ARCHITECTURE Structure OF controladores_IO IS
     SIGNAL s_ps2_ascii_code : std_logic_vector(7 downto 0);
     SIGNAL s_ps2_clear_char : std_logic;
     SIGNAL s_ps2_data_ready : std_logic;
+
+    SIGNAL contador_ciclos          : std_logic_vector(15 downto 0);
+    SIGNAL contador_milisegundos    : std_logic_vector(15 downto 0);
 BEGIN
+
+    process(CLOCK_50)
+    begin
+        if rising_edge(CLOCK_50) then
+            if contador_ciclos=0 then
+                contador_ciclos<=x"C350"; -- tiempo de ciclo=20ns(50Mhz) 1ms=50000ciclos
+                if contador_milisegundos>0 then
+                    contador_milisegundos <= contador_milisegundos-1;
+                end if;
+            else
+                contador_ciclos <= contador_ciclos-1;
+            end if;
+        end if;
+    end process;
 
     PROCESS (CLOCK_50) IS
     BEGIN
         IF rising_edge(CLOCK_50) THEN
             registers(PORT_KEY)(3 downto 0) <= KEY(3 DOWNTO 0);
             registers(PORT_SW)(7 downto 0) <= SW(7 DOWNTO 0);
+            registers(PORT_RAND) <= contador_ciclos;
+            registers(PORT_TIMER) <= contador_milisegundos;
 
             IF wr_out = '1' AND addr_io /= PORT_KEY AND addr_io /= PORT_SW THEN
                 if addr_io = PORT_PS2_DATA_VALID THEN
