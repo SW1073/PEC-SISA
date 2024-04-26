@@ -99,7 +99,7 @@ BEGIN
              s_w_arit_log WHEN OP_IMMED,
              s_w_comp     WHEN OP_CMPS,
              s_w_ext_arit WHEN OP_EXT_ARIT,
-             s_w_misc     WHEN OP_MOVS,
+             s_w_misc     WHEN OP_MISC,
              s_w_arit_log WHEN OTHERS;
 
 END Structure;

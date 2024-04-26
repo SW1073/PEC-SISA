@@ -34,6 +34,7 @@ ARCHITECTURE Structure OF control_l IS
 	SIGNAL s_opcode      : std_logic_vector(3 DOWNTO 0);
 	SIGNAL s_f           : std_logic_vector(2 DOWNTO 0);
 	SIGNAL s_f_jumps     : std_logic_vector(2 DOWNTO 0);
+	SIGNAL s_f_sys       : std_logic_vector(5 DOWNTO 0);
 	SIGNAL s_first_reg   : std_logic_vector(2 DOWNTO 0);
 	SIGNAL s_second_reg  : std_logic_vector(2 DOWNTO 0);
 	SIGNAL s_third_reg   : std_logic_vector(2 DOWNTO 0);
@@ -42,11 +43,16 @@ ARCHITECTURE Structure OF control_l IS
 	SIGNAL s_op          : std_logic;
 	SIGNAL s_wrd_jump    : std_logic;
 	SIGNAL s_wrd_io      : std_logic;
+    SIGNAL s_wrd_sys     : std_logic;
+    SIGNAL s_f_alu_sys   : std_logic_vector(2 DOWNTO 0);
+    SIGNAL s_f_addra_sys : std_logic_vector(2 DOWNTO 0);
+    SIGNAL s_f_immed_sys : std_logic_vector(15 DOWNTO 0);
 BEGIN
 
 	s_opcode      <= ir(15 DOWNTO 12);
 	s_f           <= ir(5 DOWNTO 3);
 	s_f_jumps     <= ir(2 DOWNTO 0);
+	s_f_sys       <= ir(5 DOWNTO 0);
 	s_first_reg   <= ir(11 DOWNTO 9);
 	s_second_reg  <= ir(8 DOWNTO 6); -- Esto siempre corresponde a Ra
 	s_third_reg   <= ir(2 DOWNTO 0);
@@ -64,8 +70,14 @@ BEGIN
               OP_CMPS     WHEN OPCODE_CMPS,     -- COMPARACIONES
               OP_EXT_ARIT WHEN OPCODE_EXT_ARIT, -- MULS Y DIVS
               OP_IMMED    WHEN OPCODE_IMMED,    -- IMMED (addi)
-              OP_MOVS     WHEN OPCODE_MOVS,     -- MOVS
+              OP_MISC     WHEN OPCODE_MOVS,     -- MOVS Y MISC
+              OP_MISC     WHEN OPCODE_SYS,
               OP_ARIT_LOG WHEN OTHERS;
+
+    s_f_alu_sys <= F_MISC_X_OUT     WHEN (s_f_sys = F_SYS_RDS OR s_f_sys = F_SYS_WRS) ELSE
+                   F_ARIT_LOG_AND   WHEN (s_f_sys = F_SYS_DI) ELSE
+                   F_ARIT_LOG_OR    WHEN (s_f_sys = F_SYS_EI) ELSE
+                   F_MISC_X_OUT;
 
 	WITH s_opcode SELECT
         f <= "00" & s_op     WHEN OPCODE_MOVS,
@@ -74,6 +86,7 @@ BEGIN
              F_ARIT_LOG_ADD  WHEN OPCODE_LOADB,
              F_ARIT_LOG_ADD  WHEN OPCODE_STOREB,
              F_ARIT_LOG_ADD  WHEN OPCODE_IMMED,
+             s_f_alu_sys     WHEN OPCODE_SYS,
              s_f             WHEN OTHERS;
 
 	-- falta el 11 para cuando falla el TLB
@@ -85,8 +98,6 @@ BEGIN
              TKNBR_JUMP     WHEN s_opcode = OPCODE_JUMPS AND s_f_jumps = F_JUMP_JAL ELSE
              TKNBR_NOT_TAKEN;
 
-	-- op <= ("0" & s_op) when s_opcode = "0101" else "10"; -- Se suma solo si no son MoviS
-
 	-- Enable de incremento de PC
 	ldpc <= '0' WHEN ir = x"FFFF" ELSE '1';
 
@@ -94,7 +105,14 @@ BEGIN
 	s_wrd_jump <= '1' WHEN (s_f_jumps = F_JUMP_JAL OR s_f_jumps = F_JUMP_CALLS) ELSE
                   '0';
 
-    s_wrd_io <= '1' when s_op = F_INPUT else '0';
+    s_wrd_io <= '1' WHEN s_op = F_INPUT ELSE '0';
+
+    s_wrd_sys <= '1' WHEN   ( s_f_sys = F_SYS_WRS OR s_f_sys = F_SYS_RETI OR
+                              s_f_sys = F_SYS_EI OR s_f_sys = F_SYS_DI)
+                            ELSE '0';
+
+    -- los dos llegan a la misma conclusión
+    d_sys <= s_wrd_sys;
 
 	WITH s_opcode SELECT
         wrd <= '1'         WHEN OPCODE_MOVS,  -- Cuando MOVS
@@ -106,12 +124,22 @@ BEGIN
                '1'         WHEN OPCODE_IMMED,
                s_wrd_jump  WHEN OPCODE_JUMPS,
                s_wrd_io    WHEN OPCODE_IO,
+               s_wrd_sys   WHEN OPCODE_SYS,
                '0'         WHEN OTHERS;
+
+    a_sys <= A_SYS_OUT_SYS  WHEN ( s_f_sys = F_SYS_RDS OR s_f_sys = F_SYS_EI OR
+                                  s_f_sys = F_SYS_DI OR s_f_sys = F_SYS_RETI)
+             ELSE A_SYS_OUT_REG;
+
+        s_f_addra_sys <=    "111" WHEN (s_f_sys = F_SYS_EI OR s_f_sys = F_SYS_DI) ELSE
+                            "000" WHEN (s_f_sys = F_SYS_RETI) ELSE
+                            s_second_reg;
 
 	-- Direcciones de registros
 	WITH s_opcode SELECT
-		addr_a <= s_first_reg  WHEN OPCODE_MOVS,
-                  s_second_reg WHEN OTHERS;
+		addr_a <= s_first_reg   WHEN OPCODE_MOVS,
+                  s_f_addra_sys WHEN OPCODE_SYS,
+                  s_second_reg  WHEN OTHERS;
 
 	WITH s_opcode SELECT
 		addr_b <= s_first_reg WHEN OPCODE_STORE,
@@ -121,21 +149,27 @@ BEGIN
                   s_first_reg WHEN OPCODE_IO,
                   s_third_reg WHEN OTHERS;
 
-	-- siempre pasa esto
-	addr_d <= s_first_reg;
+    addr_d <= "111" WHEN (s_opcode = OPCODE_SYS AND (s_f_sys = F_SYS_EI OR s_f_sys = F_SYS_DI OR
+                          s_f_sys = F_SYS_RETI)) ELSE
+              s_first_reg;
 
 	WITH s_opcode SELECT
-        b_or_immed <= '1' WHEN OPCODE_CMPS,
-                      '1' WHEN OPCODE_ARIT_LOG,
-                      '1' WHEN OPCODE_EXT_ARIT,
-                      '1' WHEN OPCODE_BRANCHES,
-                      '1' WHEN OPCODE_JUMPS,
-                      '0' WHEN OTHERS;
+        b_or_immed <= BIMM_B_OUT WHEN OPCODE_CMPS,
+                      BIMM_B_OUT WHEN OPCODE_ARIT_LOG,
+                      BIMM_B_OUT WHEN OPCODE_EXT_ARIT,
+                      BIMM_B_OUT WHEN OPCODE_BRANCHES,
+                      BIMM_B_OUT WHEN OPCODE_JUMPS,
+                      BIMM_IMMED_OUT WHEN OTHERS;
+
+    s_f_immed_sys <= x"0002" WHEN (s_f_sys = F_SYS_EI) ELSE
+                     x"FFFD" WHEN (s_f_sys = F_SYS_DI) ELSE
+                     x"0000";
 
 	-- Valor inmediato con extension de signo extraido de la instruccion.
 	WITH s_opcode SELECT
 		immed <= std_logic_vector(resize(s_long_immed, immed'length))  WHEN OPCODE_MOVS,
                  std_logic_vector(resize(s_long_immed, immed'length))  WHEN OPCODE_BRANCHES,
+                 s_f_immed_sys                                         WHEN OPCODE_SYS,
                  std_logic_vector(resize(s_short_immed, immed'length)) WHEN OTHERS;
 
 	-- Permiso de escritura en la memoria si es una instrucción ST o STB
@@ -150,6 +184,7 @@ BEGIN
                 IN_D_DATAMEM WHEN OPCODE_LOADB, -- Cuando LD o LDB
                 IN_D_PC      WHEN OPCODE_JUMPS, -- ESTO IGNORA SI ES JAL O CALLS, LE ENTRA PC+2 AL BANCO DE REGS SIEMPRE.
                 IN_D_IO      WHEN OPCODE_IO,    -- Cuando operamos con IO
+                IN_D_ALUOUT  WHEN OPCODE_SYS,
                 IN_D_ALUOUT  WHEN OTHERS;
 
 	-- La señal que determina si hay que desplazar el inmediato o no

@@ -23,8 +23,8 @@ PACKAGE package_opcodes IS
     CONSTANT F_INPUT         : std_logic := '0';
     CONSTANT F_OUTPUT        : std_logic := '1';
 
-    CONSTANT F_SYS_READ      : std_logic_vector(5 DOWNTO 0) := "101100";
-    CONSTANT F_SYS_WRITE     : std_logic_vector(5 DOWNTO 0) := "110000";
+    CONSTANT F_SYS_RDS       : std_logic_vector(5 DOWNTO 0) := "101100";
+    CONSTANT F_SYS_WRS       : std_logic_vector(5 DOWNTO 0) := "110000";
     CONSTANT F_SYS_EI        : std_logic_vector(5 DOWNTO 0) := "100000";
     CONSTANT F_SYS_DI        : std_logic_vector(5 DOWNTO 0) := "100001";
     CONSTANT F_SYS_RETI      : std_logic_vector(5 DOWNTO 0) := "100100";

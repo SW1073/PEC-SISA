@@ -85,7 +85,7 @@ BEGIN
 
 	-- s_data <= datard_m when in_d = '1' else s_aluout;
 	s_immed_real <= immed WHEN immed_x2 = '0' ELSE (immed(14 DOWNTO 0) & '0');
-	s_y          <= s_regout_b WHEN b_or_immed = '1' ELSE s_immed_real;
+	s_y          <= s_regout_b WHEN b_or_immed = BIMM_B_OUT ELSE s_immed_real;
 	regout_a     <= s_regout_a;
 
 	reg : regfile PORT MAP(

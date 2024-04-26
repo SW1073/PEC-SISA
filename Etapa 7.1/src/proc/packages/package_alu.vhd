@@ -9,7 +9,7 @@ PACKAGE package_alu IS
 	CONSTANT OP_CMPS          : std_logic_vector(2 DOWNTO 0) := "001";
 	CONSTANT OP_EXT_ARIT      : std_logic_vector(2 DOWNTO 0) := "010";
 	CONSTANT OP_IMMED         : std_logic_vector(2 DOWNTO 0) := "011";
-	CONSTANT OP_MOVS          : std_logic_vector(2 DOWNTO 0) := "100";
+	CONSTANT OP_MISC          : std_logic_vector(2 DOWNTO 0) := "100";
 
 	-- ARITMETICO LOGICAS
 	CONSTANT F_ARIT_LOG_AND   : std_logic_vector(2 DOWNTO 0) := "000";
@@ -54,9 +54,11 @@ PACKAGE package_alu IS
 	--
 	--
 	CONSTANT F_JUMP_CALLS     : std_logic_vector(2 DOWNTO 0) := "111";
+
 	-- MISC
 	CONSTANT F_MISC_MOVI      : std_logic_vector(2 DOWNTO 0) := "000";
 	CONSTANT F_MISC_MOVHI     : std_logic_vector(2 DOWNTO 0) := "001";
+    CONSTANT F_MISC_X_OUT     : std_logic_vector(2 DOWNTO 0) := "010";
 
 END package_alu;
 PACKAGE BODY package_alu IS
