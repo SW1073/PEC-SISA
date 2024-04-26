@@ -20,35 +20,18 @@ architecture comportament of ps2_keyboard_emul is
     signal s_internal_ps2_clk : std_logic := '0';
 
     signal s_ps2_data : std_logic := '1';
-    signal s_flag_start : std_logic := '0';
-
-    signal s_data_reversed: std_logic_vector(7 downto 0);
 
 begin
 
-    starter: process (s_internal_ps2_clk) is
-        variable v_previous_send : std_logic := '0';
-    begin
-        if falling_edge(s_internal_ps2_clk) then
-            if i_send = '1' and v_previous_send = '0' then
-                s_flag_start <= '1';
-            else
-                s_flag_start <= '0';
-            end if;
-        end if;
-
-        v_previous_send := i_send;
-    end process; -- starter
-
     -- next state process
-    next_state: process (s_internal_ps2_clk, s_flag_start) is
+    next_state: process (s_internal_ps2_clk) is
         variable v_state : ps2_state_t;
     begin
         if falling_edge(s_internal_ps2_clk) then
             v_state := s_state;
             case (v_state) is
                 when IDLE =>
-                    if s_flag_start = '1' then
+                    if i_send = '1' then
                         v_state := START;
                     end if;
 

@@ -140,7 +140,7 @@ begin
 
     addr_mem (15 downto 0) <= addr_SOC (15 downto 0);
     botones(9) <= reset_proc;
-
+    botones(8) <= '0'; -- normal running mode
     -- Descripcio del comportament
     clk <= not clk after 10 ns;
     reset_ram <= '1' after 15 ns, '0' after 50 ns;    -- reseteamos la RAm en el primer ciclo
