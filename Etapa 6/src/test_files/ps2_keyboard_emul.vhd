@@ -13,87 +13,85 @@ end ps2_keyboard_emul;
 
 architecture comportament of ps2_keyboard_emul is
 
-    type ps2_state_t is ( IDLE, SENDING );
+    type ps2_state_t is ( IDLE, START, DATA, PARITY, STOP );
 
     signal s_state : ps2_state_t := IDLE;
-    signal s_seq_buff : std_logic_vector(10 downto 0); -- 11 bits
-
-    signal s_idx : integer range 10 downto 0 := 10;
+    signal s_idx : integer range 8 downto 0 := 8;
     signal s_internal_ps2_clk : std_logic := '0';
 
-    signal s_falling_edge_counter : integer := 0;
+    signal s_ps2_data : std_logic := '1';
+
+    signal s_reversed_data_to_send : std_logic_vector(0 to 7);
 
 begin
 
-    -- Clock de 10 Mhz lol
-    s_internal_ps2_clk <= not s_internal_ps2_clk after 50 ns;
-
-    -- start bit
-    s_seq_buff(10) <= '0';
-    -- make command
-    s_seq_buff(9 downto 2) <= i_data_to_send;
-    -- parity bit
-    s_seq_buff(1) <= not xor_reduce(i_data_to_send);
-    -- stop bit
-    s_seq_buff(0) <= '1';
+    s_reversed_data_to_send <= i_data_to_send;
 
     -- next state process
-    next_state: process (i_send, s_idx) is
+    next_state: process (s_internal_ps2_clk) is
         variable v_state : ps2_state_t;
     begin
-        v_state := s_state;
-        case (v_state) is
-            when IDLE =>
-                if rising_edge(i_send) then
-                    v_state := SENDING;
-                end if;
-            when SENDING =>
-                if s_idx+1 = 0 then
-                    v_state := IDLE;
-                end if;
-        end case;
-        s_state <= v_state;
+        if falling_edge(s_internal_ps2_clk) then
+            v_state := s_state;
+            case (v_state) is
+                when IDLE =>
+                    if i_send = '1' then
+                        v_state := START;
+                    end if;
+
+                when START => v_state := DATA;
+
+                when DATA =>
+                    if s_idx = 0 then
+                        v_state := PARITY;
+                    end if;
+
+                when PARITY => v_state := STOP;
+
+                when STOP => v_state := IDLE;
+            end case;
+            s_state <= v_state;
+        end if;
     end process; -- next_state
 
     -- output logic process
     output_logic: process (ps2_clk) is
     begin
         if falling_edge(ps2_clk) then
-            s_falling_edge_counter <= s_falling_edge_counter + 1;
             case (s_state) is
                 when IDLE =>
-                    if i_send = '1' then
-                        s_idx <= s_idx - 1;
-                    end if;
-                when SENDING =>
+                    s_ps2_data <= '1';
+
+                when START =>
+                    s_ps2_data <= '0';
+
+                when DATA =>
                     if s_idx > 0 then
+                        s_ps2_data <= s_reversed_data_to_send(s_idx-1);
                         s_idx <= s_idx - 1;
-                    else
-                        s_idx <= 10;
                     end if;
+
+                when PARITY =>
+                    s_ps2_data <= not xor_reduce(i_data_to_send);
+
+                when STOP =>
+                    s_ps2_data <= '1';
+                    s_idx <= 8;
             end case;
         end if;
     end process; -- output_logic
 
+    s_internal_ps2_clk <= not s_internal_ps2_clk after 50 ns;
+
     -- done flag output
     with s_state select
         o_done <= '1' when IDLE,
-                  '0' when SENDING;
+                  '0' when others;
 
     -- Select which clock is running
-    ps2_clk <= '1' when
-                (s_state = IDLE and s_falling_edge_counter = 0) or
-                (s_state = SENDING and s_falling_edge_counter > 11)
-                else s_internal_ps2_clk;
-    -- with s_state select
-    --     ps2_clk <= '1'                  when IDLE,
-    --                 s_internal_ps2_clk  when SENDING;
+    ps2_clk <= '1' when s_state = IDLE else s_internal_ps2_clk;
 
-
-    -- Select what data is on the bus
-    with s_state select
-        ps2_data <= '1'                 when IDLE,
-                     s_seq_buff(s_idx)  when SENDING;
+    ps2_data <= s_ps2_data;
 
 end comportament;
 

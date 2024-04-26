@@ -15,6 +15,8 @@ vcom -93 -work work {../proc/alu/alu_ext_arit.vhd}
 vcom -93 -work work {../proc/alu/alu_misc.vhd}
 
 vcom -93 -work work {../io_ctrl/controladores_io.vhd}
+vcom -93 -work work {../Controlador_PS2_Keyboard/ps2_keyboard.vhd}
+vcom -93 -work work {../Controlador_PS2_Keyboard/keyboard_controller.vhd}
 
 vcom -93 -work work {../driver7Segmentos.vhd}
 vcom -93 -work work {../debugger.vhd}
