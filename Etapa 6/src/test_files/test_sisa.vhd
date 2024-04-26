@@ -64,34 +64,53 @@ architecture comportament of test_sisa is
     end component;
 
 
-   -- Registres (entrades) i cables
-    signal clk           : std_logic := '0';
-    signal reset_ram    	: std_logic := '0';
-    signal reset_proc    : std_logic := '0';
+    -- Registres (entrades) i cables
+    signal clk                  : std_logic := '0';
+    signal reset_ram            : std_logic := '0';
+    signal reset_proc           : std_logic := '0';
 
-    signal addr_SoC      : std_logic_vector(17 downto 0);
-    signal addr_mem      : std_logic_vector(15 downto 0);
-    signal data_mem      : std_logic_vector(15 downto 0);
+    signal addr_SoC             : std_logic_vector(17 downto 0);
+    signal addr_mem             : std_logic_vector(15 downto 0);
+    signal data_mem             : std_logic_vector(15 downto 0);
 
-    signal ub_m           : std_logic;
-    signal lb_m           : std_logic;
-    signal ce_m           : std_logic;
-    signal oe_m           : std_logic;
-    signal we_m           : std_logic;
-    signal ce_m2           : std_logic;
+    signal ub_m                 : std_logic;
+    signal lb_m                 : std_logic;
+    signal ce_m                 : std_logic;
+    signal oe_m                 : std_logic;
+    signal we_m                 : std_logic;
+    signal ce_m2                : std_logic;
 
-    signal botones      : std_logic_vector(9 downto 0);
-
-
-    signal s_ps2_data_to_send : std_logic_vector(7 downto 0);
-    signal s_ps2_send : std_logic;
-    signal s_ps2_done : std_logic;
-
-    signal s_ps2_clk    : std_logic;
-    signal s_ps2_dat    : std_logic;
+    signal botones              : std_logic_vector(9 downto 0);
 
 
+    signal s_ps2_data_to_send   : std_logic_vector(7 downto 0);
+    signal s_ps2_send           : std_logic;
+    signal s_ps2_done           : std_logic;
+
+    signal s_ps2_clk            : std_logic;
+    signal s_ps2_dat            : std_logic;
+
+
+    constant c_N                : integer := 4;
+    type arr_t is array (0 to c_N-1) of std_logic_vector(7 downto 0);
+    signal s_keyboard_scancodes : arr_t := (x"1C", x"F0", x"1C", x"1B");
+    signal s_keyboard_idx       : integer range 0 to c_N-1 := 0;
+    signal s_keyboard_done      : std_logic := '0';
 begin
+
+    s_ps2_data_to_send <= s_keyboard_scancodes(s_keyboard_idx);
+    s_ps2_send <= '0' when (s_keyboard_done = '1' or reset_proc = '1') else '1';
+
+    keyboard_sender: process (s_ps2_done) is
+    begin
+        if rising_edge(s_ps2_done) then
+            if s_keyboard_idx = c_N-1 then
+                s_keyboard_done <= '1';
+            else
+                s_keyboard_idx <= s_keyboard_idx + 1;
+            end if;
+        end if;
+    end process; -- keyboard sender
 
     ce_m2 <= '1', ce_m after 100ns;
 
@@ -135,12 +154,11 @@ begin
         ps2_data => s_ps2_dat
     );
 
-    s_ps2_data_to_send <= x"38";
-    s_ps2_send <= '0', '1' after 400 ns, '0' after 1200 ns;
 
     addr_mem (15 downto 0) <= addr_SOC (15 downto 0);
     botones(9) <= reset_proc;
     botones(8) <= '0'; -- normal running mode
+
     -- Descripcio del comportament
     clk <= not clk after 10 ns;
     reset_ram <= '1' after 15 ns, '0' after 50 ns;    -- reseteamos la RAm en el primer ciclo

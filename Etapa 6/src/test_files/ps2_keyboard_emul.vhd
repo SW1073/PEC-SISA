@@ -21,7 +21,11 @@ architecture comportament of ps2_keyboard_emul is
 
     signal s_ps2_data : std_logic := '1';
 
+    signal s_reversed_data_to_send : std_logic_vector(0 to 7);
+
 begin
+
+    s_reversed_data_to_send <= i_data_to_send;
 
     -- next state process
     next_state: process (s_internal_ps2_clk) is
@@ -63,7 +67,7 @@ begin
 
                 when DATA =>
                     if s_idx > 0 then
-                        s_ps2_data <= i_data_to_send(s_idx-1);
+                        s_ps2_data <= s_reversed_data_to_send(s_idx-1);
                         s_idx <= s_idx - 1;
                     end if;
 
