@@ -61,8 +61,8 @@ BEGIN
 	s_long_immed  <= signed(ir(7 DOWNTO 0));
 	s_op          <= ir(8);
 
-    s_op_sys <= OP_ARIT_LOG WHEN (s_f_sys = F_SYS_EI or s_f_sys = F_SYS_DI)
-                ELSE OP_MISC;
+    s_op_sys <= OP_ARIT_LOG WHEN (s_f_sys = F_SYS_EI or s_f_sys = F_SYS_DI) ELSE
+                OP_MISC;
 
 	-- Operacion de ALU
 	WITH s_opcode SELECT
@@ -75,7 +75,7 @@ BEGIN
               OP_EXT_ARIT WHEN OPCODE_EXT_ARIT, -- MULS Y DIVS
               OP_IMMED    WHEN OPCODE_IMMED,    -- IMMED (addi)
               OP_MISC     WHEN OPCODE_MOVS,     -- MOVS Y MISC
-              s_op_sys    WHEN OPCODE_SYS,
+              s_op_sys    WHEN OPCODE_SYS,      -- SISTEMA. Dependen de F
               OP_ARIT_LOG WHEN OTHERS;
 
     s_f_alu_sys <= F_MISC_X_OUT     WHEN (s_f_sys = F_SYS_RDS OR s_f_sys = F_SYS_WRS) ELSE
@@ -111,13 +111,26 @@ BEGIN
 
     s_wrd_io <= '1' WHEN s_op = F_INPUT ELSE '0';
 
-    s_wrd_sys <= '1' WHEN   ( s_f_sys = F_SYS_WRS OR s_f_sys = F_SYS_RETI OR
-                              s_f_sys = F_SYS_EI OR s_f_sys = F_SYS_DI)
-                            ELSE '0';
+    -- Señal de selección d_sys. Indica en cual de los 2 bancos de registros se escribe el dato d
+    with s_f_sys select
+        d_sys <= '1' when F_SYS_WRS,
+                 '1' when F_SYS_RETI,
+                 '1' when F_SYS_EI,
+                 '1' when F_SYS_DI,
+                 '0' when F_SYS_RDS,  -- Cuando RDS, escribimos, pero en el banco de regs regular, no en el otro
+                 '0' when others;
 
-    -- los dos llegan a la misma conclusión
-    d_sys <= s_wrd_sys;
+    -- Señal de esritura wrd cuando instruccion de sistema.
+    -- De momento, todas las instrucciones de sistema implementadas, escriben (a un banco, o al otro)
+    with s_f_sys select
+        s_wrd_sys <= '1' when F_SYS_WRS,
+                     '1' when F_SYS_RETI,
+                     '1' when F_SYS_EI,
+                     '1' when F_SYS_DI,
+                     '1' when F_SYS_RDS,
+                     '0' when others;
 
+    -- Señal de escritura en banco de registros
 	WITH s_opcode SELECT
         wrd <= '1'         WHEN OPCODE_MOVS,  -- Cuando MOVS
                '1'         WHEN OPCODE_LOAD,  -- Cuando LD
@@ -131,20 +144,25 @@ BEGIN
                s_wrd_sys   WHEN OPCODE_SYS,
                '0'         WHEN OTHERS;
 
+    -- Seleccion de la salida del primer puerto de lectura
+    -- Sale lo leido en el banco regular, o el de sisetma
     a_sys <= A_SYS_OUT_SYS  WHEN ( s_f_sys = F_SYS_RDS OR s_f_sys = F_SYS_EI OR
                                   s_f_sys = F_SYS_DI OR s_f_sys = F_SYS_RETI)
              ELSE A_SYS_OUT_REG;
 
+    -- Registro que se lee cuando estamos en ops de sistema.
+    -- Hardcoded para algunas instrucciones que siempre leen del mismo reg
     s_f_addra_sys <=    "111" WHEN (s_f_sys = F_SYS_EI OR s_f_sys = F_SYS_DI) ELSE
                         "000" WHEN (s_f_sys = F_SYS_RETI) ELSE
                         s_second_reg;
 
-	-- Direcciones de registros
+	-- Dirección del primer puerto de lectura
 	WITH s_opcode SELECT
 		addr_a <= s_first_reg   WHEN OPCODE_MOVS,
                   s_f_addra_sys WHEN OPCODE_SYS,
                   s_second_reg  WHEN OTHERS;
 
+    -- Direccion del segundo puerto de lectura
 	WITH s_opcode SELECT
 		addr_b <= s_first_reg WHEN OPCODE_STORE,
                   s_first_reg WHEN OPCODE_STOREB,
@@ -153,10 +171,12 @@ BEGIN
                   s_first_reg WHEN OPCODE_IO,
                   s_third_reg WHEN OTHERS;
 
+    -- Direccion del puerto de escritura
     addr_d <= "111" WHEN (s_opcode = OPCODE_SYS AND (s_f_sys = F_SYS_EI OR s_f_sys = F_SYS_DI OR
                           s_f_sys = F_SYS_RETI)) ELSE
               s_first_reg;
 
+    -- Selección de dato de entrada para segundo puerto de la alu
 	WITH s_opcode SELECT
         b_or_immed <= BIMM_B_OUT WHEN OPCODE_CMPS,
                       BIMM_B_OUT WHEN OPCODE_ARIT_LOG,
@@ -178,14 +198,14 @@ BEGIN
 
 	-- Permiso de escritura en la memoria si es una instrucción ST o STB
 	WITH s_opcode SELECT
-        wr_m <= '1' WHEN OPCODE_STORE,  -- Cuando ST o STB
-                '1' WHEN OPCODE_STOREB, -- Cuando ST o STB
+        wr_m <= '1' WHEN OPCODE_STORE,  -- Cuando ST
+                '1' WHEN OPCODE_STOREB, -- Cuando STB
                 '0' WHEN OTHERS;
 
 	-- 1 when MEM, 0 when ALU (permiso para el banco de registros)
 	WITH s_opcode SELECT
-        in_d <= IN_D_DATAMEM WHEN OPCODE_LOAD,  -- Cuando LD o LDB
-                IN_D_DATAMEM WHEN OPCODE_LOADB, -- Cuando LD o LDB
+        in_d <= IN_D_DATAMEM WHEN OPCODE_LOAD,  -- Cuando LD
+                IN_D_DATAMEM WHEN OPCODE_LOADB, -- Cuando LDB
                 IN_D_PC      WHEN OPCODE_JUMPS, -- ESTO IGNORA SI ES JAL O CALLS, LE ENTRA PC+2 AL BANCO DE REGS SIEMPRE.
                 IN_D_IO      WHEN OPCODE_IO,    -- Cuando operamos con IO
                 IN_D_ALUOUT  WHEN OPCODE_SYS,
@@ -193,8 +213,8 @@ BEGIN
 
 	-- La señal que determina si hay que desplazar el inmediato o no
 	WITH s_opcode SELECT
-        immed_x2 <= '1' WHEN OPCODE_LOAD,  -- Cuando LD o ST
-                    '1' WHEN OPCODE_STORE, -- Cuando LD o ST
+        immed_x2 <= '1' WHEN OPCODE_LOAD,  -- Cuando LD
+                    '1' WHEN OPCODE_STORE, -- Cuando ST
                     '0' WHEN OTHERS;
 
 	-- La señal indica si el acceso a memoria es a nivel de byte o word
