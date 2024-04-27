@@ -28,7 +28,7 @@ RSG:   getiid r7          ;obtiene el numero identificador de la interrupcion qu
        ; *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
        ; Rutina principal
        ; *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
-inici: 
+inici:
        ei                 ;activa las interrupciones
 binf:  movi R0,0
        bz   r0,binf       ;bucle infinito a la espera de que lleguen interrupciones

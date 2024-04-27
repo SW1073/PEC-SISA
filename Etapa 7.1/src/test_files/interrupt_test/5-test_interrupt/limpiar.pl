@@ -21,7 +21,7 @@ sub limpiar_tipofuente_codigo()
                 if ($longitud_code==4) {
                     #ROM Memory Modelsim
                     print FICHERO_SALIDA1 "$code\n";
-           
+
                     #placa DE1
                     print FICHERO_SALIDA2 "$code";
 
@@ -62,11 +62,11 @@ sub limpiar_tipofuente_datos()
                             $part2=substr($inv_data,4,4)."\n";
                         }
                         #ROM Memory Modelsim
-                        print FICHERO_SALIDA1 "${part1}${part2}";  
-                        
+                        print FICHERO_SALIDA1 "${part1}${part2}";
+
                         #placa DE1
                         print FICHERO_SALIDA2 "$inv_data";
-        
+
                         #placa DE2-115
                         print FICHERO_SALIDA3 "$data";
                     }
@@ -81,7 +81,7 @@ sub limpiar_tipofuente_datos()
 # Rutina Principal
 if ($#ARGV != 1) {
     printf STDERR "\n%sWARNING:%s USO correcto del programa \n",color("bold red on_white"),color("reset");
-    printf STDERR "  > %slimpiar.pl <codigo|datos> <nombre_fichero_origen> %s\n\n",color("bold"),color("reset"); 
+    printf STDERR "  > %slimpiar.pl <codigo|datos> <nombre_fichero_origen> %s\n\n",color("bold"),color("reset");
     die "Faltan el parametros de entrada\n"
 } else {
     $tipo_fuente = $ARGV[0];
@@ -100,7 +100,7 @@ if (open(FICHERO_IN, "$FICHERO_origen")) {
             if (open(FICHERO_SALIDA3, ">$FICHERO_SALIDA_DE2")) {
 
                 printf "Transformando: %s${FICHERO_origen}%s\n",color("bold green"),color("reset");
-        
+
                 limpiar_tipofuente_codigo() if (lc($tipo_fuente) eq "codigo");
                 limpiar_tipofuente_datos()  if (lc($tipo_fuente) eq "datos");
 

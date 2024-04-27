@@ -47,6 +47,7 @@ ARCHITECTURE Structure OF control_l IS
     SIGNAL s_f_alu_sys   : std_logic_vector(2 DOWNTO 0);
     SIGNAL s_f_addra_sys : std_logic_vector(2 DOWNTO 0);
     SIGNAL s_f_immed_sys : std_logic_vector(15 DOWNTO 0);
+    SIGNAL s_op_sys      : std_logic_vector(2 downto 0);
 BEGIN
 
 	s_opcode      <= ir(15 DOWNTO 12);
@@ -60,6 +61,9 @@ BEGIN
 	s_long_immed  <= signed(ir(7 DOWNTO 0));
 	s_op          <= ir(8);
 
+    s_op_sys <= OP_ARIT_LOG WHEN (s_f_sys = F_SYS_EI or s_f_sys = F_SYS_DI)
+                ELSE OP_MISC;
+
 	-- Operacion de ALU
 	WITH s_opcode SELECT
         op <= OP_ARIT_LOG WHEN OPCODE_ARIT_LOG, -- ARITMETICO LOGICAS
@@ -71,7 +75,7 @@ BEGIN
               OP_EXT_ARIT WHEN OPCODE_EXT_ARIT, -- MULS Y DIVS
               OP_IMMED    WHEN OPCODE_IMMED,    -- IMMED (addi)
               OP_MISC     WHEN OPCODE_MOVS,     -- MOVS Y MISC
-              OP_MISC     WHEN OPCODE_SYS,
+              s_op_sys    WHEN OPCODE_SYS,
               OP_ARIT_LOG WHEN OTHERS;
 
     s_f_alu_sys <= F_MISC_X_OUT     WHEN (s_f_sys = F_SYS_RDS OR s_f_sys = F_SYS_WRS) ELSE
@@ -131,9 +135,9 @@ BEGIN
                                   s_f_sys = F_SYS_DI OR s_f_sys = F_SYS_RETI)
              ELSE A_SYS_OUT_REG;
 
-        s_f_addra_sys <=    "111" WHEN (s_f_sys = F_SYS_EI OR s_f_sys = F_SYS_DI) ELSE
-                            "000" WHEN (s_f_sys = F_SYS_RETI) ELSE
-                            s_second_reg;
+    s_f_addra_sys <=    "111" WHEN (s_f_sys = F_SYS_EI OR s_f_sys = F_SYS_DI) ELSE
+                        "000" WHEN (s_f_sys = F_SYS_RETI) ELSE
+                        s_second_reg;
 
 	-- Direcciones de registros
 	WITH s_opcode SELECT
