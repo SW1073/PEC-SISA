@@ -39,6 +39,8 @@ ARCHITECTURE Structure OF sisa IS
 		PORT (
 			clk       : IN  std_logic;
 			boot      : IN  std_logic;
+            inta      : OUT  STD_LOGIC;
+            intr      : IN  STD_LOGIC;
 			datard_m  : IN  std_logic_vector(15 DOWNTO 0);
 			addr_m    : OUT std_logic_vector(15 DOWNTO 0);
 			data_wr   : OUT std_logic_vector(15 DOWNTO 0);
@@ -79,6 +81,8 @@ ARCHITECTURE Structure OF sisa IS
         PORT (
             boot       : IN  STD_LOGIC;
             CLOCK_50   : IN  STD_LOGIC;
+            inta       : IN  STD_LOGIC;
+            intr       : OUT  STD_LOGIC;
             addr_io    : IN  STD_LOGIC_VECTOR(7  DOWNTO 0);
             wr_io      : IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
             rd_io      : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
@@ -179,6 +183,9 @@ ARCHITECTURE Structure OF sisa IS
     signal s_clk_50      : std_logic;
     signal s_clk_6_25    : std_logic;
 
+    SIGNAL s_intr        : std_logic;
+    SIGNAL s_inta        : std_logic;
+
 BEGIN
 
     s_boot <= SW(9);
@@ -217,6 +224,8 @@ BEGIN
         -- inputs
         boot        => s_boot,
         CLOCK_50    => s_clk_50,
+        intr        => s_intr,
+        inta        => s_inta,
         addr_io     => s_addr_io, -- address
         wr_io       => s_data_wr, -- write data
         wr_out      => s_wr_out,  -- write eanble
@@ -240,7 +249,9 @@ BEGIN
 		clk       => s_clk_6_25,
 		datard_m  => s_rd_data,
         rd_io     => s_rd_io,
+        intr      => s_intr,
 		-- outputs
+        inta      => s_inta,
 		word_byte => s_word_byte,
 		wr_m      => s_wr_m,
 		addr_m    => s_addr_m,

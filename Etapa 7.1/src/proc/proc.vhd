@@ -5,6 +5,8 @@ ENTITY proc IS
 	PORT (
 		clk       : IN  std_logic;
 		boot      : IN  std_logic;
+        inta      : OUT  std_logic;
+        intr      : IN  std_logic;
 		datard_m  : IN  std_logic_vector(15 DOWNTO 0);
 		addr_m    : OUT std_logic_vector(15 DOWNTO 0);
 		data_wr   : OUT std_logic_vector(15 DOWNTO 0);
