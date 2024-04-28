@@ -28,6 +28,7 @@ ENTITY unidad_control IS
         word_byte  : OUT std_logic;
         b_or_immed : OUT std_logic;
         a_sys      : OUT std_logic;
+        b_sys      : OUT std_logic;
         addr_io    : OUT STD_LOGIC_VECTOR(7  DOWNTO 0);
         wr_out     : OUT STD_LOGIC;
         rd_in      : OUT STD_LOGIC);
@@ -57,6 +58,7 @@ ARCHITECTURE Structure OF unidad_control IS
 			tknbr      : OUT std_logic_vector(1 DOWNTO 0);
             b_or_immed : OUT std_logic;
             a_sys      : OUT std_logic;
+            b_sys      : OUT std_logic;
             addr_io    : OUT STD_LOGIC_VECTOR(7  DOWNTO 0);
             wr_out     : OUT STD_LOGIC;
             rd_in      : OUT STD_LOGIC);
@@ -135,6 +137,7 @@ BEGIN
 		tknbr      => s_tknbr,
 		b_or_immed => b_or_immed,
         a_sys      => a_sys,
+        b_sys      => b_sys,
         addr_io    => addr_io,
         wr_out     => s_wr_out,
         rd_in      => s_rd_in

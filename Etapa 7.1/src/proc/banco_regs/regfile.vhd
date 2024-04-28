@@ -2,6 +2,7 @@ LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 USE ieee.numeric_std.ALL;        --Esta libreria sera necesaria si usais conversiones TO_INTEGER
 USE ieee.std_logic_unsigned.ALL; --Esta libreria sera necesaria si usais conversiones CONV_INTEGER
+USE work.package_control.ALL;
 
 ENTITY regfile IS
 	PORT (
@@ -13,6 +14,7 @@ ENTITY regfile IS
 		addr_b : IN  std_logic_vector(2 DOWNTO 0);
 		addr_d : IN  std_logic_vector(2 DOWNTO 0);
         a_sys  : IN  std_logic;
+        b_sys  : IN  std_logic;
 		a      : OUT std_logic_vector(15 DOWNTO 0);
 		b      : OUT std_logic_vector(15 DOWNTO 0));
 END regfile;
@@ -29,6 +31,9 @@ ARCHITECTURE Structure OF regfile IS
 
     SIGNAL reg_a        : std_logic_vector(15 DOWNTO 0);
     SIGNAL sys_reg_a    : std_logic_vector(15 DOWNTO 0);
+
+    SIGNAL reg_b        : std_logic_vector(15 DOWNTO 0);
+    SIGNAL sys_reg_b    : std_logic_vector(15 DOWNTO 0);
 BEGIN
 
     s_wrd <= '0' WHEN d_sys = '1' ELSE wrd;
@@ -53,9 +58,11 @@ BEGIN
 
     reg_a <= registers(conv_integer(addr_a));
     sys_reg_a <= sys_registers(conv_integer(addr_a));
+	a <= sys_reg_a WHEN a_sys = SYS_OUT_SYS ELSE reg_a;
 
-	a <= sys_reg_a WHEN a_sys = '1' ELSE reg_a;
-	b <= registers(conv_integer(addr_b));
+    reg_b <= registers(conv_integer(addr_b));
+    sys_reg_b <= sys_registers(conv_integer(addr_b));
+	b <= sys_reg_b WHEN b_sys = SYS_OUT_SYS ELSE reg_b;
 
 END Structure;
 

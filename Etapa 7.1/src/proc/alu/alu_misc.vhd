@@ -16,7 +16,7 @@ ARCHITECTURE Structure OF alu_misc IS
 BEGIN
 
 	WITH op SELECT
-        w <= y                              WHEN F_MISC_MOVI,  -- MOVI
+        w <= y                              WHEN F_MISC_MOVI,  -- MOVI, or dejar pasar Y (F_MISC_Y_OUT)
              y(7 DOWNTO 0) & x(7 DOWNTO 0)  WHEN F_MISC_MOVHI, -- MOVHI
              x                              WHEN F_MISC_X_OUT, -- deja pasar X
              "XXXXXXXXXXXXXXXX"             WHEN OTHERS;

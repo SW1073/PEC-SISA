@@ -25,29 +25,32 @@ ENTITY control_l IS
 		tknbr      : OUT std_logic_vector(1 DOWNTO 0);
 		b_or_immed : OUT std_logic;
         a_sys      : OUT std_logic;
+        b_sys      : OUT std_logic;
         addr_io    : OUT STD_LOGIC_VECTOR(7  DOWNTO 0);
         wr_out     : OUT STD_LOGIC;
         rd_in      : OUT STD_LOGIC);
 END control_l;
 
 ARCHITECTURE Structure OF control_l IS
-	SIGNAL s_opcode      : std_logic_vector(3 DOWNTO 0);
-	SIGNAL s_f           : std_logic_vector(2 DOWNTO 0);
-	SIGNAL s_f_jumps     : std_logic_vector(2 DOWNTO 0);
-	SIGNAL s_f_sys       : std_logic_vector(5 DOWNTO 0);
-	SIGNAL s_first_reg   : std_logic_vector(2 DOWNTO 0);
-	SIGNAL s_second_reg  : std_logic_vector(2 DOWNTO 0);
-	SIGNAL s_third_reg   : std_logic_vector(2 DOWNTO 0);
-	SIGNAL s_short_immed : signed(5 DOWNTO 0);
-	SIGNAL s_long_immed  : signed(7 DOWNTO 0);
-	SIGNAL s_op          : std_logic;
-	SIGNAL s_wrd_jump    : std_logic;
-	SIGNAL s_wrd_io      : std_logic;
-    SIGNAL s_wrd_sys     : std_logic;
-    SIGNAL s_f_alu_sys   : std_logic_vector(2 DOWNTO 0);
-    SIGNAL s_f_addra_sys : std_logic_vector(2 DOWNTO 0);
-    SIGNAL s_f_immed_sys : std_logic_vector(15 DOWNTO 0);
-    SIGNAL s_op_sys      : std_logic_vector(2 downto 0);
+	SIGNAL s_opcode         : std_logic_vector(3 DOWNTO 0);
+	SIGNAL s_f              : std_logic_vector(2 DOWNTO 0);
+	SIGNAL s_f_jumps        : std_logic_vector(2 DOWNTO 0);
+	SIGNAL s_f_sys          : std_logic_vector(5 DOWNTO 0);
+	SIGNAL s_first_reg      : std_logic_vector(2 DOWNTO 0);
+	SIGNAL s_second_reg     : std_logic_vector(2 DOWNTO 0);
+	SIGNAL s_third_reg      : std_logic_vector(2 DOWNTO 0);
+	SIGNAL s_short_immed    : signed(5 DOWNTO 0);
+	SIGNAL s_long_immed     : signed(7 DOWNTO 0);
+	SIGNAL s_op             : std_logic;
+	SIGNAL s_wrd_jump       : std_logic;
+	SIGNAL s_wrd_io         : std_logic;
+    SIGNAL s_wrd_sys        : std_logic;
+    SIGNAL s_f_alu_sys      : std_logic_vector(2 DOWNTO 0);
+    SIGNAL s_f_addra_sys    : std_logic_vector(2 DOWNTO 0);
+    SIGNAL s_f_immed_sys    : std_logic_vector(15 DOWNTO 0);
+    SIGNAL s_op_sys         : std_logic_vector(2 downto 0);
+    SIGNAL s_d_sys          : std_logic;
+    SIGNAL s_b_or_immed_sys : std_logic;
 BEGIN
 
 	s_opcode      <= ir(15 DOWNTO 12);
@@ -79,6 +82,7 @@ BEGIN
               OP_ARIT_LOG WHEN OTHERS;
 
     s_f_alu_sys <= F_MISC_X_OUT     WHEN (s_f_sys = F_SYS_RDS OR s_f_sys = F_SYS_WRS) ELSE
+                   F_MISC_Y_OUT     WHEN (s_f_sys = F_SYS_RETI) ELSE
                    F_ARIT_LOG_AND   WHEN (s_f_sys = F_SYS_DI) ELSE
                    F_ARIT_LOG_OR    WHEN (s_f_sys = F_SYS_EI) ELSE
                    F_MISC_X_OUT;
@@ -100,35 +104,38 @@ BEGIN
              TKNBR_JUMP     WHEN s_opcode = OPCODE_JUMPS AND s_f_jumps = F_JUMP_JNZ AND z = '0' ELSE
              TKNBR_JUMP     WHEN s_opcode = OPCODE_JUMPS AND s_f_jumps = F_JUMP_JMP ELSE
              TKNBR_JUMP     WHEN s_opcode = OPCODE_JUMPS AND s_f_jumps = F_JUMP_JAL ELSE
+             TKNBR_JUMP     WHEN s_opcode = OPCODE_SYS AND s_f_sys = F_SYS_RETI ELSE
              TKNBR_NOT_TAKEN;
 
 	-- Enable de incremento de PC
 	ldpc <= '0' WHEN ir = x"FFFF" ELSE '1';
 
 	-- Permiso de escritura en el Banco de registros
-	s_wrd_jump <= '1' WHEN (s_f_jumps = F_JUMP_JAL OR s_f_jumps = F_JUMP_CALLS) ELSE
+    s_wrd_jump <= '1' WHEN (s_f_jumps = F_JUMP_JAL OR s_f_jumps = F_JUMP_CALLS) ELSE
                   '0';
 
     s_wrd_io <= '1' WHEN s_op = F_INPUT ELSE '0';
 
     -- Señal de selección d_sys. Indica en cual de los 2 bancos de registros se escribe el dato d
-    with s_f_sys select
-        d_sys <= '1' when F_SYS_WRS,
-                 '1' when F_SYS_RETI,
-                 '1' when F_SYS_EI,
-                 '1' when F_SYS_DI,
-                 '0' when F_SYS_RDS,  -- Cuando RDS, escribimos, pero en el banco de regs regular, no en el otro
-                 '0' when others;
+    WITH s_f_sys SELECT
+        s_d_sys <= '1' WHEN F_SYS_WRS,
+                   '1' WHEN F_SYS_RETI,
+                   '1' WHEN F_SYS_EI,
+                   '1' WHEN F_SYS_DI,
+                   '0' WHEN F_SYS_RDS,  -- Cuando RDS, escribimos, pero en el banco de regs regular, no en el otro
+                   '0' WHEN others;
+
+    d_sys <= s_d_sys WHEN s_opcode = OPCODE_SYS ELSE '0';
 
     -- Señal de esritura wrd cuando instruccion de sistema.
     -- De momento, todas las instrucciones de sistema implementadas, escriben (a un banco, o al otro)
-    with s_f_sys select
-        s_wrd_sys <= '1' when F_SYS_WRS,
-                     '1' when F_SYS_RETI,
-                     '1' when F_SYS_EI,
-                     '1' when F_SYS_DI,
-                     '1' when F_SYS_RDS,
-                     '0' when others;
+    WITH s_f_sys SELECT
+        s_wrd_sys <= '1' WHEN F_SYS_WRS,
+                     '1' WHEN F_SYS_RETI,
+                     '1' WHEN F_SYS_EI,
+                     '1' WHEN F_SYS_DI,
+                     '1' WHEN F_SYS_RDS,
+                     '0' WHEN others;
 
     -- Señal de escritura en banco de registros
 	WITH s_opcode SELECT
@@ -146,14 +153,20 @@ BEGIN
 
     -- Seleccion de la salida del primer puerto de lectura
     -- Sale lo leido en el banco regular, o el de sisetma
-    a_sys <= A_SYS_OUT_SYS  WHEN ( s_f_sys = F_SYS_RDS OR s_f_sys = F_SYS_EI OR
-                                  s_f_sys = F_SYS_DI OR s_f_sys = F_SYS_RETI)
-             ELSE A_SYS_OUT_REG;
+    -- Puerto A
+    a_sys <= SYS_OUT_SYS  WHEN s_opcode = OPCODE_SYS and
+                             ( s_f_sys = F_SYS_RDS OR s_f_sys = F_SYS_EI OR
+                               s_f_sys = F_SYS_DI OR s_f_sys = F_SYS_RETI )
+             ELSE SYS_OUT_REG;
+
+    -- Puerto B
+    b_sys <= SYS_OUT_SYS WHEN s_opcode = OPCODE_SYS and ( s_f_sys = F_SYS_RETI ) ELSE
+             SYS_OUT_REG;
 
     -- Registro que se lee cuando estamos en ops de sistema.
     -- Hardcoded para algunas instrucciones que siempre leen del mismo reg
     s_f_addra_sys <=    "111" WHEN (s_f_sys = F_SYS_EI OR s_f_sys = F_SYS_DI) ELSE
-                        "000" WHEN (s_f_sys = F_SYS_RETI) ELSE
+                        "001" WHEN (s_f_sys = F_SYS_RETI) ELSE
                         s_second_reg;
 
 	-- Dirección del primer puerto de lectura
@@ -169,6 +182,7 @@ BEGIN
                   s_first_reg WHEN OPCODE_BRANCHES,
                   s_first_reg WHEN OPCODE_JUMPS,
                   s_first_reg WHEN OPCODE_IO,
+                  "000"       WHEN OPCODE_SYS,
                   s_third_reg WHEN OTHERS;
 
     -- Direccion del puerto de escritura
@@ -176,14 +190,19 @@ BEGIN
                           s_f_sys = F_SYS_RETI)) ELSE
               s_first_reg;
 
+
+    s_b_or_immed_sys <= BIMM_IMMED_OUT WHEN s_f_sys = F_SYS_DI or s_f_sys = F_SYS_EI ELSE
+                        BIMM_B_OUT;
+
     -- Selección de dato de entrada para segundo puerto de la alu
 	WITH s_opcode SELECT
-        b_or_immed <= BIMM_B_OUT WHEN OPCODE_CMPS,
-                      BIMM_B_OUT WHEN OPCODE_ARIT_LOG,
-                      BIMM_B_OUT WHEN OPCODE_EXT_ARIT,
-                      BIMM_B_OUT WHEN OPCODE_BRANCHES,
-                      BIMM_B_OUT WHEN OPCODE_JUMPS,
-                      BIMM_IMMED_OUT WHEN OTHERS;
+        b_or_immed <= BIMM_B_OUT        WHEN OPCODE_CMPS,
+                      BIMM_B_OUT        WHEN OPCODE_ARIT_LOG,
+                      BIMM_B_OUT        WHEN OPCODE_EXT_ARIT,
+                      BIMM_B_OUT        WHEN OPCODE_BRANCHES,
+                      BIMM_B_OUT        WHEN OPCODE_JUMPS,
+                      s_b_or_immed_sys  WHEN OPCODE_SYS,
+                      BIMM_IMMED_OUT    WHEN OTHERS;
 
     s_f_immed_sys <= x"0002" WHEN (s_f_sys = F_SYS_EI) ELSE
                      x"FFFD" WHEN (s_f_sys = F_SYS_DI) ELSE

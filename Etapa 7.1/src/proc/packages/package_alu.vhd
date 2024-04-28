@@ -59,6 +59,7 @@ PACKAGE package_alu IS
 	CONSTANT F_MISC_MOVI      : std_logic_vector(2 DOWNTO 0) := "000";
 	CONSTANT F_MISC_MOVHI     : std_logic_vector(2 DOWNTO 0) := "001";
     CONSTANT F_MISC_X_OUT     : std_logic_vector(2 DOWNTO 0) := "010";
+    CONSTANT F_MISC_Y_OUT     : std_logic_vector(2 DOWNTO 0) := "000";
 
 END package_alu;
 PACKAGE BODY package_alu IS

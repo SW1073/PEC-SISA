@@ -21,6 +21,7 @@ ENTITY datapath IS
 		pc         : IN  std_logic_vector(15 DOWNTO 0);
 		in_d       : IN  std_logic_vector(1 DOWNTO 0);
         a_sys      : IN  std_logic;
+        b_sys      : IN  std_logic;
 		b_or_immed : IN  std_logic;
         rd_io      : IN  std_logic_vector(15 downto 0);
 		addr_m     : OUT std_logic_vector(15 DOWNTO 0);
@@ -54,6 +55,7 @@ ARCHITECTURE Structure OF datapath IS
 			addr_b : IN  std_logic_vector(2 DOWNTO 0);
 			addr_d : IN  std_logic_vector(2 DOWNTO 0);
             a_sys  : IN  std_logic;
+            b_sys  : IN  std_logic;
 			a      : OUT std_logic_vector(15 DOWNTO 0);
 			b      : OUT std_logic_vector(15 DOWNTO 0));
 	END COMPONENT;
@@ -97,6 +99,7 @@ BEGIN
 		addr_b => addr_b,
 		addr_d => addr_d,
         a_sys  => a_sys,
+        b_sys  => b_sys,
 		a      => s_regout_a,
         b      => s_regout_b
 	);

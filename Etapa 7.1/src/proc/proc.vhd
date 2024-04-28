@@ -40,6 +40,7 @@ ARCHITECTURE Structure OF proc IS
 			in_d       : IN  std_logic_vector(1 DOWNTO 0);
 			b_or_immed : IN  std_logic;
             a_sys      : IN  std_logic;
+            b_sys      : IN  std_logic;
             rd_io      : IN  std_logic_vector(15 downto 0);
 			addr_m     : OUT std_logic_vector(15 DOWNTO 0);
 			data_wr    : OUT std_logic_vector(15 DOWNTO 0);
@@ -70,6 +71,7 @@ ARCHITECTURE Structure OF proc IS
 			word_byte  : OUT std_logic;
             b_or_immed : OUT std_logic;
             a_sys      : OUT std_logic;
+            b_sys      : OUT std_logic;
             addr_io    : OUT STD_LOGIC_VECTOR(7  DOWNTO 0);
             wr_out     : OUT STD_LOGIC;
             rd_in      : OUT STD_LOGIC);
@@ -89,6 +91,7 @@ ARCHITECTURE Structure OF proc IS
 	SIGNAL s_immed_x2   : std_logic;
 	SIGNAL s_b_or_immed : std_logic;
     SIGNAL s_a_sys      : std_logic;
+    SIGNAL s_b_sys      : std_logic;
 	SIGNAL s_z          : std_logic;
 	SIGNAL s_regout_a   : std_logic_vector(15 DOWNTO 0);
 
@@ -115,6 +118,7 @@ BEGIN
 		in_d       => s_in_d,
 		b_or_immed => s_b_or_immed,
         a_sys      => s_a_sys,
+        b_sys      => s_b_sys,
         rd_io      => rd_io,
 		-- outputs
 		addr_m     => addr_m,
@@ -147,6 +151,7 @@ BEGIN
 		word_byte  => word_byte,
 		b_or_immed => s_b_or_immed,
         a_sys      => s_a_sys,
+        b_sys      => s_b_sys,
         addr_io    => addr_io,
         wr_out     => wr_out,
         rd_in      => rd_in
