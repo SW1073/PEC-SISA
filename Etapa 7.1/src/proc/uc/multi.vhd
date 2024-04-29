@@ -43,31 +43,31 @@ BEGIN
 		END IF;
 	END PROCESS; -- prx_estado
 
-	-- Se�al que, o bien vale el valor de ldpc generado por la l�gica de control cuando se est� en el ciclo
+	-- Señal que, o bien vale el valor de ldpc generado por la lógica de control cuando se está en el ciclo
 	--de DEMW o 0 en otro caso (hasta que implementemos las instrucciones de salto).
 	ldpc <= ldpc_l WHEN s_estado = DEMW ELSE '0';
 
-	-- Se�al que, o bien vale el valor de wrd generado por la l�gica de control cuando se est� en el ciclo
+	-- Señal que, o bien vale el valor de wrd generado por la lógica de control cuando se está en el ciclo
 	-- de DEMW o 0 en otro caso.
 	wrd <= wrd_l WHEN s_estado = DEMW ELSE '0';
 
-	-- Se�al que, o bien vale el valor de wr_m generado por la l�gica de control cuando se est� en el
+	-- Señal que, o bien vale el valor de wr_m generado por la lógica de control cuando se está en el
 	-- ciclo de DEMW o 0 en otro caso.
 	wr_m <= wr_m_l WHEN s_estado = DEMW ELSE '0';
 
-	-- Se�al word_byte generada por la l�gica de control y que s�lo debe dejarse pasar en el ciclo de
+	-- Señal word_byte generada por la lógica de control y que sólo debe dejarse pasar en el ciclo de
 	-- DEMW. En el ciclo F debe valer 0 ya que el acceso a la memoria,
-	-- para traerse una instrucci�n, es a nivel de word
+	-- para traerse una instrucción, es a nivel de word
 	word_byte <= w_b WHEN s_estado = DEMW ELSE '0';
 
     rd_in <= rd_in_l WHEN s_estado = DEMW ELSE '0';
     wr_out <= wr_out_l WHEN s_estado = DEMW ELSE '0';
 
-	-- Esta se�al a 1 le indicar� al datapath que en el bus de direcciones de la memoria deber� poner la
-	-- salida de la ALU y si vale 0 deber� poner el PC. B�sicamente nos dice si estamos al ciclo F o DEMW
+	-- Esta señal a 1 le indicará al datapath que en el bus de direcciones de la memoria deberá poner la
+	-- salida de la ALU y si vale 0 deberá poner el PC. Básicamente nos dice si estamos al ciclo F o DEMW
 	ins_dad <= '0' WHEN s_estado = FETCH ELSE '1'; -- s_estado es 0 si FETCH, 1 cuando DEMW
 
-	-- Es la se�al que indica que cargaremos un nuevo valor en el IR, s�lo se activa en el ciclo F
+	-- Es la señal que indica que cargaremos un nuevo valor en el IR, solo se activa en el ciclo F
 	ldir <= '1' WHEN s_estado = FETCH ELSE '0';
 
 END Structure;
