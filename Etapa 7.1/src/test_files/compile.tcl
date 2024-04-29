@@ -11,6 +11,10 @@ vcom -93 -work work {../io_ctrl/package_io.vhd}
 # IO controller and things inside it
 vcom -93 -work work {../Controlador_PS2_Keyboard/ps2_keyboard.vhd}
 vcom -93 -work work {../Controlador_PS2_Keyboard/keyboard_controller.vhd}
+vcom -93 -work work {../io_ctrl/interrupt/interrupt_ctrl.vhd}
+vcom -93 -work work {../io_ctrl/interrupt/timer_int_ctrl.vhd}
+vcom -93 -work work {../io_ctrl/interrupt/key_sw_int_ctrl.vhd}
+vcom -93 -work work {../io_ctrl/interrupt/keyboard_int_ctrl.vhd}
 vcom -93 -work work {../io_ctrl/controladores_io.vhd}
 
 

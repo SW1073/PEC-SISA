@@ -70,6 +70,15 @@ ARCHITECTURE Structure OF controladores_IO IS
             read_data   : OUT std_logic_vector(n_bits-1 DOWNTO 0));
     END COMPONENT;
 
+    COMPONENT timer_int_ctrl IS
+        PORT (
+            clk         : IN std_logic;
+            boot        : IN std_logic;
+            inta        : IN std_logic;
+            --
+            intr        : OUT std_logic);
+    END COMPONENT;
+
     TYPE Mat IS ARRAY (255 DOWNTO 0) OF std_logic_vector(15 DOWNTO 0);
     SIGNAL registers : Mat := (OTHERS => (OTHERS => '0'));
 
@@ -100,7 +109,7 @@ BEGIN
         IF rising_edge(CLOCK_50) THEN
             registers(PORT_KEY)(3 downto 0) <= s_read_keys;
             registers(PORT_SW)(7 downto 0) <= s_read_sw;
-            
+
             if v_contador_ciclos = 0 then
                 v_contador_ciclos := x"C350"; -- tiempo de ciclo=20ns(50Mhz) 1ms=50000ciclos
                 if v_contador_milisegundos > 0 then
@@ -193,6 +202,14 @@ BEGIN
         --
         intr        => s_switch_intr,
         read_data   => s_read_sw
+    );
+
+    timer0: timer_int_ctrl PORT MAP (
+        clk         => CLOCK_50,
+        boot        => boot,
+        inta        => s_timer_inta,
+        --
+        intr        => s_timer_intr
     );
 
 END Structure;

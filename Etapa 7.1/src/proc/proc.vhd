@@ -160,6 +160,7 @@ BEGIN
 	);
 
 	dbg_pc <= s_pc;
+    inta <= '0';
 
 END Structure;
 
