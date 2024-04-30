@@ -15,8 +15,11 @@ ENTITY regfile IS
 		addr_d : IN  std_logic_vector(2 DOWNTO 0);
         a_sys  : IN  std_logic;
         b_sys  : IN  std_logic;
+        system : IN  std_logic;
+        pc     : IN  std_logic_vector(15 DOWNTO 0);
 		a      : OUT std_logic_vector(15 DOWNTO 0);
-		b      : OUT std_logic_vector(15 DOWNTO 0));
+		b      : OUT std_logic_vector(15 DOWNTO 0);
+        int_enabled : OUT std_logic);
 END regfile;
 
 ARCHITECTURE Structure OF regfile IS
@@ -46,13 +49,19 @@ BEGIN
 	PROCESS (clk) IS
 	BEGIN
 		IF rising_edge(clk) THEN
-			IF s_wrd = '1' THEN
-				registers(conv_integer(addr_d)) <= d;
-			END IF;
+            IF system = '1' THEN
+                sys_registers(2) <= x"000F";
+                sys_registers(7)(1) <= '0';
+                sys_registers(1) <= pc;
+            END IF;
 
-			IF s_sys_wrd = '1' THEN
-				sys_registers(conv_integer(addr_d)) <= d;
-			END IF;
+            IF s_wrd = '1' THEN
+                registers(conv_integer(addr_d)) <= d;
+            END IF;
+
+            IF s_sys_wrd = '1' THEN
+                sys_registers(conv_integer(addr_d)) <= d;
+            END IF;
 		END IF;
 	END PROCESS;
 
@@ -63,6 +72,9 @@ BEGIN
     reg_b <= registers(conv_integer(addr_b));
     sys_reg_b <= sys_registers(conv_integer(addr_b));
 	b <= sys_reg_b WHEN b_sys = SYS_OUT_SYS ELSE reg_b;
+
+    -- bit 1 de S7
+    int_enabled <= sys_registers(7)(1);
 
 END Structure;
 

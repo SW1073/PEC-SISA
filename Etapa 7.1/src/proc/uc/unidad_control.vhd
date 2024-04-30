@@ -12,6 +12,8 @@ ENTITY unidad_control IS
         z          : IN  std_logic;
         datard_m   : IN  std_logic_vector(15 DOWNTO 0);
         regout_a   : IN  std_logic_vector(15 DOWNTO 0);
+        int_enabled: IN std_logic;
+        intr       : IN std_logic;
         op         : OUT std_logic_vector(2 DOWNTO 0);
         f          : OUT std_logic_vector(2 DOWNTO 0);
         wrd        : OUT std_logic;
@@ -31,7 +33,8 @@ ENTITY unidad_control IS
         b_sys      : OUT std_logic;
         addr_io    : OUT STD_LOGIC_VECTOR(7  DOWNTO 0);
         wr_out     : OUT STD_LOGIC;
-        rd_in      : OUT STD_LOGIC);
+        rd_in      : OUT STD_LOGIC;
+        system     : OUT std_logic);
 END unidad_control;
 
 ARCHITECTURE Structure OF unidad_control IS
@@ -41,6 +44,7 @@ ARCHITECTURE Structure OF unidad_control IS
 	COMPONENT control_l IS
 		PORT (
 			ir         : IN  std_logic_vector(15 DOWNTO 0);
+            system     : IN  std_logic;
 			z          : IN  std_logic;
 			op         : OUT std_logic_vector(2 DOWNTO 0);
 			f          : OUT std_logic_vector(2 DOWNTO 0);
@@ -75,6 +79,8 @@ ARCHITECTURE Structure OF unidad_control IS
             rd_in_l   : IN  std_logic;
             wr_out_l  : IN  std_logic;
             w_b       : IN  std_logic;
+            int_enabled : IN std_logic;
+            intr      : IN std_logic;
             ldpc      : OUT std_logic;
             wrd       : OUT std_logic;
             wr_m      : OUT std_logic;
@@ -82,7 +88,8 @@ ARCHITECTURE Structure OF unidad_control IS
             wr_out    : OUT std_logic;
             ldir      : OUT std_logic;
             ins_dad   : OUT std_logic;
-            word_byte : OUT std_logic);
+            word_byte : OUT std_logic;
+            system    : OUT std_logic);
 	END COMPONENT;
 
 	-- Senales para conectar control_l con multi
@@ -107,6 +114,8 @@ ARCHITECTURE Structure OF unidad_control IS
 
     SIGNAL s_rd_in  : std_logic;
     SIGNAL s_wr_out : std_logic;
+
+    SIGNAl s_system : std_logic;
 BEGIN
 
 	-- Aqui iria la declaracion del "mapeo" (PORT MAP) de los nombres de las entradas/salidas de los componentes
@@ -119,6 +128,7 @@ BEGIN
 	control_l0 : control_l PORT MAP(
 		-- input
 		ir => s_reg_ir, -- instruction register
+        system => s_system,
 		z  => z,
 		-- ouputs
 		op         => op,
@@ -153,6 +163,8 @@ BEGIN
         rd_in_l => s_rd_in,
         wr_out_l => s_wr_out,
 		w_b    => s_word_byte,
+        int_enabled => int_enabled,
+        intr   => intr,
 		-- outputs
 		ldpc      => s_multi_ldpc,
 		wrd       => wrd,
@@ -161,7 +173,8 @@ BEGIN
         wr_out    => wr_out,
 		ldir      => s_multi_ldir,
 		ins_dad   => ins_dad,
-		word_byte => word_byte
+		word_byte => word_byte,
+        system    => s_system
 	);
 
 	-- Program Counter and Instruction Register

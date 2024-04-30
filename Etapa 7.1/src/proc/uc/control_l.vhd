@@ -8,6 +8,7 @@ USE work.package_alu.ALL;
 ENTITY control_l IS
 	PORT (
 		ir         : IN  std_logic_vector(15 DOWNTO 0);
+        system     : IN std_logic;
 		z          : IN  std_logic;
 		op         : OUT std_logic_vector(2 DOWNTO 0);
 		f          : OUT std_logic_vector(2 DOWNTO 0);

@@ -10,6 +10,8 @@ ENTITY multi IS
 		wr_m_l    : IN  std_logic;
         rd_in_l   : IN  std_logic;
         wr_out_l  : IN  std_logic;
+        int_enabled : IN std_logic;
+        intr      : IN std_logic;
 		w_b       : IN  std_logic;
 		ldpc      : OUT std_logic;
 		wrd       : OUT std_logic;
@@ -18,13 +20,14 @@ ENTITY multi IS
         wr_out    : OUT std_logic;
 		ldir      : OUT std_logic;
 		ins_dad   : OUT std_logic;
-		word_byte : OUT std_logic);
+		word_byte : OUT std_logic;
+        system    : OUT std_logic);
 END ENTITY;
 
 ARCHITECTURE Structure OF multi IS
 
 	-- Aqui iria la declaracion de las los estados de la maquina de estados
-	TYPE StateType IS (FETCH, DEMW);
+	TYPE StateType IS (FETCH, DEMW, SYS);
 
 	SIGNAL s_estado : StateType := FETCH; -- 0 si FETCH, 1 si DEMW
 BEGIN
@@ -38,18 +41,25 @@ BEGIN
 		ELSIF rising_edge(clk) THEN
 			CASE s_estado IS
 				WHEN FETCH => s_estado <= DEMW;
-				WHEN DEMW  => s_estado  <= FETCH;
+				WHEN DEMW  => 
+                    IF intr = '1' AND int_enabled = '1' THEN
+                        s_estado  <= SYS;
+                    ELSE
+                        s_estado  <= FETCH;
+                    END IF;
+                WHEN SYS => s_estado <= FETCH;
 			END CASE; -- s_estado
 		END IF;
 	END PROCESS; -- prx_estado
 
 	-- Señal que, o bien vale el valor de ldpc generado por la lógica de control cuando se está en el ciclo
-	--de DEMW o 0 en otro caso (hasta que implementemos las instrucciones de salto).
-	ldpc <= ldpc_l WHEN s_estado = DEMW ELSE '0';
+	--de DEMW o 0 en otro caso
+	ldpc <= ldpc_l WHEN s_estado = DEMW AND s_estado = SYS ELSE '0';
 
 	-- Señal que, o bien vale el valor de wrd generado por la lógica de control cuando se está en el ciclo
 	-- de DEMW o 0 en otro caso.
-	wrd <= wrd_l WHEN s_estado = DEMW ELSE '0';
+	wrd <= wrd_l WHEN s_estado = DEMW AND s_estado = SYS
+           ELSE '0';
 
 	-- Señal que, o bien vale el valor de wr_m generado por la lógica de control cuando se está en el
 	-- ciclo de DEMW o 0 en otro caso.
@@ -69,6 +79,8 @@ BEGIN
 
 	-- Es la señal que indica que cargaremos un nuevo valor en el IR, solo se activa en el ciclo F
 	ldir <= '1' WHEN s_estado = FETCH ELSE '0';
+
+    system <= '1' WHEN s_estado = SYS ELSE '0';
 
 END Structure;
 

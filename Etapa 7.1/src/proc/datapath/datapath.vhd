@@ -24,9 +24,11 @@ ENTITY datapath IS
         b_sys      : IN  std_logic;
 		b_or_immed : IN  std_logic;
         rd_io      : IN  std_logic_vector(15 downto 0);
+        system     : IN  std_logic;
 		addr_m     : OUT std_logic_vector(15 DOWNTO 0);
 		data_wr    : OUT std_logic_vector(15 DOWNTO 0);
 		regout_a   : OUT std_logic_vector(15 DOWNTO 0);
+        int_enabled : OUT std_logic;
 		z          : OUT std_logic);
 END datapath;
 
@@ -56,8 +58,10 @@ ARCHITECTURE Structure OF datapath IS
 			addr_d : IN  std_logic_vector(2 DOWNTO 0);
             a_sys  : IN  std_logic;
             b_sys  : IN  std_logic;
+            pc     : IN  std_logic_vector(15 DOWNTO 0);
 			a      : OUT std_logic_vector(15 DOWNTO 0);
-			b      : OUT std_logic_vector(15 DOWNTO 0));
+			b      : OUT std_logic_vector(15 DOWNTO 0);
+            int_enabled : OUT std_logic);
 	END COMPONENT;
 
 	SIGNAL s_sys_regout_a : std_logic_vector(15 DOWNTO 0);
@@ -100,8 +104,10 @@ BEGIN
 		addr_d => addr_d,
         a_sys  => a_sys,
         b_sys  => b_sys,
+        pc     => pc,
 		a      => s_regout_a,
-        b      => s_regout_b
+        b      => s_regout_b,
+        int_enabled => int_enabled
 	);
 
 	al : alu PORT MAP(

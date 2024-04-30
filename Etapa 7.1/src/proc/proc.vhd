@@ -44,9 +44,11 @@ ARCHITECTURE Structure OF proc IS
             a_sys      : IN  std_logic;
             b_sys      : IN  std_logic;
             rd_io      : IN  std_logic_vector(15 downto 0);
+            system     : IN  std_logic;
 			addr_m     : OUT std_logic_vector(15 DOWNTO 0);
 			data_wr    : OUT std_logic_vector(15 DOWNTO 0);
 			regout_a   : OUT std_logic_vector(15 DOWNTO 0);
+            int_enabled : OUT std_logic;
 			z          : OUT std_logic);
 	END COMPONENT;
 
@@ -57,6 +59,8 @@ ARCHITECTURE Structure OF proc IS
 			z          : IN  std_logic;
 			datard_m   : IN  std_logic_vector(15 DOWNTO 0);
 			regout_a   : IN  std_logic_vector(15 DOWNTO 0);
+            int_enabled : IN std_logic;
+            intr       : IN std_logic;
 			op         : OUT std_logic_vector(2 DOWNTO 0);
 			f          : OUT std_logic_vector(2 DOWNTO 0);
 			wrd        : OUT std_logic;
@@ -76,7 +80,8 @@ ARCHITECTURE Structure OF proc IS
             b_sys      : OUT std_logic;
             addr_io    : OUT STD_LOGIC_VECTOR(7  DOWNTO 0);
             wr_out     : OUT STD_LOGIC;
-            rd_in      : OUT STD_LOGIC);
+            rd_in      : OUT STD_LOGIC;
+            system     : OUT STD_LOGIC);
 	END COMPONENT;
 
 	SIGNAL s_op         : std_logic_vector (2 DOWNTO 0);
@@ -95,6 +100,8 @@ ARCHITECTURE Structure OF proc IS
     SIGNAL s_a_sys      : std_logic;
     SIGNAL s_b_sys      : std_logic;
 	SIGNAL s_z          : std_logic;
+    SIGNAL s_int_enabled : std_logic;
+    SIGNAL s_system     : std_logic;
 	SIGNAL s_regout_a   : std_logic_vector(15 DOWNTO 0);
 
 BEGIN
@@ -122,10 +129,12 @@ BEGIN
         a_sys      => s_a_sys,
         b_sys      => s_b_sys,
         rd_io      => rd_io,
+        system     => s_system,
 		-- outputs
 		addr_m     => addr_m,
 		data_wr    => data_wr,
 		regout_a   => s_regout_a,
+        int_enabled => s_int_enabled,
 		z          => s_z
 	);
 
@@ -136,6 +145,8 @@ BEGIN
 		datard_m   => datard_m,
 		regout_a   => s_regout_a,
 		z          => s_z,
+        int_enabled => s_int_enabled,
+        intr       => intr,
 		-- outputs
 		op         => s_op,
 		f          => s_f,
@@ -156,7 +167,8 @@ BEGIN
         b_sys      => s_b_sys,
         addr_io    => addr_io,
         wr_out     => wr_out,
-        rd_in      => rd_in
+        rd_in      => rd_in,
+        system     => s_system
 	);
 
 	dbg_pc <= s_pc;
