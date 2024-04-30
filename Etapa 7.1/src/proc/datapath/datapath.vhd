@@ -58,6 +58,7 @@ ARCHITECTURE Structure OF datapath IS
 			addr_d : IN  std_logic_vector(2 DOWNTO 0);
             a_sys  : IN  std_logic;
             b_sys  : IN  std_logic;
+            system : IN  std_logic;
             pc     : IN  std_logic_vector(15 DOWNTO 0);
 			a      : OUT std_logic_vector(15 DOWNTO 0);
 			b      : OUT std_logic_vector(15 DOWNTO 0);
@@ -104,6 +105,7 @@ BEGIN
 		addr_d => addr_d,
         a_sys  => a_sys,
         b_sys  => b_sys,
+        system => system,
         pc     => pc,
 		a      => s_regout_a,
         b      => s_regout_b,
