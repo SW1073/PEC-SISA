@@ -41,7 +41,7 @@ BEGIN
 		ELSIF rising_edge(clk) THEN
 			CASE s_estado IS
 				WHEN FETCH => s_estado <= DEMW;
-				WHEN DEMW  => 
+				WHEN DEMW  =>
                     IF intr = '1' AND int_enabled = '1' THEN
                         s_estado  <= SYS;
                     ELSE
@@ -54,11 +54,11 @@ BEGIN
 
 	-- Señal que, o bien vale el valor de ldpc generado por la lógica de control cuando se está en el ciclo
 	--de DEMW o 0 en otro caso
-	ldpc <= ldpc_l WHEN s_estado = DEMW AND s_estado = SYS ELSE '0';
+	ldpc <= ldpc_l WHEN s_estado = DEMW OR s_estado = SYS ELSE '0';
 
 	-- Señal que, o bien vale el valor de wrd generado por la lógica de control cuando se está en el ciclo
 	-- de DEMW o 0 en otro caso.
-	wrd <= wrd_l WHEN s_estado = DEMW AND s_estado = SYS
+	wrd <= wrd_l WHEN s_estado = DEMW OR s_estado = SYS
            ELSE '0';
 
 	-- Señal que, o bien vale el valor de wr_m generado por la lógica de control cuando se está en el

@@ -210,6 +210,7 @@ BEGIN
 
 	pc    <= s_reg_pc;
 	immed <= s_immed;
+    system <= s_system;
 
 END Structure;
 

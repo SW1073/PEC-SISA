@@ -172,16 +172,15 @@ BEGIN
 
     -- Registro que se lee cuando estamos en ops de sistema.
     -- Hardcoded para algunas instrucciones que siempre leen del mismo reg
-    s_f_addra_sys <= "101" WHEN system = '1'                                ELSE
-                     "111" WHEN (s_f_sys = F_SYS_EI OR s_f_sys = F_SYS_DI)  ELSE
+     s_f_addra_sys <="111" WHEN (s_f_sys = F_SYS_EI OR s_f_sys = F_SYS_DI)  ELSE
                      "001" WHEN (s_f_sys = F_SYS_RETI)                      ELSE
                      s_second_reg;
 
 	-- Dirección del primer puerto de lectura
-	WITH s_opcode SELECT
-		addr_a <= s_first_reg   WHEN OPCODE_MOVS,
-                  s_f_addra_sys WHEN OPCODE_SYS,
-                  s_second_reg  WHEN OTHERS;
+    addr_a <= "101"         WHEN system = '1'           ELSE
+              s_first_reg   WHEN s_opcode = OPCODE_MOVS ELSE
+              s_f_addra_sys WHEN s_opcode = OPCODE_SYS  ELSE
+              s_second_reg  ;
 
     -- Direccion del segundo puerto de lectura
 

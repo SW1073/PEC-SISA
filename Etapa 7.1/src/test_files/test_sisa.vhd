@@ -96,6 +96,8 @@ architecture comportament of test_sisa is
     signal s_keyboard_scancodes : arr_t := (x"1C", x"F0", x"1C", x"1B");
     signal s_keyboard_idx       : integer range 0 to c_N-1 := 0;
     signal s_keyboard_done      : std_logic := '0';
+
+    signal s_keys               : std_logic_vector(3 downto 0) := x"0";
 begin
 
     s_ps2_data_to_send <= s_keyboard_scancodes(s_keyboard_idx);
@@ -118,7 +120,7 @@ begin
     SoC : sisa port map (
         CLOCK_50    => clk,
         SW          => botones,
-        KEY         => x"F",
+        KEY         => s_keys,
 
         SRAM_ADDR   => addr_SoC,
         SRAM_DQ     => data_mem,
@@ -154,6 +156,8 @@ begin
         ps2_data => s_ps2_dat
     );
 
+    -- Creamos una interrupcion (a priori)
+    s_keys <= x"0", x"2" after 400 ns;
 
     addr_mem (15 downto 0) <= addr_SOC (15 downto 0);
     botones(9) <= reset_proc;
