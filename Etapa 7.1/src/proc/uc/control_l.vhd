@@ -53,6 +53,7 @@ ARCHITECTURE Structure OF control_l IS
     SIGNAL s_op_sys         : std_logic_vector(2 downto 0);
     SIGNAL s_d_sys          : std_logic;
     SIGNAL s_b_or_immed_sys : std_logic;
+    SIGNAL s_in_d_sys       : std_logic_vector(1 DOWNTO 0);
 BEGIN
 
 	s_opcode      <= ir(15 DOWNTO 12);
@@ -144,6 +145,7 @@ BEGIN
                      '1' WHEN F_SYS_EI,
                      '1' WHEN F_SYS_DI,
                      '1' WHEN F_SYS_RDS,
+                     '1' WHEN F_SYS_GETIID,
                      '0' WHEN others;
 
     -- Señal de escritura en banco de registros
@@ -233,13 +235,16 @@ BEGIN
             '1' WHEN s_opcode = OPCODE_STOREB   ELSE -- Cuando STB
             '0' ;
 
+    s_in_d_sys <= IN_D_IO when s_f_sys = F_SYS_GETIID ELSE
+                  IN_D_ALUOUT;
+
     -- Señal que decide que dato entra al puerto de escritura del regfile (d)
     in_d <= IN_D_ALUOUT  WHEN system = '1'              ELSE -- Entrada a sistema
             IN_D_DATAMEM WHEN s_opcode = OPCODE_LOAD    ELSE -- Cuando LD
             IN_D_DATAMEM WHEN s_opcode = OPCODE_LOADB   ELSE -- Cuando LDB
             IN_D_PC      WHEN s_opcode = OPCODE_JUMPS   ELSE -- ESTO IGNORA SI ES JAL O CALLS, LE ENTRA PC+2 AL BANCO DE REGS SIEMPRE.
             IN_D_IO      WHEN s_opcode = OPCODE_IO      ELSE -- Cuando operamos con IO
-            IN_D_ALUOUT  WHEN s_opcode = OPCODE_SYS     ELSE -- Cuando operamos con instrucciones de acceso a registros especiales
+            s_in_d_sys   WHEN s_opcode = OPCODE_SYS     ELSE -- Cuando operamos con instrucciones de acceso a registros especiales
             IN_D_ALUOUT  ;
 
 	-- La señal que determina si hay que desplazar el inmediato o no
