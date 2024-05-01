@@ -1,15 +1,15 @@
 name: learn-github-actions
 run-name: ${{ github.actor }} is learning GitHub Actions
+
 on: [push]
 jobs:
-  check-compilation:
-    name: job-clone-repo-and-ls
+  build:
     runs-on: ubuntu-latest
-    uses: SW1073/PEC-SISA@main
-    with:
-      owner: 'SW1073'
-      repository: 'PEC-SISA'
-      access-token: ${{ secrets.ACCESS_TOKEN }}
     steps:
-      - run: cd PEC-SISA/
-      - run: ls -lha
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: List Files
+      run: |
+        cd ${{ github.workspace }}
+        ls -la
