@@ -3,8 +3,13 @@ run-name: ${{ github.actor }} is learning GitHub Actions
 on: [push]
 jobs:
   check-compilation:
+    name: job-clone-repo-and-ls
     runs-on: ubuntu-latest
+    uses: SW1073/PEC-SISA@main
+    with:
+      owner: 'SW1073'
+      repository: 'PEC-SISA'
+      access-token: ${{ secrets.ACCESS_TOKEN }}
     steps:
-      - run: git clone https://github.com/SW1073/PEC-SISA
       - run: cd PEC-SISA/
-      - run: make ETAPA=7.1
+      - run: ls -lha
