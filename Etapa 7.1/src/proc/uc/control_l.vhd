@@ -29,7 +29,8 @@ ENTITY control_l IS
         b_sys      : OUT std_logic;
         addr_io    : OUT STD_LOGIC_VECTOR(7  DOWNTO 0);
         wr_out     : OUT STD_LOGIC;
-        rd_in      : OUT STD_LOGIC);
+        rd_in      : OUT STD_LOGIC;
+        inta       : OUT STD_LOGIC);
 END control_l;
 
 ARCHITECTURE Structure OF control_l IS
@@ -64,6 +65,9 @@ BEGIN
 	s_short_immed <= signed(ir(5 DOWNTO 0));
 	s_long_immed  <= signed(ir(7 DOWNTO 0));
 	s_op          <= ir(8);
+
+    inta <= '1' WHEN s_opcode = OPCODE_SYS AND s_f_sys = F_SYS_GETIID ELSE
+            '0';
 
     s_op_sys <= OP_ARIT_LOG WHEN (s_f_sys = F_SYS_EI or s_f_sys = F_SYS_DI) ELSE
                 OP_MISC;

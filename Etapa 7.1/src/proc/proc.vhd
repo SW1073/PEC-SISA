@@ -78,10 +78,11 @@ ARCHITECTURE Structure OF proc IS
             b_or_immed : OUT std_logic;
             a_sys      : OUT std_logic;
             b_sys      : OUT std_logic;
-            addr_io    : OUT STD_LOGIC_VECTOR(7  DOWNTO 0);
-            wr_out     : OUT STD_LOGIC;
-            rd_in      : OUT STD_LOGIC;
-            system     : OUT STD_LOGIC);
+            addr_io    : OUT std_logic_vector(7  DOWNTO 0);
+            wr_out     : OUT std_logic;
+            rd_in      : OUT std_logic;
+            system     : OUT std_logic;
+            inta       : OUT std_logic);
 	END COMPONENT;
 
 	SIGNAL s_op         : std_logic_vector (2 DOWNTO 0);
@@ -168,11 +169,11 @@ BEGIN
         addr_io    => addr_io,
         wr_out     => wr_out,
         rd_in      => rd_in,
-        system     => s_system
+        system     => s_system,
+        inta       => inta
 	);
 
 	dbg_pc <= s_pc;
-    inta <= '0';
 
 END Structure;
 

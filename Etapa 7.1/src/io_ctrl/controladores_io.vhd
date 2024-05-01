@@ -143,7 +143,9 @@ BEGIN
     END PROCESS;
 
     -- Read con enable
-    rd_io <= registers(conv_integer(addr_io)) WHEN rd_in = '1' ELSE x"0000";
+    rd_io <= registers(conv_integer(addr_io))   WHEN rd_in = '1' AND inta = '0' ELSE
+             x"000" & "00" & s_iid              WHEN inta = '1'                 ELSE
+             x"0000";
 
     hex <= registers(PORT_HEX)(15 downto 0);
     hex_on <= registers(PORT_HEX_OFF)(3 downto 0);
