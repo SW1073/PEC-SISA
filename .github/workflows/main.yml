@@ -10,7 +10,6 @@ jobs:
       uses: actions/checkout@v2
 
     - name: List Files
-      uses: docker
       run: |
         cd ${{ github.workspace }}
         ls -la
