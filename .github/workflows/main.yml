@@ -13,5 +13,7 @@ jobs:
       run: |
         cd ${{ github.workspace }}
         ls -la
+    - name: Run Etapa 6
+      run: |
         export ETAPA=6
-        ./exe_modelsim.sh
+        ./exe_modelsim_action.sh
