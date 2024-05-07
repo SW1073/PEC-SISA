@@ -21,6 +21,7 @@ ARCHITECTURE Structure OF key_sw_int_ctrl IS
 
     SIGNAL sending_intr : std_logic;
     SIGNAL current_data : std_logic_vector(n_bits-1 DOWNTO 0);
+    SIGNAL prev_inta    : std_logic := '0';
 
     SIGNAL changed : boolean;
 BEGIN
@@ -39,11 +40,13 @@ BEGIN
                 IF changed AND sending_intr = '0' THEN
                     sending_intr <= '1';
                     current_data <= data;
-                ELSIF sending_intr = '1' AND inta = '1' THEN
+                ELSIF sending_intr = '1' AND (prev_inta = '0' AND inta = '1') THEN
                     sending_intr <= '0';
                 END IF;
 
             END IF;
+
+            prev_inta <= inta;
         END IF;
     END PROCESS;
 
