@@ -51,8 +51,8 @@ BEGIN
                     sending_intr <= '0';
                 END IF;
             END IF;
+            s_prev_inta <= inta;
         END IF;
-        s_prev_inta <= inta;
     END PROCESS;
 
     intr <= sending_intr;
