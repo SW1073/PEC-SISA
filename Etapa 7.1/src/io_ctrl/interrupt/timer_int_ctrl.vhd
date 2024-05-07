@@ -20,6 +20,7 @@ ARCHITECTURE Structure OF timer_int_ctrl IS
     -- 0.05 s. a 50MHz (20 ns) = 25 x10^5 clock events
     CONSTANT counter_objective : integer := 2500000;
     SIGNAL counter : integer range 0 to counter_objective := 0;
+    SIGNAL s_prev_inta : std_logic := '0';
 BEGIN
 
     reloj: PROCESS (clk) IS
@@ -46,11 +47,12 @@ BEGIN
             ELSE
                 IF sending_intr = '0' and counter = counter_objective THEN
                     sending_intr <= '1';
-                ELSIF sending_intr = '1' AND inta = '1' THEN
+                ELSIF sending_intr = '1' AND (s_prev_inta = '0' AND inta = '1') THEN
                     sending_intr <= '0';
                 END IF;
             END IF;
         END IF;
+        s_prev_inta <= inta;
     END PROCESS;
 
     intr <= sending_intr;
