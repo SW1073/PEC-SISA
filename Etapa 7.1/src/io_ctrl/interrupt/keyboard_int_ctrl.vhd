@@ -28,6 +28,9 @@ ARCHITECTURE BEHAVIORAL OF keyboard_int_ctrl IS
               data_ready : out   STD_LOGIC);
     end COMPONENT;
 
+    SIGNAL s_data_ready : std_logic;
+    SIGNAL s_clear_char : std_logic;
+
 BEGIN
 
     -- intr cuando presionan tecla
@@ -40,9 +43,14 @@ BEGIN
         ps2_clk     => ps2_clk,
         ps2_data    => ps2_data,
         read_char   => read_char,
-        clear_char  => clear_char,
-        data_ready  => data_ready
+        clear_char  => s_clear_char,
+        data_ready  => s_data_ready
     );
+
+    s_clear_char <= clear_char or inta;
+
+    intr <= s_data_ready;
+    data_ready <= s_data_ready;
 
 END BEHAVIORAL;
 

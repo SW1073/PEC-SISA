@@ -50,6 +50,7 @@ ARCHITECTURE Structure OF controladores_IO IS
             CLOCK_50    : IN    std_logic;
             reset       : IN    std_logic;
             inta        : IN    std_logic;
+            intr        : OUT    std_logic;
             ps2_clk     : INOUT std_logic;
             ps2_data    : INOUT std_logic;
             read_char   : OUT   std_logic_vector(7 DOWNTO 0);
@@ -125,19 +126,20 @@ BEGIN
             IF wr_out = '1' AND addr_io /= PORT_KEY AND addr_io /= PORT_SW THEN
                 if addr_io = PORT_PS2_DATA_VALID THEN
                     registers(conv_integer(addr_io)) <= x"0000";
-                    s_ps2_clear_char <= '0';
+                    s_ps2_clear_char <= '1';
                 ELSE
                     registers(conv_integer(addr_io)) <= wr_io;
                     if addr_io = PORT_TIMER then
                         v_contador_milisegundos := wr_io;
                     end if;
                 END IF;
+            ELSE
+                s_ps2_clear_char <= '0';
             END IF;
 
             IF s_ps2_data_ready = '1' THEN
                 registers(PORT_PS2_DATA)(7 downto 0) <= s_ps2_ascii_code;
                 registers(PORT_PS2_DATA_VALID) <= x"FFFF";
-                s_ps2_clear_char <= '1';
             END IF;
         END IF;
     END PROCESS;
@@ -157,7 +159,7 @@ BEGIN
         boot        => boot,
         inta        => inta,
         key_intr    => s_key_intr,
-        ps2_intr    => s_ps2_data_ready,
+        ps2_intr    => s_ps2_intr,
         switch_intr => s_switch_intr,
         timer_intr  => s_timer_intr,
         --
@@ -171,8 +173,9 @@ BEGIN
 
     keyboard0: keyboard_int_ctrl PORT MAP(
         CLOCK_50    => CLOCK_50,
-        inta        => s_ps2_inta,
         reset       => boot,
+        inta        => s_ps2_inta,
+        intr        => s_ps2_intr,
         ps2_clk     => ps2_clk,
         ps2_data    => ps2_data,
         read_char   => s_ps2_ascii_code,
