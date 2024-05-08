@@ -51,7 +51,7 @@ BEGIN
         IF rising_edge(CLOCK_50) THEN
             registers(PORT_KEY)(3 downto 0) <= KEY(3 DOWNTO 0);
             registers(PORT_SW)(7 downto 0) <= SW(7 DOWNTO 0);
-            
+
             if v_contador_ciclos = 0 then
                 v_contador_ciclos := x"C350"; -- tiempo de ciclo=20ns(50Mhz) 1ms=50000ciclos
                 if v_contador_milisegundos > 0 then
@@ -67,19 +67,20 @@ BEGIN
             IF wr_out = '1' AND addr_io /= PORT_KEY AND addr_io /= PORT_SW THEN
                 if addr_io = PORT_PS2_DATA_VALID THEN
                     registers(conv_integer(addr_io)) <= x"0000";
-                    s_ps2_clear_char <= '0';
+                    s_ps2_clear_char <= '1';
                 ELSE
                     registers(conv_integer(addr_io)) <= wr_io;
                     if addr_io = PORT_TIMER then
                         v_contador_milisegundos := wr_io;
                     end if;
                 END IF;
+            ELSE
+                s_ps2_clear_char <= '0';
             END IF;
 
             IF s_ps2_data_ready = '1' THEN
                 registers(PORT_PS2_DATA)(7 downto 0) <= s_ps2_ascii_code;
                 registers(PORT_PS2_DATA_VALID) <= x"FFFF";
-                s_ps2_clear_char <= '1';
             END IF;
         END IF;
     END PROCESS;
