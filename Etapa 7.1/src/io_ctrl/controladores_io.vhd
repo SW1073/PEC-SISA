@@ -29,8 +29,6 @@ ARCHITECTURE Structure OF controladores_IO IS
 
     COMPONENT interrupt_ctrl IS
     PORT (
-        clk         : IN std_logic;
-        boot        : IN std_logic;
         inta        : IN std_logic;
         key_intr    : IN std_logic;
         ps2_intr    : IN std_logic;
@@ -155,8 +153,6 @@ BEGIN
     led_rojos <= registers(PORT_RED_LEDS)(7 downto 0);
 
     intr_ctrl: interrupt_ctrl PORT MAP(
-        clk         => CLOCK_50,
-        boot        => boot,
         inta        => inta,
         key_intr    => s_key_intr,
         ps2_intr    => s_ps2_intr,
