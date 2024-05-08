@@ -93,7 +93,7 @@ begin
         end if;
     end process;
 
-    process (state) begin
+    process (state, clk) begin
         data_ready_we <= '0';
         case state is
             when idle =>

@@ -171,7 +171,7 @@ BEGIN
 
     keyboard0: keyboard_int_ctrl PORT MAP(
         CLOCK_50    => CLOCK_50,
-        inta        => inta,
+        inta        => s_ps2_inta,
         reset       => boot,
         ps2_clk     => ps2_clk,
         ps2_data    => ps2_data,
