@@ -1,4 +1,4 @@
-cd /home/usuari/test_files
+pwd
 
 transcript on
 if {[file exists rtl_work]} {
