@@ -46,6 +46,8 @@ ARCHITECTURE Structure OF proc IS
             b_sys      : IN  std_logic;
             rd_io      : IN  std_logic_vector(15 downto 0);
             system     : IN  std_logic;
+            exception  : IN  std_logic;
+            exception_code : IN std_logic_vector(3 DOWNTO 0);
 			addr_m     : OUT std_logic_vector(15 DOWNTO 0);
 			data_wr    : OUT std_logic_vector(15 DOWNTO 0);
 			regout_a   : OUT std_logic_vector(15 DOWNTO 0);
@@ -86,6 +88,8 @@ ARCHITECTURE Structure OF proc IS
             wr_out     : OUT std_logic;
             rd_in      : OUT std_logic;
             system     : OUT std_logic;
+            exception  : OUT std_logic;
+            exception_code : OUT std_logic_vector(3 DOWNTO 0);
             inta       : OUT std_logic);
 	END COMPONENT;
 
@@ -106,9 +110,11 @@ ARCHITECTURE Structure OF proc IS
     SIGNAL s_b_sys      : std_logic;
 	SIGNAL s_z          : std_logic;
     SIGNAL s_int_enabled : std_logic;
-    SIGNAL s_system     : std_logic;
-	SIGNAL s_regout_a   : std_logic_vector(15 DOWNTO 0);
+    SIGNAL s_system      : std_logic;
+	SIGNAL s_regout_a    : std_logic_vector(15 DOWNTO 0);
     SIGNAL s_div_by_zero : std_logic;
+    SIGNAL s_exception   : std_logic;
+    SIGNAL s_exception_code   : std_logic_vector(3 DOWNTO 0);
 
 BEGIN
 
@@ -136,6 +142,8 @@ BEGIN
         b_sys      => s_b_sys,
         rd_io      => rd_io,
         system     => s_system,
+        exception  => s_exception,
+        exception_code => s_exception_code,
 		-- outputs
 		addr_m     => addr_m,
 		data_wr    => data_wr,
@@ -178,6 +186,8 @@ BEGIN
         wr_out     => wr_out,
         rd_in      => rd_in,
         system     => s_system,
+        exception  => s_exception,
+        exception_code => s_exception_code,
         inta       => inta
 	);
 

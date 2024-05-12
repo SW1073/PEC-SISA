@@ -25,6 +25,8 @@ ENTITY datapath IS
 		b_or_immed : IN  std_logic;
         rd_io      : IN  std_logic_vector(15 downto 0);
         system     : IN  std_logic;
+        exception  : IN  std_logic;
+        exception_code : IN std_logic_vector(3 DOWNTO 0);
 		addr_m     : OUT std_logic_vector(15 DOWNTO 0);
 		data_wr    : OUT std_logic_vector(15 DOWNTO 0);
 		regout_a   : OUT std_logic_vector(15 DOWNTO 0);
@@ -61,6 +63,9 @@ ARCHITECTURE Structure OF datapath IS
             a_sys  : IN  std_logic;
             b_sys  : IN  std_logic;
             system : IN  std_logic;
+            addr_m : IN  std_logic_vector(15 DOWNTO 0);
+            exception : IN std_logic;
+            exception_code : IN std_logic_vector(3 DOWNTO 0);
             pc     : IN  std_logic_vector(15 DOWNTO 0);
 			a      : OUT std_logic_vector(15 DOWNTO 0);
 			b      : OUT std_logic_vector(15 DOWNTO 0);
@@ -77,6 +82,8 @@ ARCHITECTURE Structure OF datapath IS
 	SIGNAL s_y          : std_logic_vector(15 DOWNTO 0);
 
 	SIGNAL s_pc : std_logic_vector(15 DOWNTO 0);
+
+    SIGNAL s_addr_m : std_logic_vector(15 DOWNTO 0); 
 
 BEGIN
 
@@ -108,6 +115,9 @@ BEGIN
         a_sys  => a_sys,
         b_sys  => b_sys,
         system => system,
+        addr_m => s_addr_m,
+        exception => exception,
+        exception_code => exception_code,
         pc     => pc,
 		a      => s_regout_a,
         b      => s_regout_b,
@@ -124,8 +134,10 @@ BEGIN
 		z  => z
 	);
 
-	addr_m  <= s_aluout WHEN ins_dad = '1' ELSE pc;
+	s_addr_m  <= s_aluout WHEN ins_dad = '1' ELSE pc;
+
 	data_wr <= s_regout_b;
+    addr_m  <= s_addr_m;
 
 END Structure;
 

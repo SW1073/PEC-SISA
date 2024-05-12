@@ -3,6 +3,7 @@ USE ieee.std_logic_1164.ALL;
 USE ieee.numeric_std.ALL;        --Esta libreria sera necesaria si usais conversiones TO_INTEGER
 USE ieee.std_logic_unsigned.ALL; --Esta libreria sera necesaria si usais conversiones CONV_INTEGER
 USE work.package_control.ALL;
+USE work.package_exceptions.ALL;
 
 ENTITY regfile IS
 	PORT (
@@ -16,6 +17,9 @@ ENTITY regfile IS
         a_sys  : IN  std_logic;
         b_sys  : IN  std_logic;
         system : IN  std_logic;
+        addr_m : IN  std_logic_vector(15 DOWNTO 0);
+        exception : IN std_logic;
+        exception_code : IN std_logic_vector(3 DOWNTO 0);
         pc     : IN  std_logic_vector(15 DOWNTO 0);
 		a      : OUT std_logic_vector(15 DOWNTO 0);
 		b      : OUT std_logic_vector(15 DOWNTO 0);
@@ -50,9 +54,15 @@ BEGIN
 	BEGIN
 		IF rising_edge(clk) THEN
             IF system = '1' THEN
-                sys_registers(2) <= x"000F";
+                sys_registers(2) <= x"000" & exception_code;
                 sys_registers(7)(1) <= '0';
                 sys_registers(1) <= pc;
+
+                IF exception = '1' THEN
+                    IF exception_code = EX_BAD_ALLIGNMENT THEN
+                        sys_registers(3) <= addr_m;
+                    END IF;
+                END IF;
             END IF;
 
             IF s_wrd = '1' THEN

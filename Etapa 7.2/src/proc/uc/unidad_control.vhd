@@ -37,8 +37,9 @@ ENTITY unidad_control IS
         wr_out     : OUT std_logic;
         rd_in      : OUT std_logic;
         system     : OUT std_logic;
-        inta       : OUT std_logic;
-        exception_code : OUT std_logic_vector(3 DOWNTO 0));
+        exception  : OUT std_logic;
+        exception_code : OUT std_logic_vector(3 DOWNTO 0);
+        inta       : OUT std_logic);
 END unidad_control;
 
 ARCHITECTURE Structure OF unidad_control IS
@@ -241,6 +242,7 @@ BEGIN
 	pc    <= s_reg_pc;
 	immed <= s_immed;
     system <= s_system;
+    exception <= s_exception;
 
 END Structure;
 
