@@ -14,6 +14,8 @@ ENTITY unidad_control IS
         regout_a   : IN  std_logic_vector(15 DOWNTO 0);
         int_enabled: IN  std_logic;
         intr       : IN  std_logic;
+        div_by_zero : IN  std_logic;
+        bad_allignment : IN std_logic;
         op         : OUT std_logic_vector(2 DOWNTO 0);
         f          : OUT std_logic_vector(2 DOWNTO 0);
         wrd        : OUT std_logic;
@@ -35,7 +37,8 @@ ENTITY unidad_control IS
         wr_out     : OUT std_logic;
         rd_in      : OUT std_logic;
         system     : OUT std_logic;
-        inta       : OUT std_logic);
+        inta       : OUT std_logic;
+        exception_code : OUT std_logic_vector(3 DOWNTO 0));
 END unidad_control;
 
 ARCHITECTURE Structure OF unidad_control IS
@@ -67,8 +70,7 @@ ARCHITECTURE Structure OF unidad_control IS
             addr_io    : OUT std_logic_vector(7  DOWNTO 0);
             wr_out     : OUT std_logic;
             rd_in      : OUT std_logic;
-            inta       : OUT std_logic;
-            illegal_instr : OUT std_logic);
+            inta       : OUT std_logic);
 	END COMPONENT;
 
 	-- Multi
@@ -84,6 +86,7 @@ ARCHITECTURE Structure OF unidad_control IS
             w_b       : IN  std_logic;
             int_enabled : IN std_logic;
             intr      : IN std_logic;
+            exception : IN std_logic;
             ldpc      : OUT std_logic;
             wrd       : OUT std_logic;
             wr_m      : OUT std_logic;
@@ -94,6 +97,17 @@ ARCHITECTURE Structure OF unidad_control IS
             word_byte : OUT std_logic;
             system    : OUT std_logic);
 	END COMPONENT;
+
+    COMPONENT exception_ctrl IS
+	PORT (
+		clk             : IN  std_logic;
+        ir              : IN  std_logic_vector(15 DOWNTO 0);
+        int_enabled     : IN std_logic;
+        intr            : IN std_logic;
+        bad_allignment  : IN std_logic;
+        exception       : OUT std_logic;
+        exception_code  : OUT std_logic_vector(3 DOWNTO 0));
+    END COMPONENT;
 
 	-- Senales para conectar control_l con multi
 	SIGNAL s_ldpc      : std_logic;
@@ -119,6 +133,7 @@ ARCHITECTURE Structure OF unidad_control IS
     SIGNAL s_wr_out : std_logic;
 
     SIGNAl s_system : std_logic;
+    SIGNAL s_exception : std_logic;
 BEGIN
 
 	-- Aqui iria la declaracion del "mapeo" (PORT MAP) de los nombres de las entradas/salidas de los componentes
@@ -169,6 +184,7 @@ BEGIN
 		w_b    => s_word_byte,
         int_enabled => int_enabled,
         intr   => intr,
+        exception => s_exception,
 		-- outputs
 		ldpc      => s_multi_ldpc,
 		wrd       => wrd,
@@ -180,6 +196,16 @@ BEGIN
 		word_byte => word_byte,
         system    => s_system
 	);
+
+    ex_ctrl : exception_ctrl PORT MAP(
+        clk            => clk,
+        ir             => s_reg_ir,
+        int_enabled    => int_enabled,
+        intr           => intr,
+        bad_allignment => bad_allignment,
+        exception      => s_exception,
+        exception_code => exception_code
+    );
 
 	-- Program Counter and Instruction Register
 	cp_and_ir : PROCESS (clk) IS

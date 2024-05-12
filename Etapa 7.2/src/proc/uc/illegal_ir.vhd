@@ -8,7 +8,7 @@ USE work.package_alu.ALL;
 ENTITY illegal_ir IS
 	PORT (
 		ir              : IN  std_logic_vector(15 DOWNTO 0);
-        illegal_instr   : OUT std_logic);
+        is_illegal      : OUT std_logic);
 END ENTITY;
 
 ARCHITECTURE Structure OF illegal_ir IS
@@ -109,7 +109,7 @@ BEGIN
                                 (s_f_sys = "111100" OR s_f_sys = "111101" OR s_f_sys = "111110")
                         ELSE '0';
 
-    illegal_instr <= s_illegal_comp OR s_illegal_ext_arit OR s_illegal_float OR
+    is_illegal <= s_illegal_comp OR s_illegal_ext_arit OR s_illegal_float OR
                      s_illegal_jump_1 OR s_illegal_jump_2 OR s_illegal_jump_3 OR
                      s_illegal_sys_1 OR s_illegal_sys_2 OR s_illegal_sys_3 OR
                      s_illegal_sys_4 OR s_illegal_sys_5 OR s_illegal_sys_6 OR

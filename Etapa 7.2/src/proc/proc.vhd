@@ -8,6 +8,7 @@ ENTITY proc IS
         inta      : OUT  std_logic;
         intr      : IN  std_logic;
 		datard_m  : IN  std_logic_vector(15 DOWNTO 0);
+        bad_allignment : IN std_logic;
 		addr_m    : OUT std_logic_vector(15 DOWNTO 0);
 		data_wr   : OUT std_logic_vector(15 DOWNTO 0);
 		wr_m      : OUT std_logic;
@@ -49,6 +50,7 @@ ARCHITECTURE Structure OF proc IS
 			data_wr    : OUT std_logic_vector(15 DOWNTO 0);
 			regout_a   : OUT std_logic_vector(15 DOWNTO 0);
             int_enabled : OUT std_logic;
+            div_by_zero : OUT std_logic;
 			z          : OUT std_logic);
 	END COMPONENT;
 
@@ -61,6 +63,8 @@ ARCHITECTURE Structure OF proc IS
 			regout_a   : IN  std_logic_vector(15 DOWNTO 0);
             int_enabled : IN std_logic;
             intr       : IN std_logic;
+            div_by_zero : IN std_logic;
+            bad_allignment : IN std_logic;
 			op         : OUT std_logic_vector(2 DOWNTO 0);
 			f          : OUT std_logic_vector(2 DOWNTO 0);
 			wrd        : OUT std_logic;
@@ -104,6 +108,7 @@ ARCHITECTURE Structure OF proc IS
     SIGNAL s_int_enabled : std_logic;
     SIGNAL s_system     : std_logic;
 	SIGNAL s_regout_a   : std_logic_vector(15 DOWNTO 0);
+    SIGNAL s_div_by_zero : std_logic;
 
 BEGIN
 
@@ -136,6 +141,7 @@ BEGIN
 		data_wr    => data_wr,
 		regout_a   => s_regout_a,
         int_enabled => s_int_enabled,
+        div_by_zero => s_div_by_zero,
 		z          => s_z
 	);
 
@@ -148,6 +154,8 @@ BEGIN
 		z          => s_z,
         int_enabled => s_int_enabled,
         intr       => intr,
+        div_by_zero => s_div_by_zero,
+        bad_allignment => bad_allignment,
 		-- outputs
 		op         => s_op,
 		f          => s_f,

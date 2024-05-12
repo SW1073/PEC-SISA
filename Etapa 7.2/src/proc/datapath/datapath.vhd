@@ -29,6 +29,7 @@ ENTITY datapath IS
 		data_wr    : OUT std_logic_vector(15 DOWNTO 0);
 		regout_a   : OUT std_logic_vector(15 DOWNTO 0);
         int_enabled : OUT std_logic;
+        div_by_zero : OUT std_logic;
 		z          : OUT std_logic);
 END datapath;
 
@@ -40,12 +41,13 @@ ARCHITECTURE Structure OF datapath IS
 
 	COMPONENT alu IS
 		PORT (
-			x  : IN  std_logic_vector(15 DOWNTO 0);
-			y  : IN  std_logic_vector(15 DOWNTO 0);
-			op : IN  std_logic_vector(2 DOWNTO 0);
-			f  : IN  std_logic_vector(2 DOWNTO 0);
-			w  : OUT std_logic_vector(15 DOWNTO 0);
-			z  : OUT std_logic);
+			x           : IN  std_logic_vector(15 DOWNTO 0);
+			y           : IN  std_logic_vector(15 DOWNTO 0);
+			op          : IN  std_logic_vector(2 DOWNTO 0);
+			f           : IN  std_logic_vector(2 DOWNTO 0);
+			w           : OUT std_logic_vector(15 DOWNTO 0);
+            div_by_zero : OUT std_logic;
+			z           : OUT std_logic);
 	END COMPONENT;
 	COMPONENT regfile IS
 		PORT (
@@ -118,6 +120,7 @@ BEGIN
 		x  => s_regout_a,
 		y  => s_y,
 		w  => s_aluout,
+        div_by_zero => div_by_zero,
 		z  => z
 	);
 

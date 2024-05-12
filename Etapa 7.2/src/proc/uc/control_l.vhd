@@ -30,8 +30,7 @@ ENTITY control_l IS
         addr_io    : OUT STD_LOGIC_VECTOR(7  DOWNTO 0);
         wr_out     : OUT STD_LOGIC;
         rd_in      : OUT STD_LOGIC;
-        inta       : OUT STD_LOGIC;
-        illegal_instr   : OUT std_logic);
+        inta       : OUT STD_LOGIC);
 END control_l;
 
 ARCHITECTURE Structure OF control_l IS
@@ -56,14 +55,7 @@ ARCHITECTURE Structure OF control_l IS
     SIGNAL s_b_or_immed_sys : std_logic;
     SIGNAL s_in_d_sys       : std_logic_vector(1 DOWNTO 0);
 
-    COMPONENT illegal_ir IS
-	PORT (
-		ir              : IN  std_logic_vector(15 DOWNTO 0);
-        illegal_instr   : OUT std_logic);
-    END COMPONENT;
 BEGIN
-
-    illegal_ir1: illegal_ir PORT MAP (ir, illegal_instr);
 
 	s_opcode      <= ir(15 DOWNTO 12);
 	s_f           <= ir(5 DOWNTO 3);

@@ -42,6 +42,7 @@ ARCHITECTURE Structure OF sisa IS
             inta      : OUT  STD_LOGIC;
             intr      : IN  STD_LOGIC;
 			datard_m  : IN  std_logic_vector(15 DOWNTO 0);
+            bad_allignment : IN std_logic;
 			addr_m    : OUT std_logic_vector(15 DOWNTO 0);
 			data_wr   : OUT std_logic_vector(15 DOWNTO 0);
 			wr_m      : OUT std_logic;
@@ -61,6 +62,7 @@ ARCHITECTURE Structure OF sisa IS
 			rd_data   : OUT   std_logic_vector(15 DOWNTO 0);
 			we        : IN    std_logic;
 			byte_m    : IN    std_logic;
+            bad_allignment : OUT std_logic;
 			-- señales para la placa de desarrollo
 			SRAM_ADDR : OUT   std_logic_vector(17 DOWNTO 0);
 			SRAM_DQ   : INOUT std_logic_vector(15 DOWNTO 0);
@@ -158,6 +160,7 @@ ARCHITECTURE Structure OF sisa IS
     SIGNAL s_vga_byte_m  : std_logic;
     SIGNAL s_vga_cursor  : std_logic_vector(15 DOWNTO 0) := (others => '0');
     SIGNAL s_vga_cursor_enable : std_logic := '0';
+    SIGNAL s_bad_allignment : std_logic;
 
 	-- Registre del divisor de rellotge
 	SIGNAL s_reg_divisor : std_logic_vector(2 DOWNTO 0) := "000";
@@ -250,6 +253,7 @@ BEGIN
 		datard_m  => s_rd_data,
         rd_io     => s_rd_io,
         intr      => s_intr,
+        bad_allignment => s_bad_allignment,
 		-- outputs
         inta      => s_inta,
 		word_byte => s_word_byte,
@@ -269,6 +273,7 @@ BEGIN
 		rd_data   => s_rd_data,
 		we        => s_wr_m,
 		byte_m    => s_word_byte,
+        bad_allignment => s_bad_allignment,
 		-- señales para la placa de desarrollo
 		SRAM_ADDR => SRAM_ADDR,
 		SRAM_DQ   => SRAM_DQ,

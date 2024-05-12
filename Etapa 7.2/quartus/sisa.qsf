@@ -498,6 +498,8 @@ set_location_assignment PIN_Y7 -to SRAM_LB_N
 set_location_assignment PIN_T8 -to SRAM_OE_N
 set_location_assignment PIN_W7 -to SRAM_UB_N
 set_location_assignment PIN_AA10 -to SRAM_WE_N
+set_global_assignment -name VHDL_FILE ../src/proc/packages/package_exceptions.vhd
+set_global_assignment -name VHDL_FILE ../src/proc/uc/exception_ctrl.vhd
 set_global_assignment -name VHDL_FILE ../src/proc/uc/illegal_ir.vhd
 set_global_assignment -name VHDL_FILE ../src/io_ctrl/interrupt/key_sw_int_ctrl.vhd
 set_global_assignment -name VHDL_FILE ../src/io_ctrl/interrupt/interrupt_ctrl.vhd

@@ -13,6 +13,7 @@ ENTITY multi IS
         int_enabled : IN std_logic;
         intr      : IN std_logic;
 		w_b       : IN  std_logic;
+        exception : IN std_logic;
 		ldpc      : OUT std_logic;
 		wrd       : OUT std_logic;
 		wr_m      : OUT std_logic;
@@ -42,7 +43,7 @@ BEGIN
 			CASE s_estado IS
 				WHEN FETCH => s_estado <= DEMW;
 				WHEN DEMW  =>
-                    IF intr = '1' AND int_enabled = '1' THEN
+                    IF exception = '1' THEN
                         s_estado  <= SYS;
                     ELSE
                         s_estado  <= FETCH;
