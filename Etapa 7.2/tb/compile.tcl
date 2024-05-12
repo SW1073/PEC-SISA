@@ -9,6 +9,7 @@ vcom -93 -work work {../src/package_records.vhd}
 vcom -93 -work work {../src/proc/packages/package_opcodes.vhd}
 vcom -93 -work work {../src/proc/packages/package_alu.vhd}
 vcom -93 -work work {../src/proc/packages/package_control.vhd}
+vcom -93 -work work {../src/proc/packages/package_exceptions.vhd}
 vcom -93 -work work {../src/io_ctrl/package_io.vhd}
 
 
@@ -49,6 +50,7 @@ vcom -93 -work work {../src/proc/uc/multi.vhd}
 vcom -93 -work work {../src/proc/uc/control_l.vhd}
 vcom -93 -work work {../src/proc/uc/unidad_control.vhd}
 vcom -93 -work work {../src/proc/uc/illegal_ir.vhd}
+vcom -93 -work work {../src/proc/uc/exception_ctrl.vhd}
 
 
 # Processor
