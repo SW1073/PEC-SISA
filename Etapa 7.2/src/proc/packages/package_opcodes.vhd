@@ -18,6 +18,8 @@ PACKAGE package_opcodes IS
 	CONSTANT OPCODE_JUMPS    : std_logic_vector(3 DOWNTO 0) := "1010";
     CONSTANT OPCODE_IO       : std_logic_vector(3 DOWNTO 0) := "0111";
     CONSTANT OPCODE_SYS      : std_logic_vector(3 DOWNTO 0) := "1111";
+    CONSTANT OPCODE_FLOAT    : std_logic_vector(3 DOWNTO 0) := "1001";
+    CONSTANT OPCODE_LD_FLOAT : std_logic_vector(3 DOWNTO 0) := "1011";
 
     -- F de
     CONSTANT F_INPUT         : std_logic := '0';

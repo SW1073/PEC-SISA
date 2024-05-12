@@ -51,7 +51,7 @@ BEGIN
     s_illegal_ext_arit <= '1' WHEN s_opcode = OPCODE_EXT_ARIT AND 
                                 (s_f = "011" OR s_f = "110" OR s_f = "111")
                         ELSE '0';
-    s_illegal_float <= '1' WHEN s_opcode = OPCODE_FLOAT -- AND (s_f = "110");
+    s_illegal_float <= '1' WHEN s_opcode = OPCODE_FLOAT OR s_opcode = OPCODE_LD_FLOAT -- AND (s_f = "110");
                         ELSE '0';
 
     s_illegal_jump_1 <= '1' WHEN s_opcode = OPCODE_JUMPS AND s_f /= "000"
@@ -71,20 +71,20 @@ BEGIN
 
     -- EI, DI
     s_illegal_sys_2 <= '1' WHEN s_opcode = OPCODE_SYS AND 
-                                (s_f_sys = "100010" OR s_f_sys = "100011") AND
-                                (s_first_reg /= "000" OR s_second_reg /= "000")
+                                (s_f_sys = "100010" OR s_f_sys = "100011" OR
+                                s_first_reg /= "000" OR s_second_reg /= "000")
                         ELSE '0';
 
     -- RETI
     s_illegal_sys_3 <= '1' WHEN s_opcode = OPCODE_SYS AND
-                                (s_f_sys = "100101" OR s_f_sys = "100110" OR s_f_sys = "100111") AND
-                                (s_first_reg /= "000" OR s_second_reg /= "000")
+                                (s_f_sys = "100101" OR s_f_sys = "100110" OR s_f_sys = "100111" OR
+                                s_first_reg /= "000" OR s_second_reg /= "000")
                         ELSE '0';
 
     -- GETIID
     s_illegal_sys_4 <= '1' WHEN s_opcode = OPCODE_SYS AND
-                                (s_f_sys = "101001" OR s_f_sys = "101010" OR s_f_sys = "101011") AND
-                                (s_second_reg /= "000")
+                                (s_f_sys = "101001" OR s_f_sys = "101010" OR s_f_sys = "101011" OR
+                                s_second_reg /= "000")
                         ELSE '0';
 
     -- RDS

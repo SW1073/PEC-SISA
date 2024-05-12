@@ -48,6 +48,7 @@ vcom -93 -work work {../src/proc/datapath/datapath.vhd}
 vcom -93 -work work {../src/proc/uc/multi.vhd}
 vcom -93 -work work {../src/proc/uc/control_l.vhd}
 vcom -93 -work work {../src/proc/uc/unidad_control.vhd}
+vcom -93 -work work {../src/proc/uc/illegal_ir.vhd}
 
 
 # Processor

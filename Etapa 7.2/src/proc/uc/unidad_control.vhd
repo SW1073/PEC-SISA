@@ -67,7 +67,8 @@ ARCHITECTURE Structure OF unidad_control IS
             addr_io    : OUT std_logic_vector(7  DOWNTO 0);
             wr_out     : OUT std_logic;
             rd_in      : OUT std_logic;
-            inta       : OUT std_logic);
+            inta       : OUT std_logic;
+            illegal_instr : OUT std_logic);
 	END COMPONENT;
 
 	-- Multi
