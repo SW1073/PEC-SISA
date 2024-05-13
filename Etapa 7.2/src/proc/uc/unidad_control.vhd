@@ -4,6 +4,7 @@ USE ieee.numeric_std.ALL;
 USE ieee.std_logic_unsigned.ALL;
 USE work.package_alu.ALL;
 USE work.package_control.ALL;
+USE work.package_exceptions.ALL;
 
 ENTITY unidad_control IS
 	PORT (
@@ -135,6 +136,7 @@ ARCHITECTURE Structure OF unidad_control IS
 
     SIGNAl s_system : std_logic;
     SIGNAL s_exception : std_logic;
+    SIGNAL s_exception_code : std_logic_vector(3 DOWNTO 0);
 BEGIN
 
 	-- Aqui iria la declaracion del "mapeo" (PORT MAP) de los nombres de las entradas/salidas de los componentes
@@ -205,7 +207,7 @@ BEGIN
         intr           => intr,
         bad_allignment => bad_allignment,
         exception      => s_exception,
-        exception_code => exception_code
+        exception_code => s_exception_code
     );
 
 	-- Program Counter and Instruction Register
@@ -215,19 +217,23 @@ BEGIN
 			IF boot = '0' THEN
 				-- Sumamos al PC solo cuando ldpc que sale del multi = 1
 				IF s_multi_ldpc = '1' THEN
-					CASE s_tknbr IS
-						WHEN TKNBR_NOT_TAKEN =>
-							s_reg_pc <= s_pc_mas_dos;
-						WHEN TKNBR_BRANCH =>
-							s_reg_pc <= s_pc_mas_immed;
-						WHEN TKNBR_JUMP =>
-							s_reg_pc <= regout_a;
-						WHEN OTHERS =>
-							s_reg_pc <= s_pc_mas_dos;
-					END CASE;
 
-                    IF s_exception = '1' THEN
+                    IF s_system = '0' AND s_exception = '1' AND s_exception_code = EX_ILLEGAL_INSTR THEN
+                        -- si instruccion ilegal y aún no hemos entrado a sys vamos a la siguiente, ignoramos tknbr.
                         s_reg_pc <= s_pc_mas_dos;
+                    ELSE
+
+                        CASE s_tknbr IS
+                            WHEN TKNBR_NOT_TAKEN =>
+                                s_reg_pc <= s_pc_mas_dos;
+                            WHEN TKNBR_BRANCH =>
+                                s_reg_pc <= s_pc_mas_immed;
+                            WHEN TKNBR_JUMP =>
+                                s_reg_pc <= regout_a;
+                            WHEN OTHERS =>
+                                s_reg_pc <= s_pc_mas_dos;
+                        END CASE;
+
                     END IF;
 				END IF;
 
@@ -247,6 +253,7 @@ BEGIN
 	immed <= s_immed;
     system <= s_system;
     exception <= s_exception;
+    exception_code <= s_exception_code;
 
 END Structure;
 
