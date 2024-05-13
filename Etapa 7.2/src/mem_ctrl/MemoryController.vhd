@@ -63,7 +63,7 @@ begin
     s_bad_allignment <= '1' WHEN byte_m = '1' AND addr(0) = '1'
                         ELSE '0';
 
-    s_sram_we <= '0' WHEN s_is_vga_access = '1' OR s_bad_allignment = '1' ELSE we;
+    s_sram_we <= '0' WHEN s_is_vga_access = '1' ELSE we;
 
     -- Por ahora, toda lectura es siempre de la SRAM, per en un futuro aquí habrá que multiplexar
     rd_data     <= s_sram_data_readed when s_is_vga_access = '0' else vga_rd_data;

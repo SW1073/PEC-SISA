@@ -60,11 +60,14 @@ BEGIN
 	-- Señal que, o bien vale el valor de wrd generado por la lógica de control cuando se está en el ciclo
 	-- de DEMW o 0 en otro caso.
 	wrd <= wrd_l WHEN s_estado = DEMW OR s_estado = SYS
+           ELSE '0' WHEN exception = '1'
            ELSE '0';
 
 	-- Señal que, o bien vale el valor de wr_m generado por la lógica de control cuando se está en el
 	-- ciclo de DEMW o 0 en otro caso.
-	wr_m <= wr_m_l WHEN s_estado = DEMW ELSE '0';
+	wr_m <= wr_m_l WHEN s_estado = DEMW
+            ELSE '0' WHEN exception = '1'
+            ELSE '0';
 
 	-- Señal word_byte generada por la lógica de control y que sólo debe dejarse pasar en el ciclo de
 	-- DEMW. En el ciclo F debe valer 0 ya que el acceso a la memoria,

@@ -225,6 +225,10 @@ BEGIN
 						WHEN OTHERS =>
 							s_reg_pc <= s_pc_mas_dos;
 					END CASE;
+
+                    IF s_exception = '1' THEN
+                        s_reg_pc <= s_pc_mas_dos;
+                    END IF;
 				END IF;
 
 				-- Sumamos al IR solo cuando ldir que sale del multi = 1

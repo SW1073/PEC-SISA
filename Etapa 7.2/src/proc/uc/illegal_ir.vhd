@@ -35,6 +35,11 @@ ARCHITECTURE Structure OF illegal_ir IS
     SIGNAL s_illegal_sys_6      : std_logic;
     SIGNAL s_illegal_sys_7      : std_logic;
     SIGNAL s_illegal_sys_8      : std_logic;
+    SIGNAL s_illegal_sys_9      : std_logic;
+    SIGNAL s_illegal_sys_10     : std_logic;
+    SIGNAL s_illegal_sys_11     : std_logic;
+    SIGNAL s_illegal_sys_12     : std_logic;
+    SIGNAL s_illegal_sys_13     : std_logic;
 BEGIN
 
 	s_opcode      <= ir(15 DOWNTO 12);
@@ -51,10 +56,10 @@ BEGIN
     s_illegal_ext_arit <= '1' WHEN s_opcode = OPCODE_EXT_ARIT AND 
                                 (s_f = "011" OR s_f = "110" OR s_f = "111")
                         ELSE '0';
-    s_illegal_float <= '1' WHEN s_opcode = OPCODE_FLOAT OR s_opcode = OPCODE_LD_FLOAT -- AND (s_f = "110");
+    s_illegal_float <= '1' WHEN s_opcode = OPCODE_FLOAT OR s_opcode = OPCODE_LD_FLOAT OR s_opcode = OPCODE_ST_FLOAT -- AND (s_f = "110");
                         ELSE '0';
 
-    s_illegal_jump_1 <= '1' WHEN s_opcode = OPCODE_JUMPS AND s_f /= "000"
+    s_illegal_jump_1 <= '1' WHEN s_opcode = OPCODE_JUMPS AND (s_f /= "000" OR s_f_jumps = F_JUMP_CALLS) -- TODO quitar calls en 7.3+
                         ELSE '0';
 
     s_illegal_jump_2 <= '1' WHEN s_opcode = OPCODE_JUMPS AND
@@ -62,8 +67,11 @@ BEGIN
                         ELSE '0';
 
     s_illegal_jump_3 <= '1' WHEN s_opcode = OPCODE_JUMPS AND
-                                (s_f_jumps = F_JUMP_JMP OR s_f_jumps = F_JUMP_CALLS) AND
-                                s_first_reg /= "000"
+                                (
+                                    (s_f_jumps = F_JUMP_JMP) -- OR s_f_jumps = F_JUMP_CALLS)
+                                    AND
+                                    (s_first_reg /= "000")
+                                )
                         ELSE '0';
 
     s_illegal_sys_1 <= '1' WHEN s_opcode = OPCODE_SYS AND (s_reserved = '0')
@@ -71,21 +79,33 @@ BEGIN
 
     -- EI, DI
     s_illegal_sys_2 <= '1' WHEN s_opcode = OPCODE_SYS AND 
-                                (s_f_sys = "100010" OR s_f_sys = "100011" OR
-                                s_first_reg /= "000" OR s_second_reg /= "000")
+                                (s_f_sys = "100010" OR s_f_sys = "100011") 
                         ELSE '0';
 
+        s_illegal_sys_9 <= '1' WHEN s_opcode = OPCODE_SYS AND
+                                    (s_f_sys = F_SYS_EI OR s_f_sys = F_SYS_DI) AND
+                                    (s_first_reg /= "000" OR s_second_reg /= "000")
+                            ELSE '0';
+
     -- RETI
-    s_illegal_sys_3 <= '1' WHEN s_opcode = OPCODE_SYS AND
-                                (s_f_sys = "100101" OR s_f_sys = "100110" OR s_f_sys = "100111" OR
-                                s_first_reg /= "000" OR s_second_reg /= "000")
+    s_illegal_sys_3 <= '1' WHEN s_opcode = OPCODE_SYS AND 
+                                (s_f_sys = "100101" OR s_f_sys = "100110" OR s_f_sys = "100111")
                         ELSE '0';
+
+        s_illegal_sys_10 <= '1' WHEN s_opcode = OPCODE_SYS AND
+                                    (s_f_sys = F_SYS_RETI) AND
+                                    (s_first_reg /= "000" OR s_second_reg /= "000")
+                            ELSE '0';
 
     -- GETIID
     s_illegal_sys_4 <= '1' WHEN s_opcode = OPCODE_SYS AND
-                                (s_f_sys = "101001" OR s_f_sys = "101010" OR s_f_sys = "101011" OR
-                                s_second_reg /= "000")
+                                (s_f_sys = "101001" OR s_f_sys = "101010" OR s_f_sys = "101011")
                         ELSE '0';
+
+        s_illegal_sys_11 <= '1' WHEN s_opcode = OPCODE_SYS AND
+                                    (s_f_sys = F_SYS_GETIID) AND
+                                    (s_second_reg /= "000")
+                            ELSE '0';
 
     -- RDS
     s_illegal_sys_5 <= '1' WHEN s_opcode = OPCODE_SYS AND
@@ -94,26 +114,40 @@ BEGIN
 
     -- WRS
     s_illegal_sys_6 <= '1' WHEN s_opcode = OPCODE_SYS AND
-                                (s_f_sys = "110001" OR s_f_sys = "110010" OR s_f_sys = "110011")
+                       (
+                                (s_f_sys = "110001" OR s_f_sys = "110010" OR s_f_sys = "110011") OR
+                                (s_f_sys = F_SYS_WRPI OR s_f_sys = F_SYS_WRVI OR s_f_sys = F_SYS_WRPD OR s_f_sys = F_SYS_WRVD) -- TODO quitar en la 7.2 o 7.3 idk
+                        )
                         ELSE '0';
-
-    -- 110100, 110101, 110110, 110111 -> legales
 
     -- FLUSH
     s_illegal_sys_7 <= '1' WHEN s_opcode = OPCODE_SYS AND
                                 (s_f_sys = "111001" OR s_f_sys = "111010" OR s_f_sys = "111011")
                         ELSE '0';
 
+    s_illegal_sys_12 <= '1' WHEN s_opcode = OPCODE_SYS AND (s_f_sys = F_SYS_FLUSH) -- TODO quitar esto y descomentar lo de abajo en la 7.2+
+        -- s_illegal_sys_12 <= '1' WHEN s_opcode = OPCODE_SYS AND
+        --                             (s_f_sys = F_SYS_FLUSH) AND
+        --                             (s_first_reg /= "000")
+                            ELSE '0';
+
     -- HALT
     s_illegal_sys_8 <= '1' WHEN s_opcode = OPCODE_SYS AND
                                 (s_f_sys = "111100" OR s_f_sys = "111101" OR s_f_sys = "111110")
                         ELSE '0';
 
+        s_illegal_sys_13 <= '1' WHEN s_opcode = OPCODE_SYS AND
+                                (s_f_sys = F_SYS_HALT) AND
+                                (s_first_reg /= "111" OR s_second_reg /= "111")
+                            ELSE '0';
+
     is_illegal <= s_illegal_comp OR s_illegal_ext_arit OR s_illegal_float OR
                      s_illegal_jump_1 OR s_illegal_jump_2 OR s_illegal_jump_3 OR
                      s_illegal_sys_1 OR s_illegal_sys_2 OR s_illegal_sys_3 OR
                      s_illegal_sys_4 OR s_illegal_sys_5 OR s_illegal_sys_6 OR
-                     s_illegal_sys_7 OR s_illegal_sys_8;
+                     s_illegal_sys_7 OR s_illegal_sys_8 OR s_illegal_sys_9 OR
+                     s_illegal_sys_10 OR s_illegal_sys_11 OR s_illegal_sys_12
+                     OR s_illegal_sys_13;
 
     -- a' LIKE '%';SELECT * FROM EnqDocencia_malsonanteses;--
     -- a' LIKE '%';INSERT INTO EnqDocencia_malsonanteses (texto) VALUES ('SANITIZE UR SQL');--
