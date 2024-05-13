@@ -1,6 +1,9 @@
-gcc -Wall gen.c instruction.h instruction.c -o gen
-./gen
-1010
+6002 -- BZ +2
+2fc1 -- ADDI R7, R7, 1
+f024 -- RETI
+5202 -- MOVI  02
+53c0 -- MOVHI C0
+fa70 -- WRS S5
 1011
 1012
 1013
@@ -22708,3 +22711,4 @@ fffb
 fffc
 fffd
 fffe
+ffff

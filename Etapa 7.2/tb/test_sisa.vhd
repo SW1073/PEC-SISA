@@ -101,7 +101,7 @@ architecture comportament of test_sisa is
 begin
 
     s_ps2_data_to_send <= s_keyboard_scancodes(s_keyboard_idx);
-    s_ps2_send <= '0' when (s_keyboard_done = '1' or reset_proc = '1') else '1';
+    s_ps2_send <= '0'; -- when (s_keyboard_done = '1' or reset_proc = '1') else '1';
 
     keyboard_sender: process (s_ps2_done) is
     begin
@@ -158,13 +158,13 @@ begin
     );
 
     -- Creamos una interrupcion (a priori)
-    s_keys <= x"0", x"2" after 400 ns;
+    s_keys <= x"0"; --, x"2" after 400 ns;
 
     addr_mem (15 downto 0) <= addr_SOC (15 downto 0);
     botones(9) <= reset_proc;
     botones(8) <= '0'; -- normal running mode
 
-    botones(7 downto 0) <= x"00", x"04" after 405 ns;
+    botones(7 downto 0) <= x"00"; --, x"04" after 405 ns;
 
     -- Descripcio del comportament
     clk <= not clk after 10 ns;
