@@ -4,7 +4,7 @@ CFLAGS=-Wall
 
 all: gen
 
-%: %.c
+gen: gen.c instruction.h instruction.c
 > $(CC) $(CFLAGS) $^ -o $@
 
 run: gen
