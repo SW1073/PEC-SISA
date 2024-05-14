@@ -10,6 +10,7 @@ ENTITY exception_ctrl IS
         int_enabled     : IN std_logic;
         intr            : IN std_logic;
         bad_allignment  : IN std_logic;
+        div_by_zero     : IN std_logic;
         exception       : OUT std_logic;
         exception_code  : OUT std_logic_vector(3 DOWNTO 0));
 END ENTITY;
@@ -57,6 +58,8 @@ BEGIN
                 s_exception_code_register <= EX_INTERRUPT_CODE;
             elsif s_true_bad_alignment = '1' then
                 s_exception_code_register <= EX_BAD_ALLIGNMENT;
+            elsif div_by_zero = '1' then
+                s_exception_code_register <= EX_DIV_BY_ZERO;
             else
                 s_exception_code_register <= (OTHERS => '0');
             end if;
