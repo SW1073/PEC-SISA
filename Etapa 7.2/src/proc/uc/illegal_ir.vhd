@@ -103,9 +103,9 @@ BEGIN
                                 s_opcode = OPCODE_STOREB OR
                                 s_opcode = OPCODE_MOVS OR
                                 s_opcode = OPCODE_BRANCHES OR
-                                s_opcode = OPCODE_IO 
+                                s_opcode = OPCODE_IO
                       ELSE '0';
-                                
+
 
     is_illegal <= '0'           WHEN s_valid_opcode = '1' ELSE
              s_illegal_comp     WHEN s_opcode = OPCODE_CMPS     ELSE

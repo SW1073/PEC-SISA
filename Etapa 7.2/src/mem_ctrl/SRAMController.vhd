@@ -68,7 +68,7 @@ begin
         if rising_edge(clk) then
             case (s_state) is
                 when READ =>
-					if WR = '1' then
+					if WR = '1' and bad_allignment = '0' then
 						if byte_m = '0' and address(0) = '0' then
 							SRAM_UB_N <= '0';
 							SRAM_LB_N <= '0';

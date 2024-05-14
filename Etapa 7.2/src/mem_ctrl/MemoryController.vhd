@@ -51,7 +51,7 @@ architecture comportament of MemoryController is
     signal s_sram_data_readed: std_logic_vector(15 downto 0);
     signal s_sram_wr: std_logic;
     signal s_sram_we: std_logic;
-    
+
     signal s_proc_addr_menos_vga_base_addr : std_logic_vector(15 downto 0);
     signal s_is_vga_access : std_logic;
 
@@ -60,7 +60,7 @@ begin
     s_is_vga_access <= '1' WHEN (addr >= x"A000") AND (addr <= x"BFFF") ELSE '0';
     s_proc_addr_menos_vga_base_addr <= addr - x"A000";
 
-    s_bad_allignment <= '1' WHEN byte_m = '1' AND addr(0) = '1'
+    s_bad_allignment <= '1' WHEN byte_m = '0' AND addr(0) = '1'
                         ELSE '0';
 
     s_sram_we <= '0' WHEN s_is_vga_access = '1' ELSE we;

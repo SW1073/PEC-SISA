@@ -1,6 +1,7 @@
 LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 USE work.package_exceptions.ALL;
+USE work.package_opcodes.ALL;
 
 ENTITY exception_ctrl IS
 	PORT (
@@ -24,16 +25,45 @@ ARCHITECTURE Structure OF exception_ctrl IS
     SIGNAL s_illegal : std_logic;
     SIGNAL s_interrupt : std_logic;
 
+    SIGNAL s_opcode: std_logic_vector(3 DOWNTO 0);
+    SIGNAL s_is_memw_instr: std_logic;
+
+    SIGNAL s_true_bad_alignment: std_logic;
+
+    SIGNAL s_exception_code_register: std_logic_vector(3 DOWNTO 0);
+    SIGNAL s_exception: std_logic;
+
 BEGIN
+
+    s_opcode <= ir(15 DOWNTO 12);
+    s_is_memw_instr <= '1' WHEN s_opcode = OPCODE_LOAD OR
+                                s_opcode = OPCODE_STORE ELSE
+                       '0';
+
+    s_true_bad_alignment <= bad_allignment AND s_is_memw_instr;
 
     illegal_ir1: illegal_ir PORT MAP (ir, s_illegal);
     s_interrupt <= int_enabled AND intr;
 
-    exception <= s_illegal OR s_interrupt OR bad_allignment;
-    exception_code <= EX_ILLEGAL_INSTR WHEN s_illegal = '1' ELSE
-                      EX_INTERRUPT_CODE WHEN s_interrupt = '1' ELSE
-                      EX_BAD_ALLIGNMENT WHEN bad_allignment = '1' ELSE
-                      (OTHERS => '0');
+    s_exception <= s_illegal OR s_interrupt OR s_true_bad_alignment;
+    exception <= s_exception;
+
+    process (s_exception) is
+    begin
+        if rising_edge(s_exception) then
+            if s_illegal = '1' then
+                s_exception_code_register <= EX_ILLEGAL_INSTR;
+            elsif s_interrupt = '1' then
+                s_exception_code_register <= EX_INTERRUPT_CODE;
+            elsif s_true_bad_alignment = '1' then
+                s_exception_code_register <= EX_BAD_ALLIGNMENT;
+            else
+                s_exception_code_register <= (OTHERS => '0');
+            end if;
+        end if;
+    end process;
+
+    exception_code <= s_exception_code_register;
 
 END Structure;
 
