@@ -218,8 +218,7 @@ BEGIN
 				-- Sumamos al PC solo cuando ldpc que sale del multi = 1
 				IF s_multi_ldpc = '1' THEN
 
-                    IF s_system = '0' AND s_exception = '1' AND s_exception_code = EX_ILLEGAL_INSTR THEN
-                        -- si instruccion ilegal y aún no hemos entrado a sys vamos a la siguiente, ignoramos tknbr.
+                    IF s_system = '0' AND s_exception = '1' THEN
                         s_reg_pc <= s_pc_mas_dos;
                     ELSE
 

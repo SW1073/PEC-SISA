@@ -63,16 +63,15 @@ BEGIN
     ------ SYSTEM
     s_illegal_sys_1 <= '1' WHEN s_reserved = '0' ELSE '0';
     -- EI, DI, RETI
-
     s_illegal_sys_2 <= '1' WHEN s_first_reg /= "000" OR s_second_reg /= "000" ELSE '0';
+
     -- GETIID
-
     s_illegal_sys_3 <= '1' WHEN s_second_reg /= "000" ELSE '0';
+
     -- FLUSH
-
     -- s_illegal_sys_4 <= '1' WHEN s_first_reg /= "000" ELSE '0'; -- TODO descomentar en 7.3+
-    -- HALT
 
+    -- HALT
     s_illegal_sys_5 <= '1' WHEN s_first_reg /= "111" OR s_second_reg /= "111" ELSE '0';
 
     s_illegal_sys_6 <= '1' WHEN s_f_sys = "100010" OR s_f_sys = "100011" OR -- EI, DI
