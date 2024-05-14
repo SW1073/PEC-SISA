@@ -107,6 +107,7 @@ ARCHITECTURE Structure OF unidad_control IS
         int_enabled     : IN std_logic;
         intr            : IN std_logic;
         bad_allignment  : IN std_logic;
+        div_by_zero     : IN std_logic;
         exception       : OUT std_logic;
         exception_code  : OUT std_logic_vector(3 DOWNTO 0));
     END COMPONENT;
@@ -205,6 +206,7 @@ BEGIN
         ir             => s_reg_ir,
         int_enabled    => int_enabled,
         intr           => intr,
+        div_by_zero    => div_by_zero,
         bad_allignment => bad_allignment,
         exception      => s_exception,
         exception_code => s_exception_code
