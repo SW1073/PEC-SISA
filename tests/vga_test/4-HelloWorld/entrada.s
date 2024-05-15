@@ -2,6 +2,8 @@
 
  movi  r7, 0x00 ; Pila de sist: decreix en
  movhi r7, 0x82 ;  RAM: 0x81fe, 0x81fc, ...
+ movi r5, 0xFA
+ wrs s5, r5
  ;wrs   s6, r7   ; a s6: la pila de sistema
 
  ; El retorn de la rutina principal

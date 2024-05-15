@@ -21,6 +21,19 @@ int write_one(int fila, int col, int c)
 int main () {
     int valor;
 
+ //    int src = 0xFA;
+ //    int dest;
+	//
+ //  __asm__ (
+ //    "movi %0, 0xFA\n\t"
+	// "wrs %1, %0"
+ // 	: "=r" (dest)
+ // 	: "r" (src));           
+	//
+ //    if (dest) {
+ //        write_one(2, 5, 0x3F48);
+ //    }
+
     valor=0x3F48;     		/* H mayuscula en blanco */
     write_one(1,5,valor); 	/* escribe el caracter en la posicion fila=1,columna=5 */
     valor=0x0365;     		/* e minuscula en rojo */
