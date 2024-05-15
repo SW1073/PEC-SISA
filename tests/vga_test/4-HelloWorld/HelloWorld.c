@@ -11,12 +11,12 @@ int write_one(int fila, int col, int c)
       "st 0(%0), %1"      // %0 corresponde a la variable "pos" que habra sido cargada en un registro
                           // %1 corresponde a la variable "c" que habra sido cargada en otro registro
       : /* sin salidas */
-      : "a" (pos), "b" (c));  
+      : "a" (pos), "b" (c));
 
   res=1;
   return res;
 }
-                        
+
 
 int main () {
     int valor;
@@ -28,7 +28,7 @@ int main () {
  //    "movi %0, 0xFA\n\t"
 	// "wrs %1, %0"
  // 	: "=r" (dest)
- // 	: "r" (src));           
+ // 	: "r" (src));
 	//
  //    if (dest) {
  //        write_one(2, 5, 0x3F48);
