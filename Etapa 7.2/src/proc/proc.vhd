@@ -17,7 +17,8 @@ ENTITY proc IS
         addr_io   : OUT STD_LOGIC_VECTOR(7  DOWNTO 0);
         rd_io     : IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
         wr_out    : OUT STD_LOGIC;
-        rd_in     : OUT STD_LOGIC);
+        rd_in     : OUT STD_LOGIC;
+        is_mem_access : OUT std_logic);
 END proc;
 ARCHITECTURE Structure OF proc IS
 
@@ -58,29 +59,29 @@ ARCHITECTURE Structure OF proc IS
 
 	COMPONENT unidad_control IS
 		PORT (
-			boot       : IN  std_logic;
-			clk        : IN  std_logic;
-			z          : IN  std_logic;
-			datard_m   : IN  std_logic_vector(15 DOWNTO 0);
-			regout_a   : IN  std_logic_vector(15 DOWNTO 0);
-            int_enabled : IN std_logic;
-            intr       : IN std_logic;
-            div_by_zero : IN std_logic;
+            boot       : IN  std_logic;
+            clk        : IN  std_logic;
+            z          : IN  std_logic;
+            datard_m   : IN  std_logic_vector(15 DOWNTO 0);
+            regout_a   : IN  std_logic_vector(15 DOWNTO 0);
+            int_enabled: IN  std_logic;
+            intr       : IN  std_logic;
+            div_by_zero : IN  std_logic;
             bad_allignment : IN std_logic;
-			op         : OUT std_logic_vector(2 DOWNTO 0);
-			f          : OUT std_logic_vector(2 DOWNTO 0);
-			wrd        : OUT std_logic;
-			d_sys      : OUT std_logic;
-			addr_a     : OUT std_logic_vector(2 DOWNTO 0);
-			addr_b     : OUT std_logic_vector(2 DOWNTO 0);
-			addr_d     : OUT std_logic_vector(2 DOWNTO 0);
-			immed      : OUT std_logic_vector(15 DOWNTO 0);
-			pc         : OUT std_logic_vector(15 DOWNTO 0);
-			ins_dad    : OUT std_logic;
-			in_d       : OUT std_logic_vector(1 DOWNTO 0);
-			immed_x2   : OUT std_logic;
-			wr_m       : OUT std_logic;
-			word_byte  : OUT std_logic;
+            op         : OUT std_logic_vector(2 DOWNTO 0);
+            f          : OUT std_logic_vector(2 DOWNTO 0);
+            wrd        : OUT std_logic;
+            d_sys      : OUT std_logic;
+            addr_a     : OUT std_logic_vector(2 DOWNTO 0);
+            addr_b     : OUT std_logic_vector(2 DOWNTO 0);
+            addr_d     : OUT std_logic_vector(2 DOWNTO 0);
+            immed      : OUT std_logic_vector(15 DOWNTO 0);
+            pc         : OUT std_logic_vector(15 DOWNTO 0);
+            ins_dad    : OUT std_logic;
+            in_d       : OUT std_logic_vector(1 DOWNTO 0);
+            immed_x2   : OUT std_logic;
+            wr_m       : OUT std_logic;
+            word_byte  : OUT std_logic;
             b_or_immed : OUT std_logic;
             a_sys      : OUT std_logic;
             b_sys      : OUT std_logic;
@@ -90,7 +91,8 @@ ARCHITECTURE Structure OF proc IS
             system     : OUT std_logic;
             exception  : OUT std_logic;
             exception_code : OUT std_logic_vector(3 DOWNTO 0);
-            inta       : OUT std_logic);
+            inta       : OUT std_logic;
+            is_mem_access : OUT std_logic);
 	END COMPONENT;
 
 	SIGNAL s_op         : std_logic_vector (2 DOWNTO 0);
@@ -188,7 +190,8 @@ BEGIN
         system     => s_system,
         exception  => s_exception,
         exception_code => s_exception_code,
-        inta       => inta
+        inta       => inta,
+        is_mem_access => is_mem_access
 	);
 
 	dbg_pc <= s_pc;

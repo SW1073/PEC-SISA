@@ -10,6 +10,7 @@ entity MemoryController is
           rd_data    : out std_logic_vector(15 downto 0);
           we         : in  std_logic;
           byte_m     : in  std_logic;
+          is_mem_access  : IN  std_logic;
           bad_allignment : out std_logic;
           -- se�ales para la placa de desarrollo
           SRAM_ADDR : out   std_logic_vector(17 downto 0);
@@ -60,7 +61,7 @@ begin
     s_is_vga_access <= '1' WHEN (addr >= x"A000") AND (addr <= x"BFFF") ELSE '0';
     s_proc_addr_menos_vga_base_addr <= addr - x"A000";
 
-    s_bad_allignment <= '1' WHEN byte_m = '0' AND addr(0) = '1'
+    s_bad_allignment <= '1' WHEN byte_m = '0' AND addr(0) = '1' AND is_mem_access = '1'
                         ELSE '0';
 
     s_sram_we <= '0' WHEN s_is_vga_access = '1' ELSE we;

@@ -3,26 +3,28 @@ USE ieee.std_logic_1164.ALL;
 
 ENTITY multi IS
 	PORT (
-		clk       : IN  std_logic;
-		boot      : IN  std_logic;
-		ldpc_l    : IN  std_logic;
-		wrd_l     : IN  std_logic;
-		wr_m_l    : IN  std_logic;
-        rd_in_l   : IN  std_logic;
-        wr_out_l  : IN  std_logic;
-        int_enabled : IN std_logic;
-        intr      : IN std_logic;
-		w_b       : IN  std_logic;
-        exception : IN std_logic;
-		ldpc      : OUT std_logic;
-		wrd       : OUT std_logic;
-		wr_m      : OUT std_logic;
-        rd_in     : OUT std_logic;
-        wr_out    : OUT std_logic;
-		ldir      : OUT std_logic;
-		ins_dad   : OUT std_logic;
-		word_byte : OUT std_logic;
-        system    : OUT std_logic);
+		clk             : IN  std_logic;
+		boot            : IN  std_logic;
+		ldpc_l          : IN  std_logic;
+		wrd_l           : IN  std_logic;
+		wr_m_l          : IN  std_logic;
+        rd_in_l         : IN  std_logic;
+        wr_out_l        : IN  std_logic;
+        int_enabled     : IN  std_logic;
+        intr            : IN  std_logic;
+		w_b             : IN  std_logic;
+        exception       : IN  std_logic;
+        is_mem_access_l : IN  std_logic;
+		ldpc            : OUT std_logic;
+		wrd             : OUT std_logic;
+		wr_m            : OUT std_logic;
+        rd_in           : OUT std_logic;
+        wr_out          : OUT std_logic;
+		ldir            : OUT std_logic;
+		ins_dad         : OUT std_logic;
+		word_byte       : OUT std_logic;
+        system          : OUT std_logic;
+        is_mem_access   : OUT std_logic);
 END ENTITY;
 
 ARCHITECTURE Structure OF multi IS
@@ -84,7 +86,11 @@ BEGIN
 	-- Es la señal que indica que cargaremos un nuevo valor en el IR, solo se activa en el ciclo F
 	ldir <= '1' WHEN s_estado = FETCH ELSE '0';
 
+    -- Señal que indica que estamos en el ciclo de sistema
     system <= '1' WHEN s_estado = SYS ELSE '0';
+
+    -- Señal que indica si se está realizando un acceso a memoria
+    is_mem_access <= is_mem_access_l WHEN s_estado = DEMW ELSE '0';
 
 END Structure;
 

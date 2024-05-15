@@ -40,7 +40,8 @@ ENTITY unidad_control IS
         system     : OUT std_logic;
         exception  : OUT std_logic;
         exception_code : OUT std_logic_vector(3 DOWNTO 0);
-        inta       : OUT std_logic);
+        inta       : OUT std_logic;
+        is_mem_access : OUT std_logic);
 END unidad_control;
 
 ARCHITECTURE Structure OF unidad_control IS
@@ -49,67 +50,70 @@ ARCHITECTURE Structure OF unidad_control IS
 	-- Control Logic
 	COMPONENT control_l IS
 		PORT (
-			ir         : IN  std_logic_vector(15 DOWNTO 0);
-            system     : IN  std_logic;
-			z          : IN  std_logic;
-			op         : OUT std_logic_vector(2 DOWNTO 0);
-			f          : OUT std_logic_vector(2 DOWNTO 0);
-			ldpc       : OUT std_logic;
-			wrd        : OUT std_logic;
-            d_sys      : OUT std_logic;
-			addr_a     : OUT std_logic_vector(2 DOWNTO 0);
-			addr_b     : OUT std_logic_vector(2 DOWNTO 0);
-			addr_d     : OUT std_logic_vector(2 DOWNTO 0);
-			immed      : OUT std_logic_vector(15 DOWNTO 0);
-			wr_m       : OUT std_logic;
-			in_d       : OUT std_logic_vector(1 DOWNTO 0);
-			immed_x2   : OUT std_logic;
-			word_byte  : OUT std_logic;
-			tknbr      : OUT std_logic_vector(1 DOWNTO 0);
-            b_or_immed : OUT std_logic;
-            a_sys      : OUT std_logic;
-            b_sys      : OUT std_logic;
-            addr_io    : OUT std_logic_vector(7  DOWNTO 0);
-            wr_out     : OUT std_logic;
-            rd_in      : OUT std_logic;
-            inta       : OUT std_logic);
+            ir              : IN  std_logic_vector(15 DOWNTO 0);
+            system          : IN  std_logic;
+            z               : IN  std_logic;
+            op              : OUT std_logic_vector(2 DOWNTO 0);
+            f               : OUT std_logic_vector(2 DOWNTO 0);
+            ldpc            : OUT std_logic;
+            wrd             : OUT std_logic;
+            d_sys           : OUT std_logic;
+            addr_a          : OUT std_logic_vector(2 DOWNTO 0);
+            addr_b          : OUT std_logic_vector(2 DOWNTO 0);
+            addr_d          : OUT std_logic_vector(2 DOWNTO 0);
+            immed           : OUT std_logic_vector(15 DOWNTO 0);
+            wr_m            : OUT std_logic;
+            in_d            : OUT std_logic_vector(1 DOWNTO 0);
+            immed_x2        : OUT std_logic;
+            word_byte       : OUT std_logic;
+            tknbr           : OUT std_logic_vector(1 DOWNTO 0);
+            b_or_immed      : OUT std_logic;
+            a_sys           : OUT std_logic;
+            b_sys           : OUT std_logic;
+            addr_io         : OUT STD_LOGIC_VECTOR(7  DOWNTO 0);
+            wr_out          : OUT STD_LOGIC;
+            rd_in           : OUT STD_LOGIC;
+            inta            : OUT STD_LOGIC;
+            is_mem_access   : OUT std_logic);
 	END COMPONENT;
 
 	-- Multi
 	COMPONENT multi IS
 		PORT (
-            clk       : IN  std_logic;
-            boot      : IN  std_logic;
-            ldpc_l    : IN  std_logic;
-            wrd_l     : IN  std_logic;
-            wr_m_l    : IN  std_logic;
-            rd_in_l   : IN  std_logic;
-            wr_out_l  : IN  std_logic;
-            w_b       : IN  std_logic;
-            int_enabled : IN std_logic;
-            intr      : IN std_logic;
-            exception : IN std_logic;
-            ldpc      : OUT std_logic;
-            wrd       : OUT std_logic;
-            wr_m      : OUT std_logic;
-            rd_in     : OUT std_logic;
-            wr_out    : OUT std_logic;
-            ldir      : OUT std_logic;
-            ins_dad   : OUT std_logic;
-            word_byte : OUT std_logic;
-            system    : OUT std_logic);
+            clk             : IN  std_logic;
+            boot            : IN  std_logic;
+            ldpc_l          : IN  std_logic;
+            wrd_l           : IN  std_logic;
+            wr_m_l          : IN  std_logic;
+            rd_in_l         : IN  std_logic;
+            wr_out_l        : IN  std_logic;
+            int_enabled     : IN  std_logic;
+            intr            : IN  std_logic;
+            w_b             : IN  std_logic;
+            exception       : IN  std_logic;
+            is_mem_access_l : IN  std_logic;
+            ldpc            : OUT std_logic;
+            wrd             : OUT std_logic;
+            wr_m            : OUT std_logic;
+            rd_in           : OUT std_logic;
+            wr_out          : OUT std_logic;
+            ldir            : OUT std_logic;
+            ins_dad         : OUT std_logic;
+            word_byte       : OUT std_logic;
+            system          : OUT std_logic;
+            is_mem_access   : OUT std_logic);
 	END COMPONENT;
 
     COMPONENT exception_ctrl IS
-	PORT (
-		clk             : IN  std_logic;
-        ir              : IN  std_logic_vector(15 DOWNTO 0);
-        int_enabled     : IN std_logic;
-        intr            : IN std_logic;
-        bad_allignment  : IN std_logic;
-        div_by_zero     : IN std_logic;
-        exception       : OUT std_logic;
-        exception_code  : OUT std_logic_vector(3 DOWNTO 0));
+        PORT (
+            clk             : IN  std_logic;
+            ir              : IN  std_logic_vector(15 DOWNTO 0);
+            int_enabled     : IN std_logic;
+            intr            : IN std_logic;
+            bad_allignment  : IN std_logic;
+            div_by_zero     : IN std_logic;
+            exception       : OUT std_logic;
+            exception_code  : OUT std_logic_vector(3 DOWNTO 0));
     END COMPONENT;
 
 	-- Senales para conectar control_l con multi
@@ -117,6 +121,7 @@ ARCHITECTURE Structure OF unidad_control IS
 	SIGNAL s_word_byte : std_logic;
 	SIGNAL s_wr_m      : std_logic;
 	SIGNAL s_wrd       : std_logic;
+    SIGNAL s_is_mem_access : std_logic;
 
 	-- Senales utiles que salen del multi y usamos dentro de la uc
 	SIGNAL s_multi_ldpc : std_logic;
@@ -173,7 +178,8 @@ BEGIN
         addr_io    => addr_io,
         wr_out     => s_wr_out,
         rd_in      => s_rd_in,
-        inta       => inta
+        inta       => inta,
+        is_mem_access => s_is_mem_access
 	);
 
 	multi0 : multi PORT MAP(
@@ -189,6 +195,7 @@ BEGIN
         int_enabled => int_enabled,
         intr   => intr,
         exception => s_exception,
+        is_mem_access_l => s_is_mem_access,
 		-- outputs
 		ldpc      => s_multi_ldpc,
 		wrd       => wrd,
@@ -198,7 +205,8 @@ BEGIN
 		ldir      => s_multi_ldir,
 		ins_dad   => ins_dad,
 		word_byte => word_byte,
-        system    => s_system
+        system    => s_system,
+        is_mem_access => is_mem_access
 	);
 
     ex_ctrl : exception_ctrl PORT MAP(

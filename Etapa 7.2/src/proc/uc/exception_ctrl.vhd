@@ -61,7 +61,7 @@ BEGIN
             elsif div_by_zero = '1' then
                 s_exception_code_register <= EX_DIV_BY_ZERO;
             else
-                s_exception_code_register <= (OTHERS => '0');
+                s_exception_code_register <= (OTHERS => 'X');
             end if;
         end if;
     end process;
