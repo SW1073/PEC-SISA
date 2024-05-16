@@ -49,24 +49,30 @@ BEGIN
     s_exception <= s_illegal OR s_interrupt OR s_true_bad_alignment;
     exception <= s_exception;
 
-    process (s_exception) is
-    begin
-        if rising_edge(s_exception) then
-            if s_illegal = '1' then
-                s_exception_code_register <= EX_ILLEGAL_INSTR;
-            elsif s_interrupt = '1' then
-                s_exception_code_register <= EX_INTERRUPT_CODE;
-            elsif s_true_bad_alignment = '1' then
-                s_exception_code_register <= EX_BAD_ALLIGNMENT;
-            elsif div_by_zero = '1' then
-                s_exception_code_register <= EX_DIV_BY_ZERO;
-            else
-                s_exception_code_register <= (OTHERS => 'X');
-            end if;
-        end if;
-    end process;
+    exception_code <= EX_ILLEGAL_INSTR WHEN s_illegal = '1' ELSE
+                      EX_INTERRUPT_CODE WHEN s_interrupt = '1' ELSE
+                      EX_BAD_ALLIGNMENT WHEN s_true_bad_alignment = '1' ELSE
+                      EX_DIV_BY_ZERO WHEN div_by_zero = '1'
+                      ELSE (OTHERS => 'X');
 
-    exception_code <= s_exception_code_register;
+    -- process (s_exception) is
+    -- begin
+    --     if rising_edge(s_exception) then
+    --         if s_illegal = '1' then
+    --             s_exception_code_register <= EX_ILLEGAL_INSTR;
+    --         elsif s_interrupt = '1' then
+    --             s_exception_code_register <= EX_INTERRUPT_CODE;
+    --         elsif s_true_bad_alignment = '1' then
+    --             s_exception_code_register <= EX_BAD_ALLIGNMENT;
+    --         elsif div_by_zero = '1' then
+    --             s_exception_code_register <= EX_DIV_BY_ZERO;
+    --         else
+    --             s_exception_code_register <= (OTHERS => 'X');
+    --         end if;
+    --     end if;
+    -- end process;
+
+    -- exception_code <= s_exception_code_register;
 
 END Structure;
 

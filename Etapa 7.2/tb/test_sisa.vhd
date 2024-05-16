@@ -158,13 +158,14 @@ begin
     );
 
     -- Creamos una interrupcion (a priori)
-    s_keys <= x"0"; --, x"2" after 400 ns;
+    -- s_keys <= x"0", x"2" after 400 ns, x"2" after 6000 ns;
+    s_keys <= x"0", x"2" after 10000 ns, x"0" after 10100 ns, x"2" after 20000 ns, x"0" after 20100 ns;
 
     addr_mem (15 downto 0) <= addr_SOC (15 downto 0);
     botones(9) <= reset_proc;
     botones(8) <= '0'; -- normal running mode
 
-    botones(7 downto 0) <= x"00"; --, x"04" after 405 ns;
+    botones(7 downto 0) <= x"00"; --, x"04" after 8200 ns;
 
     -- Descripcio del comportament
     clk <= not clk after 10 ns;

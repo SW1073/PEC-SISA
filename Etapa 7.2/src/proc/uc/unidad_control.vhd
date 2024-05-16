@@ -228,9 +228,9 @@ BEGIN
 				-- Sumamos al PC solo cuando ldpc que sale del multi = 1
 				IF s_multi_ldpc = '1' THEN
 
-                    IF s_system = '0' AND s_exception = '1' THEN
-                        s_reg_pc <= s_pc_mas_dos;
-                    ELSE
+                    -- IF s_system = '0' AND s_exception = '1' THEN
+                    --     s_reg_pc <= s_pc_mas_dos;
+                    -- ELSE
 
                         CASE s_tknbr IS
                             WHEN TKNBR_NOT_TAKEN =>
@@ -243,7 +243,7 @@ BEGIN
                                 s_reg_pc <= s_pc_mas_dos;
                         END CASE;
 
-                    END IF;
+                    -- END IF;
 				END IF;
 
 				-- Sumamos al IR solo cuando ldir que sale del multi = 1
