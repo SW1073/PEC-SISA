@@ -61,8 +61,9 @@ BEGIN
 
 	-- Señal que, o bien vale el valor de wrd generado por la lógica de control cuando se está en el ciclo
 	-- de DEMW o 0 en otro caso.
-    wrd <= '0' WHEN exception = '1'
-           ELSE wrd_l WHEN s_estado = DEMW OR s_estado = SYS
+    wrd <= '1' WHEN s_estado = SYS
+           ELSE '0' WHEN exception = '1'
+           ELSE wrd_l WHEN s_estado = DEMW
            ELSE '0';
 
 	-- Señal que, o bien vale el valor de wr_m generado por la lógica de control cuando se está en el
