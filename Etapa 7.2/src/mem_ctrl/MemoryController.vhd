@@ -90,7 +90,7 @@ begin
     );
 
     vga_addr    <= s_proc_addr_menos_vga_base_addr(12 downto 0) WHEN s_is_vga_access = '1' ELSE (others => '0');
-    vga_we      <= we AND s_is_vga_access and s_bad_allignment;
+    vga_we      <= we AND s_is_vga_access and not s_bad_allignment;
     vga_wr_data <= wr_data;
     vga_byte_m  <= byte_m;
     bad_allignment <= s_bad_allignment;
