@@ -28,10 +28,10 @@ add wave -label CLOCK_6_25 -radix bin "${dataset}test_sisa/SoC/proc0/clk"
 add wave -label CLOCK_50   -radix bin "${dataset}test_sisa/SoC/CLOCK_50"
 
 foreach name [array name VAR1] {
-    add wave -group $dataset$name -divider "IN/OUT/INOUT"
-    add wave -group $dataset$name -radix hex -in -out -inout $VAR1($name)
-    add wave -group $dataset$name -divider "INTERNAL"
-    add wave -group $dataset$name -radix hex -internal $VAR1($name)
+    add wave -group $name -divider "IN/OUT/INOUT"
+    add wave -group $name -radix hex -in -out -inout $dataset$VAR1($name)
+    add wave -group $name -divider "INTERNAL"
+    add wave -group $name -radix hex -internal $dataset$VAR1($name)
 }
 
 for {set i 50} {$i >= 0} {incr i -1} {

@@ -20,5 +20,5 @@ sudo docker run\
     --ipc=host --cap-add=SYS_PTRACE\
     --security-opt seccomp=unconfined\
     registry.gitlab.com/axtaor/practicas-ac2:latest\
-    /root/altera/13.0sp1/modelsim_ase/linux/vsim -view $(pwd)/$F_WLF
+    /root/altera/13.0sp1/modelsim_ase/linux/vsim -view sim1=$(pwd)/$F_WLF
 
