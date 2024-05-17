@@ -91,9 +91,9 @@ architecture comportament of test_sisa is
     signal s_ps2_dat            : std_logic;
 
 
-    constant c_N                : integer := 4;
+    constant c_N                : integer := 8;
     type arr_t is array (0 to c_N-1) of std_logic_vector(7 downto 0);
-    signal s_keyboard_scancodes : arr_t := (x"1C", x"1B", x"1C", x"1B");
+    signal s_keyboard_scancodes : arr_t := (x"1C", x"1B", x"1C", x"1B", x"1C", x"1B", x"1C", x"1B");
     signal s_keyboard_idx       : integer range 0 to c_N-1 := 0;
     signal s_keyboard_done      : std_logic := '0';
 
@@ -101,14 +101,13 @@ architecture comportament of test_sisa is
 begin
 
     s_ps2_data_to_send <= s_keyboard_scancodes(s_keyboard_idx);
-    s_ps2_send <= '0'; -- when (s_keyboard_done = '1' or reset_proc = '1') else '1';
+    s_ps2_send <= '0' when (s_keyboard_done = '1' or reset_proc = '1') else '1';
 
     keyboard_sender: process (s_ps2_done) is
     begin
         if rising_edge(s_ps2_done) then
             if s_keyboard_idx = c_N-1 then
                 s_keyboard_idx <= 0;
-                -- s_keyboard_done <= '1';
             else
                 s_keyboard_idx <= s_keyboard_idx + 1;
             end if;

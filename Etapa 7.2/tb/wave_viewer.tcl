@@ -1,4 +1,4 @@
-set dataset "sim:/"
+set dataset "sim1:/"
 
 array set VAR1 {
     "SoC" "test_sisa/SoC/*"
@@ -20,12 +20,6 @@ array set VAR1 {
     "VGA ROM" "test_sisa/SoC/vgactrl0/u_font_rom/*"
     "VGA_RAM" "test_sisa/SoC/vgactrl0/U_MonitorRam/*"
 
-    "INTR Controller" "test_sisa/SoC/io/intr_ctrl/*"
-    "Keyboard INTR Controller" "test_sisa/SoC/io/keyboard0/*"
-    "Switches INTR Controller" "test_sisa/SoC/io/switches0/*"
-    "Keys INTR Controller" "test_sisa/SoC/io/keys0/*"
-    "Timer INTR Controller" "test_sisa/SoC/io/timer0/*"
-
     "IO Controller" "test_sisa/SoC/io/*"
     "PS2 Keyboard" "test_sisa/keyboard/*"
 }
@@ -44,13 +38,13 @@ for {set i 50} {$i >= 0} {incr i -1} {
     add wave -group "Memory Contents" -label "word $i" -radix hex "${dataset}test_sisa/mem0/mem_array(${i})"
 }
 
-# for {set i 200} {$i >= 100} {incr i -1} {
-#     add wave -group "LO VGA RAM Contents" -label "lo byte $i" -radix hex "${dataset}test_sisa/SoC/vgactrl0/U_MonitorRam/mem0(${i})"
-# }
-#
-# for {set i 200} {$i >= 100} {incr i -1} {
-#     add wave -group "HI VGA RAM Contents" -label "hi byte $i" -radix hex "${dataset}test_sisa/SoC/vgactrl0/U_MonitorRam/mem1(${i})"
-# }
+for {set i 200} {$i >= 100} {incr i -1} {
+    add wave -group "LO VGA RAM Contents" -label "lo byte $i" -radix hex "${dataset}test_sisa/SoC/vgactrl0/U_MonitorRam/mem0(${i})"
+}
+
+for {set i 200} {$i >= 100} {incr i -1} {
+    add wave -group "HI VGA RAM Contents" -label "hi byte $i" -radix hex "${dataset}test_sisa/SoC/vgactrl0/U_MonitorRam/mem1(${i})"
+}
 
 configure wave -signalnamewidth 1
 configure wave -timelineunits ns

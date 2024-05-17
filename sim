@@ -15,11 +15,11 @@ fi
 
 VSIM=vsim
 
-if ! [ -z $(command -v $VSIM) ]; then
-    echo "Usant vsim instal·lat LOCAL"
-    # Si tenemos vsim instalado en el path
-    vsim -do ./Etapa $ETAPA/src/test_files/runsim.tcl
-else
+# if ! [ -z $(command -v $VSIM) ]; then
+#     echo "Usant vsim instal·lat LOCAL"
+#     # Si tenemos vsim instalado en el path
+#     vsim -do ./Etapa $ETAPA/src/test_files/runsim.tcl
+# else
     echo "Usant vsim DOCKER"
     # Si no lo tenemos instalado, instalamos la imagen de docker de Àlex Torregrossa (god himself)
     sudo docker run\
@@ -34,6 +34,7 @@ else
         --ipc=host --cap-add=SYS_PTRACE\
         --security-opt seccomp=unconfined\
         registry.gitlab.com/axtaor/practicas-ac2:latest\
-        bash -c "cd /home/usuari/Etapa\ $ETAPA/tb && /root/altera/13.0sp1/modelsim_ase/linux/vsim -do runsim.tcl"
-fi
+        bash
+        # bash -c "cd /home/usuari/Etapa\ $ETAPA/tb && /root/altera/13.0sp1/modelsim_ase/linux/vsim -do runsim.tcl"
+# fi
 
