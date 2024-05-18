@@ -107,7 +107,8 @@ begin
     begin
         if rising_edge(s_ps2_done) then
             if s_keyboard_idx = c_N-1 then
-                s_keyboard_idx <= 0;
+                -- s_keyboard_idx <= 0;
+                s_keyboard_done <= '1';
             else
                 s_keyboard_idx <= s_keyboard_idx + 1;
             end if;

@@ -87,10 +87,9 @@ ARCHITECTURE Structure OF unidad_control IS
             wr_m_l          : IN  std_logic;
             rd_in_l         : IN  std_logic;
             wr_out_l        : IN  std_logic;
-            int_enabled     : IN  std_logic;
-            intr            : IN  std_logic;
             w_b             : IN  std_logic;
             exception       : IN  std_logic;
+            exception_code  : IN  std_logic_vector(3 downto 0);
             is_mem_access_l : IN  std_logic;
             ldpc            : OUT std_logic;
             wrd             : OUT std_logic;
@@ -192,9 +191,8 @@ BEGIN
         rd_in_l => s_rd_in,
         wr_out_l => s_wr_out,
 		w_b    => s_word_byte,
-        int_enabled => int_enabled,
-        intr   => intr,
         exception => s_exception,
+        exception_code => s_exception_code,
         is_mem_access_l => s_is_mem_access,
 		-- outputs
 		ldpc      => s_multi_ldpc,

@@ -1,5 +1,6 @@
 LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
+USE work.package_exceptions.ALL;
 
 ENTITY multi IS
 	PORT (
@@ -10,10 +11,9 @@ ENTITY multi IS
 		wr_m_l          : IN  std_logic;
         rd_in_l         : IN  std_logic;
         wr_out_l        : IN  std_logic;
-        int_enabled     : IN  std_logic;
-        intr            : IN  std_logic;
 		w_b             : IN  std_logic;
         exception       : IN  std_logic;
+        exception_code  : IN  std_logic_vector(3 downto 0);
         is_mem_access_l : IN  std_logic;
 		ldpc            : OUT std_logic;
 		wrd             : OUT std_logic;
@@ -61,16 +61,19 @@ BEGIN
 
 	-- Señal que, o bien vale el valor de wrd generado por la lógica de control cuando se está en el ciclo
 	-- de DEMW o 0 en otro caso.
-    wrd <= '1' WHEN s_estado = SYS
-           ELSE '0' WHEN exception = '1'
-           ELSE wrd_l WHEN s_estado = DEMW
+    wrd <=      '1'   WHEN s_estado = SYS
+           ELSE '0'   WHEN s_estado = FETCH
+           ELSE '0'   WHEN s_estado = DEMW AND exception = '1' AND exception_code /= EX_INTERRUPT_CODE
+           ELSE wrd_l WHEN s_estado = DEMW AND exception = '1' AND exception_code = EX_INTERRUPT_CODE
+           ELSE wrd_l WHEN s_estado = DEMW AND exception = '0'
            ELSE '0';
 
 	-- Señal que, o bien vale el valor de wr_m generado por la lógica de control cuando se está en el
 	-- ciclo de DEMW o 0 en otro caso.
-	wr_m <= '0' WHEN exception = '1'
-            ELSE wr_m_l WHEN s_estado = DEMW
-            ELSE '0';
+    wr_m <=      '0'    WHEN s_estado = DEMW AND exception = '1' AND exception_code /= EX_INTERRUPT_CODE
+            ELSE wr_m_l WHEN s_estado = DEMW AND exception = '1' AND exception_code = EX_INTERRUPT_CODE
+            ELSE wr_m_l WHEN s_estado = DEMW AND exception = '0'
+            ELSE '0'; -- Tanto en fetch como en sys
 
 	-- Señal word_byte generada por la lógica de control y que sólo debe dejarse pasar en el ciclo de
 	-- DEMW. En el ciclo F debe valer 0 ya que el acceso a la memoria,
@@ -78,7 +81,10 @@ BEGIN
 	word_byte <= w_b WHEN s_estado = DEMW ELSE '0';
 
     rd_in <= rd_in_l WHEN s_estado = DEMW ELSE '0';
-    wr_out <= wr_out_l WHEN s_estado = DEMW ELSE '0';
+
+    wr_out <=      wr_out_l WHEN s_estado = DEMW AND exception = '0'
+              ELSE wr_out_l WHEN s_estado = DEMW AND exception = '1' AND exception_code = EX_INTERRUPT_CODE
+              ELSE '0'; -- Tanto en fetch como en sys o en demw con excepcion que no sea interrupcion
 
 	-- Esta señal a 1 le indicará al datapath que en el bus de direcciones de la memoria deberá poner la
 	-- salida de la ALU y si vale 0 deberá poner el PC. Básicamente nos dice si estamos al ciclo F o DEMW
@@ -91,7 +97,9 @@ BEGIN
     system <= '1' WHEN s_estado = SYS ELSE '0';
 
     -- Señal que indica si se está realizando un acceso a memoria
-    is_mem_access <= is_mem_access_l WHEN s_estado = DEMW ELSE '0';
+    is_mem_access <= is_mem_access_l WHEN s_estado = DEMW AND exception = '0'
+                ELSE is_mem_access_l WHEN s_estado = DEMW AND exception = '1' AND exception_code = EX_INTERRUPT_CODE
+                ELSE '0'; -- FETCH, SYS, DEMW con excepcion que no sea interrupcion
 
 END Structure;
 
