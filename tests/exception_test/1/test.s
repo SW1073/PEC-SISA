@@ -20,8 +20,9 @@
        ; *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
        ; Rutina de servicio de interrupcion
        ; *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
-RSG:   rds    r7, s2      ;obtiene el valor del registro de estado. Nos dice que excepcioón
-       out    10, r7      ;muestra el numero de la interrupcion atendida en los visores hexadecimales
+RSG:   rds    r7, s2      ;obtiene el valor del registro de estado. Nos dice que excepción ha ocurrido
+       addi   r6, r6, 1
+       out    10, r6      ;muestra el numero de excepciones atendidas hasta en el momento
        reti
 
 
@@ -30,6 +31,21 @@ RSG:   rds    r7, s2      ;obtiene el valor del registro de estado. Nos dice que
        ; *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
 inici:
        di                 ;desactiva las interrupciones
+       movi   r0, 0xAA
+       movhi  r0, 0xAA
+
+       ; ST y LD legales
+       movi   r1, 0
+       st    0(r1), r0
+       st    2(r1), r0
+
+       ; ST y LD ilegales
        movi   r1, 1
-       ld     r0, 0(r1)
+       st     0(r1), r2
+       ld     r2, 0(r1)
+
+       ; STB y LDB (legales)
+       movi   r1, 1
+       stb    0(r1), r0
+       ldb    r2, 0(r1)
        halt
