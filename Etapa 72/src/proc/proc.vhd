@@ -1,5 +1,6 @@
 LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
+USE work.package_records.ALL;
 
 ENTITY proc IS
 	PORT (
@@ -45,11 +46,13 @@ ARCHITECTURE Structure OF proc IS
             b_sys      : IN  std_logic;
             rd_io      : IN  std_logic_vector(15 downto 0);
             system     : IN  std_logic;
+            exception  : IN t_exception_record;
 			addr_m     : OUT std_logic_vector(15 DOWNTO 0);
 			data_wr    : OUT std_logic_vector(15 DOWNTO 0);
 			regout_a   : OUT std_logic_vector(15 DOWNTO 0);
             int_enabled : OUT std_logic;
-			z          : OUT std_logic);
+			z          : OUT std_logic;
+            div_by_zero : OUT std_logic);
 	END COMPONENT;
 
 	COMPONENT unidad_control IS
@@ -60,7 +63,9 @@ ARCHITECTURE Structure OF proc IS
 			datard_m   : IN  std_logic_vector(15 DOWNTO 0);
 			regout_a   : IN  std_logic_vector(15 DOWNTO 0);
             int_enabled : IN std_logic;
-            intr       : IN std_logic;
+            intr        : IN std_logic;
+            addr_m      : IN std_logic_vector(15 DOWNTO 0);
+            div_by_zero : IN std_logic;
 			op         : OUT std_logic_vector(2 DOWNTO 0);
 			f          : OUT std_logic_vector(2 DOWNTO 0);
 			wrd        : OUT std_logic;
@@ -82,7 +87,8 @@ ARCHITECTURE Structure OF proc IS
             wr_out     : OUT std_logic;
             rd_in      : OUT std_logic;
             system     : OUT std_logic;
-            inta       : OUT std_logic);
+            inta       : OUT std_logic;
+            exception  : OUT t_exception_record);
 	END COMPONENT;
 
 	SIGNAL s_op         : std_logic_vector (2 DOWNTO 0);
@@ -104,6 +110,9 @@ ARCHITECTURE Structure OF proc IS
     SIGNAL s_int_enabled : std_logic;
     SIGNAL s_system     : std_logic;
 	SIGNAL s_regout_a   : std_logic_vector(15 DOWNTO 0);
+    SIGNAL s_addr_m     : std_logic_vector(15 DOWNTO 0);
+    SIGNAL s_div_by_zero : std_logic;
+    SIGNAL s_exception  : t_exception_record;
 
 BEGIN
 
@@ -131,12 +140,14 @@ BEGIN
         b_sys      => s_b_sys,
         rd_io      => rd_io,
         system     => s_system,
+        exception  => s_exception,
 		-- outputs
-		addr_m     => addr_m,
+		addr_m     => s_addr_m,
 		data_wr    => data_wr,
 		regout_a   => s_regout_a,
         int_enabled => s_int_enabled,
-		z          => s_z
+		z          => s_z,
+        div_by_zero => s_div_by_zero
 	);
 
 	uc : unidad_control PORT MAP(
@@ -148,6 +159,8 @@ BEGIN
 		z          => s_z,
         int_enabled => s_int_enabled,
         intr       => intr,
+        addr_m     => s_addr_m,
+        div_by_zero => s_div_by_zero,
 		-- outputs
 		op         => s_op,
 		f          => s_f,
@@ -170,10 +183,12 @@ BEGIN
         wr_out     => wr_out,
         rd_in      => rd_in,
         system     => s_system,
-        inta       => inta
+        inta       => inta,
+        exception  => s_exception
 	);
 
 	dbg_pc <= s_pc;
+    addr_m <= s_addr_m;
 
 END Structure;
 

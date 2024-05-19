@@ -20,4 +20,9 @@ package package_records is
         mem_data => (others => '0')
     );
 
+    type t_exception_record is record
+        is_exception    : std_logic;
+        code            : std_logic_vector(3 DOWNTO 0);
+    end record t_exception_record;
+
 end package_records;

@@ -4,6 +4,7 @@ USE ieee.numeric_std.ALL;
 USE ieee.std_logic_unsigned.ALL;
 USE work.package_alu.ALL;
 USE work.package_control.ALL;
+USE work.package_records.ALL;
 
 ENTITY unidad_control IS
 	PORT (
@@ -14,6 +15,8 @@ ENTITY unidad_control IS
         regout_a   : IN  std_logic_vector(15 DOWNTO 0);
         int_enabled: IN  std_logic;
         intr       : IN  std_logic;
+        addr_m     : IN std_logic_vector(15 DOWNTO 0);
+        div_by_zero : IN std_logic;
         op         : OUT std_logic_vector(2 DOWNTO 0);
         f          : OUT std_logic_vector(2 DOWNTO 0);
         wrd        : OUT std_logic;
@@ -35,7 +38,8 @@ ENTITY unidad_control IS
         wr_out     : OUT std_logic;
         rd_in      : OUT std_logic;
         system     : OUT std_logic;
-        inta       : OUT std_logic);
+        inta       : OUT std_logic;
+        exception  : OUT t_exception_record);
 END unidad_control;
 
 ARCHITECTURE Structure OF unidad_control IS
@@ -67,7 +71,9 @@ ARCHITECTURE Structure OF unidad_control IS
             addr_io    : OUT std_logic_vector(7  DOWNTO 0);
             wr_out     : OUT std_logic;
             rd_in      : OUT std_logic;
-            inta       : OUT std_logic);
+            inta       : OUT STD_LOGIC;
+            is_illegal_ir       : OUT std_logic;
+            is_word_mem_access  : OUT std_logic);
 	END COMPONENT;
 
 	-- Multi
@@ -81,8 +87,7 @@ ARCHITECTURE Structure OF unidad_control IS
             rd_in_l   : IN  std_logic;
             wr_out_l  : IN  std_logic;
             w_b       : IN  std_logic;
-            int_enabled : IN std_logic;
-            intr      : IN std_logic;
+            exception : IN t_exception_record;
             ldpc      : OUT std_logic;
             wrd       : OUT std_logic;
             wr_m      : OUT std_logic;
@@ -93,6 +98,17 @@ ARCHITECTURE Structure OF unidad_control IS
             word_byte : OUT std_logic;
             system    : OUT std_logic);
 	END COMPONENT;
+
+    COMPONENT exception_ctrl IS
+	PORT (clk           : IN std_logic;
+        addr_m          : IN std_logic_vector(15 DOWNTO 0);
+        is_word_mem_access : IN std_logic;
+        int_enabled     : IN std_logic;
+        intr            : IN std_logic;
+        is_illegal_ir   : IN  std_logic;
+        div_by_zero     : IN std_logic;
+        exception       : OUT t_exception_record);
+    END COMPONENT;
 
 	-- Senales para conectar control_l con multi
 	SIGNAL s_ldpc      : std_logic;
@@ -117,7 +133,11 @@ ARCHITECTURE Structure OF unidad_control IS
     SIGNAL s_rd_in  : std_logic;
     SIGNAL s_wr_out : std_logic;
 
-    SIGNAl s_system : std_logic;
+    SIGNAL s_system : std_logic;
+
+    SIGNAL s_is_word_mem_access : std_logic;
+    SIGNAL s_is_illegal_ir      : std_logic;
+    SIGNAL s_exception          : t_exception_record;
 BEGIN
 
 	-- Aqui iria la declaracion del "mapeo" (PORT MAP) de los nombres de las entradas/salidas de los componentes
@@ -153,7 +173,9 @@ BEGIN
         addr_io    => addr_io,
         wr_out     => s_wr_out,
         rd_in      => s_rd_in,
-        inta       => inta
+        inta       => inta,
+        is_illegal_ir => s_is_illegal_ir,
+        is_word_mem_access => s_is_word_mem_access
 	);
 
 	multi0 : multi PORT MAP(
@@ -166,8 +188,7 @@ BEGIN
         rd_in_l => s_rd_in,
         wr_out_l => s_wr_out,
 		w_b    => s_word_byte,
-        int_enabled => int_enabled,
-        intr   => intr,
+        exception => s_exception,
 		-- outputs
 		ldpc      => s_multi_ldpc,
 		wrd       => wrd,
@@ -179,6 +200,17 @@ BEGIN
 		word_byte => word_byte,
         system    => s_system
 	);
+
+    ex_ctrl : exception_ctrl PORT MAP(
+        clk           => clk,
+        addr_m        => addr_m,
+        is_word_mem_access => s_is_word_mem_access,
+        int_enabled   => int_enabled,
+        intr          => intr,
+        is_illegal_ir => s_is_illegal_ir,
+        div_by_zero   => div_by_zero,
+        exception     => s_exception
+    );
 
 	-- Program Counter and Instruction Register
 	cp_and_ir : PROCESS (clk) IS
@@ -214,6 +246,7 @@ BEGIN
 	pc    <= s_reg_pc;
 	immed <= s_immed;
     system <= s_system;
+    exception <= s_exception;
 
 END Structure;
 

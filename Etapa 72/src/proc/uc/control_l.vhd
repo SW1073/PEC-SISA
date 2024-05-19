@@ -30,10 +30,19 @@ ENTITY control_l IS
         addr_io    : OUT STD_LOGIC_VECTOR(7  DOWNTO 0);
         wr_out     : OUT STD_LOGIC;
         rd_in      : OUT STD_LOGIC;
-        inta       : OUT STD_LOGIC);
+        inta       : OUT STD_LOGIC;
+        is_illegal_ir       : OUT std_logic;
+        is_word_mem_access  : OUT std_logic);
 END control_l;
 
 ARCHITECTURE Structure OF control_l IS
+
+    COMPONENT illegal_ir IS
+        PORT (
+            ir              : IN std_logic_vector(15 DOWNTO 0);
+            is_illegal      : OUT std_logic);
+    END COMPONENT;
+
 	SIGNAL s_opcode         : std_logic_vector(3 DOWNTO 0);
 	SIGNAL s_f              : std_logic_vector(2 DOWNTO 0);
 	SIGNAL s_f_jumps        : std_logic_vector(2 DOWNTO 0);
@@ -66,6 +75,8 @@ BEGIN
 	s_short_immed <= signed(ir(5 DOWNTO 0));
 	s_long_immed  <= signed(ir(7 DOWNTO 0));
 	s_op          <= ir(8);
+
+    illegal_ir0 : illegal_ir PORT MAP (ir, is_illegal_ir);
 
     inta <= '1' WHEN s_opcode = OPCODE_SYS AND s_f_sys = F_SYS_GETIID ELSE
             '0';
@@ -228,6 +239,9 @@ BEGIN
                  std_logic_vector(resize(s_long_immed, immed'length))  WHEN OPCODE_BRANCHES,
                  s_f_immed_sys                                         WHEN OPCODE_SYS,
                  std_logic_vector(resize(s_short_immed, immed'length)) WHEN OTHERS;
+
+    is_word_mem_access <= '1' WHEN s_opcode = OPCODE_STORE OR s_opcode = OPCODE_LOAD ELSE
+                          '0';
 
 	-- Permiso de escritura en la memoria si es una instrucción ST o STB
     wr_m <= '0' WHEN system = '1'               ELSE -- Entrada a sistema

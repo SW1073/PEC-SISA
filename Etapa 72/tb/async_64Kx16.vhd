@@ -66,12 +66,15 @@ SIGNAL mem_array: mem_array_type;
     -- Instructions to read a text file into RAM --
     procedure Load_FitxerDadesMemoria (signal data_word :inout mem_array_type) is
         -- Open File in Read Mode
-        file romfile   :text open read_mode is "../../tests/vga_test/4-HelloWorld/HelloWorld.code.rom";
+        file romfile   :text open read_mode is "../../tests/exception_test/1/test.code.rom";
+        file datafile  :text open read_mode is "../../tests/interrupt_test/6.test2_interrupt/6.test2_interrupt.data.rom";
         variable lbuf  :line;
         -- variable i     :integer := 49152;  -- X"C000" ==> 49152 adreca inicial S.O.
         variable i     :integer := 24576;  -- X"C000" ==> 49152 adreca inicial S.O., pero como la memoria se direcciona a nivel de word (dos bytes) ==>  X"6000" ==> 24576 es la direccion inicial del S.O.
         variable fdata :std_logic_vector (15 downto 0);
     begin
+
+        i := 24576; -- X"6000" ==> 24576 adreca inicial del S.O.
         while not endfile(romfile) loop
             -- read data from input file
             readline(romfile, lbuf);
@@ -80,6 +83,17 @@ SIGNAL mem_array: mem_array_type;
             data_word(i) <= fdata;
             i := i+1;
         end loop;
+
+        i := 16384; -- X"4000" ==> 16384 adreca inicial de la memoria de datos
+        while not endfile(datafile) loop
+            -- read data from input file
+            readline(datafile, lbuf);
+            --read(lbuf, fdata);
+            hread(lbuf, fdata);
+            data_word(i) <= fdata;
+            i := i+1;
+        end loop;
+
     end procedure;
 
 

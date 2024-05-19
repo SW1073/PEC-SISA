@@ -10,6 +10,7 @@ ENTITY alu IS
 		y  : IN  std_logic_vector(15 DOWNTO 0);
 		op : IN  std_logic_vector(2 DOWNTO 0);
 		f  : IN  std_logic_vector(2 DOWNTO 0);
+        div_by_zero : OUT std_logic;
 		w  : OUT std_logic_vector(15 DOWNTO 0);
 		z  : OUT std_logic);
 END alu;
@@ -61,6 +62,9 @@ BEGIN
 
 	-- Check if y is 0
 	z <= '1' WHEN y = x"0000" ELSE '0';
+
+    div_by_zero <= '1' WHEN op = OP_EXT_ARIT AND (f = F_EXT_ARIT_DIV OR f = F_EXT_ARIT_DIVU) AND y = x"0000" 
+                ELSE '0';
 
 	-- extend immediate value
 	s_y_arit_log <= std_logic_vector(resize(signed(y(7 DOWNTO 0)), s_y_arit_log'length)) WHEN op = OP_IMMED ELSE y;

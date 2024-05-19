@@ -18,6 +18,9 @@ PACKAGE package_opcodes IS
 	CONSTANT OPCODE_JUMPS    : std_logic_vector(3 DOWNTO 0) := "1010";
     CONSTANT OPCODE_IO       : std_logic_vector(3 DOWNTO 0) := "0111";
     CONSTANT OPCODE_SYS      : std_logic_vector(3 DOWNTO 0) := "1111";
+    CONSTANT OPCODE_FLOAT    : std_logic_vector(3 DOWNTO 0) := "1001";
+    CONSTANT OPCODE_LD_FLOAT : std_logic_vector(3 DOWNTO 0) := "1011";
+    CONSTANT OPCODE_ST_FLOAT : std_logic_vector(3 DOWNTO 0) := "1100";
 
     -- F de
     CONSTANT F_INPUT         : std_logic := '0';
@@ -29,6 +32,12 @@ PACKAGE package_opcodes IS
     CONSTANT F_SYS_DI        : std_logic_vector(5 DOWNTO 0) := "100001";
     CONSTANT F_SYS_RETI      : std_logic_vector(5 DOWNTO 0) := "100100";
     CONSTANT F_SYS_GETIID    : std_logic_vector(5 DOWNTO 0) := "101000";
+    CONSTANT F_SYS_WRPI      : std_logic_vector(5 DOWNTO 0) := "110100";
+    CONSTANT F_SYS_WRVI      : std_logic_vector(5 DOWNTO 0) := "110101";
+    CONSTANT F_SYS_WRPD      : std_logic_vector(5 DOWNTO 0) := "110110";
+    CONSTANT F_SYS_WRVD      : std_logic_vector(5 DOWNTO 0) := "110111";
+    CONSTANT F_SYS_FLUSH     : std_logic_vector(5 DOWNTO 0) := "111000";
+    CONSTANT F_SYS_HALT      : std_logic_vector(5 DOWNTO 0) := "111111";
 
 END package_opcodes;
 

@@ -3,6 +3,7 @@ USE ieee.std_logic_1164.ALL;
 USE ieee.numeric_std.ALL;
 USE ieee.std_logic_unsigned.ALL;
 USE work.package_control.ALL;
+USE work.package_records.ALL;
 
 ENTITY datapath IS
 	PORT (
@@ -25,11 +26,13 @@ ENTITY datapath IS
 		b_or_immed : IN  std_logic;
         rd_io      : IN  std_logic_vector(15 downto 0);
         system     : IN  std_logic;
+        exception  : IN t_exception_record;
 		addr_m     : OUT std_logic_vector(15 DOWNTO 0);
 		data_wr    : OUT std_logic_vector(15 DOWNTO 0);
 		regout_a   : OUT std_logic_vector(15 DOWNTO 0);
         int_enabled : OUT std_logic;
-		z          : OUT std_logic);
+		z          : OUT std_logic;
+        div_by_zero : OUT std_logic);
 END datapath;
 
 ARCHITECTURE Structure OF datapath IS
@@ -45,7 +48,8 @@ ARCHITECTURE Structure OF datapath IS
 			op : IN  std_logic_vector(2 DOWNTO 0);
 			f  : IN  std_logic_vector(2 DOWNTO 0);
 			w  : OUT std_logic_vector(15 DOWNTO 0);
-			z  : OUT std_logic);
+			z  : OUT std_logic;
+            div_by_zero : OUT std_logic);
 	END COMPONENT;
 	COMPONENT regfile IS
 		PORT (
@@ -60,6 +64,7 @@ ARCHITECTURE Structure OF datapath IS
             b_sys  : IN  std_logic;
             system : IN  std_logic;
             pc     : IN  std_logic_vector(15 DOWNTO 0);
+            exception : IN t_exception_record;
 			a      : OUT std_logic_vector(15 DOWNTO 0);
 			b      : OUT std_logic_vector(15 DOWNTO 0);
             int_enabled : OUT std_logic);
@@ -107,6 +112,7 @@ BEGIN
         b_sys  => b_sys,
         system => system,
         pc     => pc,
+        exception => exception,
 		a      => s_regout_a,
         b      => s_regout_b,
         int_enabled => int_enabled
@@ -118,7 +124,8 @@ BEGIN
 		x  => s_regout_a,
 		y  => s_y,
 		w  => s_aluout,
-		z  => z
+		z  => z,
+        div_by_zero => div_by_zero
 	);
 
 	addr_m  <= s_aluout WHEN ins_dad = '1' ELSE pc;
