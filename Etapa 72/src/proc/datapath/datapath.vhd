@@ -65,6 +65,7 @@ ARCHITECTURE Structure OF datapath IS
             system : IN  std_logic;
             pc     : IN  std_logic_vector(15 DOWNTO 0);
             exception : IN t_exception_record;
+            addr_m : IN std_logic_vector(15 DOWNTO 0);
 			a      : OUT std_logic_vector(15 DOWNTO 0);
 			b      : OUT std_logic_vector(15 DOWNTO 0);
             int_enabled : OUT std_logic);
@@ -80,6 +81,8 @@ ARCHITECTURE Structure OF datapath IS
 	SIGNAL s_y          : std_logic_vector(15 DOWNTO 0);
 
 	SIGNAL s_pc : std_logic_vector(15 DOWNTO 0);
+
+    SIGNAL s_addr_m : std_logic_vector(15 DOWNTO 0);
 
 BEGIN
 
@@ -113,6 +116,7 @@ BEGIN
         system => system,
         pc     => pc,
         exception => exception,
+        addr_m => s_addr_m,
 		a      => s_regout_a,
         b      => s_regout_b,
         int_enabled => int_enabled
@@ -128,8 +132,10 @@ BEGIN
         div_by_zero => div_by_zero
 	);
 
-	addr_m  <= s_aluout WHEN ins_dad = '1' ELSE pc;
+	s_addr_m  <= s_aluout WHEN ins_dad = '1' ELSE pc;
+
 	data_wr <= s_regout_b;
+    addr_m <= s_addr_m;
 
 END Structure;
 
