@@ -49,7 +49,9 @@ BEGIN
     is_illegal <= '1' WHEN  (s_opcode = OPCODE_FLOAT OR s_opcode = OPCODE_LD_FLOAT OR s_opcode = OPCODE_ST_FLOAT)   OR
                             (s_opcode = OPCODE_CMPS AND (s_f = "010" OR s_f = "110" OR s_f = "111"))                OR
                             (s_opcode = OPCODE_EXT_ARIT AND (s_f = "011" OR s_f = "110" OR s_f = "111"))            OR
-                            (s_opcode = OPCODE_JUMPS AND ((s_f_jumps = "010" OR s_f_jumps = "101" OR s_f_jumps = "110") OR s_first_reg /= "000" OR s_f_jumps = F_JUMP_CALLS)) OR
+                            (s_opcode = OPCODE_JUMPS AND ((s_f_jumps = "010" OR s_f_jumps = "101" OR s_f_jumps = "110") 
+                                                    OR (s_f_jumps = F_JUMP_JMP AND s_first_reg /= "000") OR s_f_jumps = F_JUMP_CALLS)) OR -- TODO para 7.3+ F_JUMP_CALLS va en el segundo 
+                                                                                                                                          -- OR porque no permite tener el primer registro en 000.
                             (s_opcode = OPCODE_SYS AND (
                                         (s_reserved = '0') OR
                                         (s_f_sys /= F_SYS_EI AND s_f_sys /= F_SYS_DI AND s_f_sys /= F_SYS_RETI AND
