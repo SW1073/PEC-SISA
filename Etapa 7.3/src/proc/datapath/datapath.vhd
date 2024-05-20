@@ -8,6 +8,7 @@ USE work.package_records.ALL;
 ENTITY datapath IS
 	PORT (
 		clk        : IN  std_logic;
+        boot       : IN  std_logic;
 		op         : IN  std_logic_vector(2 DOWNTO 0);
 		f          : IN  std_logic_vector(2 DOWNTO 0);
 		wrd        : IN  std_logic;
@@ -55,6 +56,7 @@ ARCHITECTURE Structure OF datapath IS
 	COMPONENT regfile IS
 		PORT (
 			clk    : IN  std_logic;
+			boot   : IN  std_logic;
 			wrd    : IN  std_logic;
 			d      : IN  std_logic_vector(15 DOWNTO 0);
             d_sys  : IN  std_logic;
@@ -107,6 +109,7 @@ BEGIN
 
 	reg : regfile PORT MAP(
 		clk    => clk,
+        boot   => boot,
 		wrd    => wrd,
 		d      => s_data,
         d_sys  => d_sys,

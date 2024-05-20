@@ -28,6 +28,7 @@ ARCHITECTURE Structure OF proc IS
 	COMPONENT datapath IS
 		PORT (
 			clk        : IN  std_logic;
+			boot       : IN  std_logic;
 			op         : IN  std_logic_vector(2 DOWNTO 0);
 			f          : IN  std_logic_vector(2 DOWNTO 0);
 			wrd        : IN  std_logic;
@@ -125,6 +126,7 @@ BEGIN
 	dp : datapath PORT MAP(
 		-- inpus
 		clk        => clk,
+		boot       => boot,
 		op         => s_op,
 		f          => s_f,
 		wrd        => s_wrd,

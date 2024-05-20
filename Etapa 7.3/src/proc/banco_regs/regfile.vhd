@@ -9,6 +9,7 @@ USE work.package_exceptions.ALL;
 ENTITY regfile IS
 	PORT (
 		clk    : IN  std_logic;
+        boot   : IN  std_logic;
 		wrd    : IN  std_logic;
         d_sys  : IN  std_logic;
 		d      : IN  std_logic_vector(15 DOWNTO 0);
@@ -54,24 +55,31 @@ BEGIN
 	PROCESS (clk) IS
 	BEGIN
 		IF rising_edge(clk) THEN
-            IF system = '1' THEN
-                sys_registers(2) <= x"000" & exception.code;
-                sys_registers(7)(0) <= '1';
-                sys_registers(7)(1) <= '0';
-                sys_registers(1) <= pc;
-
-                IF exception.is_exception = '1' AND exception.code = EX_BAD_ALIGNMENT THEN
-                    sys_registers(3) <= addr_m;
+            IF boot = '1' THEN
+                sys_registers(7)(0) <= '1'; -- privileged mode
+                sys_registers(7)(1) <= '0'; -- disable interruptions
+            ELSE
+                IF system = '1' THEN
+                    -- sys_registers(2) <= x"000" & exception.code;
+                    sys_registers(7)(0) <= '1';
+                    sys_registers(7)(1) <= '0';
+                    sys_registers(1) <= pc;
                 END IF;
 
-            END IF;
+                IF exception.is_exception = '1' THEN
+                    sys_registers(2) <= x"000" & exception.code;
+                    IF exception.code = EX_BAD_ALIGNMENT THEN
+                        sys_registers(3) <= addr_m;
+                    END IF;
+                END IF;
 
-            IF s_wrd = '1' THEN
-                registers(conv_integer(addr_d)) <= d;
-            END IF;
+                IF s_wrd = '1' THEN
+                    registers(conv_integer(addr_d)) <= d;
+                END IF;
 
-            IF s_sys_wrd = '1' THEN
-                sys_registers(conv_integer(addr_d)) <= d;
+                IF s_sys_wrd = '1' THEN
+                    sys_registers(conv_integer(addr_d)) <= d;
+                END IF;
             END IF;
 		END IF;
 	END PROCESS;
