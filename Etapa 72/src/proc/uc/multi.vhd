@@ -77,7 +77,7 @@ BEGIN
 
     rd_in <= rd_in_l WHEN s_estado = DEMW ELSE '0';
     wr_out <= '0' WHEN s_estado = DEMW AND exception.is_exception = '1' AND exception.code /= EX_INTERRUPT_CODE
-            ELSE wr_m_l WHEN s_estado = DEMW
+            ELSE wr_out_l WHEN s_estado = DEMW
             ELSE '0';
 
 	-- Esta señal a 1 le indicará al datapath que en el bus de direcciones de la memoria deberá poner la
