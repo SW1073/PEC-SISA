@@ -5,6 +5,8 @@ USE ieee.std_logic_unsigned.ALL;
 USE work.package_alu.ALL;
 USE work.package_control.ALL;
 USE work.package_records.ALL;
+USE work.package_exceptions.ALL;
+USE work.package_opcodes.ALL;
 
 ENTITY unidad_control IS
 	PORT (
@@ -147,7 +149,13 @@ ARCHITECTURE Structure OF unidad_control IS
     SIGNAL s_is_protected_ir    : std_logic;
     SIGNAL s_exception          : t_exception_record;
     SIGNAL s_calls              : std_logic;
+
+    SIGNAL s_opcode             : std_logic_vector(3 DOWNTO 0);
+    SIGNAL s_f                  : std_logic_vector(5 DOWNTO 0);
 BEGIN
+
+    s_opcode <= s_reg_ir(15 DOWNTO 12);
+    s_f <= s_reg_ir(5 DOWNTO 0);
 
 	-- Aqui iria la declaracion del "mapeo" (PORT MAP) de los nombres de las entradas/salidas de los componentes
 	-- En los esquemas de la documentacion a la instancia de la logica de control le hemos llamado c0
@@ -234,16 +242,22 @@ BEGIN
 			IF boot = '0' THEN
 				-- Sumamos al PC solo cuando ldpc que sale del multi = 1
 				IF s_multi_ldpc = '1' THEN
-					CASE s_tknbr IS
-						WHEN TKNBR_NOT_TAKEN =>
-							s_reg_pc <= s_pc_mas_dos;
-						WHEN TKNBR_BRANCH =>
-							s_reg_pc <= s_pc_mas_immed;
-						WHEN TKNBR_JUMP =>
-							s_reg_pc <= regout_a;
-						WHEN OTHERS =>
-							s_reg_pc <= s_pc_mas_dos;
-					END CASE;
+                    IF s_system = '0' AND s_is_illegal_ir = '1' AND
+                        (s_opcode = OPCODE_JUMPS OR s_opcode = OPCODE_BRANCHES
+                         OR (s_opcode = OPCODE_SYS AND (s_f = F_SYS_RETI))) THEN
+                        s_reg_pc <= s_pc_mas_dos;
+                    ELSE
+                        CASE s_tknbr IS
+                            WHEN TKNBR_NOT_TAKEN =>
+                                s_reg_pc <= s_pc_mas_dos;
+                            WHEN TKNBR_BRANCH =>
+                                s_reg_pc <= s_pc_mas_immed;
+                            WHEN TKNBR_JUMP =>
+                                s_reg_pc <= regout_a;
+                            WHEN OTHERS =>
+                                s_reg_pc <= s_pc_mas_dos;
+                        END CASE;
+                    END IF;
 				END IF;
 
 				-- Sumamos al IR solo cuando ldir que sale del multi = 1

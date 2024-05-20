@@ -227,7 +227,6 @@ BEGIN
 			IF boot = '0' THEN
 				-- Sumamos al PC solo cuando ldpc que sale del multi = 1
 				IF s_multi_ldpc = '1' THEN
-                    -- IF s_system = '0' AND s_exception.is_exception = '1' AND s_exception.code = EX_ILLEGAL_INSTR AND (s_opcode = OPCODE_JUMPS OR s_opcode = OPCODE_BRANCHES) THEN
                     IF s_system = '0' AND s_is_illegal_ir = '1' AND
                         (s_opcode = OPCODE_JUMPS OR s_opcode = OPCODE_BRANCHES
                          OR (s_opcode = OPCODE_SYS AND (s_f = F_SYS_RETI))) THEN
