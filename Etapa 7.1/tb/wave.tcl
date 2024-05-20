@@ -16,6 +16,12 @@ array set VAR1 {
     "VGA ROM" "sim:/test_sisa/SoC/vgactrl0/u_font_rom/*"
     "VGA_RAM" "sim:/test_sisa/SoC/vgactrl0/U_MonitorRam/*"
 
+    "INTR Controller" "test_sisa/SoC/io/intr_ctrl/*"
+    "Keyboard INTR Controller" "test_sisa/SoC/io/keyboard0/*"
+    "Switches INTR Controller" "test_sisa/SoC/io/switches0/*"
+    "Keys INTR Controller" "test_sisa/SoC/io/keys0/*"
+    "Timer INTR Controller" "test_sisa/SoC/io/timer0/*"
+
     "IO Controller" "sim:/test_sisa/SoC/io/*"
     "PS2 Keyboard" "sim:/test_sisa/keyboard/*"
 }
