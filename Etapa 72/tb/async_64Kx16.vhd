@@ -66,7 +66,7 @@ SIGNAL mem_array: mem_array_type;
     -- Instructions to read a text file into RAM --
     procedure Load_FitxerDadesMemoria (signal data_word :inout mem_array_type) is
         -- Open File in Read Mode
-        file romfile   :text open read_mode is "../../tests/interrupt_test/5-test_interrupt/5-test_interrupt.code.rom";
+        file romfile   :text open read_mode is "../../tests/exception_test/4/div_by_zero.hex";
         file datafile  :text open read_mode is "../../tests/interrupt_test/6.test2_interrupt/6.test2_interrupt.data.rom";
         variable lbuf  :line;
         -- variable i     :integer := 49152;  -- X"C000" ==> 49152 adreca inicial S.O.

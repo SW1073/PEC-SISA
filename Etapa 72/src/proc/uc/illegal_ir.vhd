@@ -19,23 +19,6 @@ ARCHITECTURE Structure OF illegal_ir IS
 	SIGNAL s_first_reg      : std_logic_vector(2 DOWNTO 0);
 	SIGNAL s_second_reg     : std_logic_vector(2 DOWNTO 0);
     SIGNAL s_reserved       : std_logic;
-
-    SIGNAL s_valid_opcode : std_logic;
-
-    SIGNAL s_illegal_comp       : std_logic;
-    SIGNAL s_illegal_ext_arit   : std_logic;
-    SIGNAL s_illegal_float      : std_logic;
-    SIGNAL s_illegal_jump     : std_logic;
-    SIGNAL s_illegal_jump_1     : std_logic;
-    SIGNAL s_illegal_jump_2     : std_logic;
-    SIGNAL s_illegal_jump_3     : std_logic;
-    SIGNAL s_illegal_sys      : std_logic;
-    SIGNAL s_illegal_sys_1      : std_logic;
-    SIGNAL s_illegal_sys_2      : std_logic;
-    SIGNAL s_illegal_sys_3      : std_logic;
-    SIGNAL s_illegal_sys_4      : std_logic;
-    SIGNAL s_illegal_sys_5      : std_logic;
-    SIGNAL s_illegal_sys_6      : std_logic;
 BEGIN
 
 	s_opcode      <= ir(15 DOWNTO 12);
@@ -49,9 +32,9 @@ BEGIN
     is_illegal <= '1' WHEN  (s_opcode = OPCODE_FLOAT OR s_opcode = OPCODE_LD_FLOAT OR s_opcode = OPCODE_ST_FLOAT)   OR
                             (s_opcode = OPCODE_CMPS AND (s_f = "010" OR s_f = "110" OR s_f = "111"))                OR
                             (s_opcode = OPCODE_EXT_ARIT AND (s_f = "011" OR s_f = "110" OR s_f = "111"))            OR
-                            (s_opcode = OPCODE_JUMPS AND ((s_f_jumps = "010" OR s_f_jumps = "101" OR s_f_jumps = "110") 
-                                                    OR (s_f_jumps = F_JUMP_JMP AND s_first_reg /= "000") OR s_f_jumps = F_JUMP_CALLS)) OR -- TODO para 7.3+ F_JUMP_CALLS va en el segundo 
-                                                                                                                                          -- OR porque no permite tener el primer registro en 000.
+                            (s_opcode = OPCODE_JUMPS AND (  (s_f /= "000" OR s_f_jumps = "010" OR s_f_jumps = "101" OR s_f_jumps = "110") OR
+                                                            (s_f_jumps = F_JUMP_JMP AND s_first_reg /= "000") OR
+                                                            (s_f_jumps = F_JUMP_CALLS))) OR 
                             (s_opcode = OPCODE_SYS AND (
                                         (s_reserved = '0') OR
                                         (s_f_sys /= F_SYS_EI AND s_f_sys /= F_SYS_DI AND s_f_sys /= F_SYS_RETI AND

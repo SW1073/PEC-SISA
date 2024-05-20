@@ -40,17 +40,17 @@ foreach name [array name VAR1] {
     add wave -group $name -radix hex -internal $dataset$VAR1($name)
 }
 
-for {set i 50} {$i >= 0} {incr i -1} {
-    add wave -group "Memory Contents" -label "word $i" -radix hex "${dataset}test_sisa/mem0/mem_array(${i})"
-}
-
-for {set i 100} {$i >= 0} {incr i -1} {
-    add wave -group "LO VGA RAM Contents" -label "lo byte $i" -radix hex "${dataset}test_sisa/SoC/vgactrl0/U_MonitorRam/mem0(${i})"
-}
-
-for {set i 100} {$i >= 0} {incr i -1} {
-    add wave -group "HI VGA RAM Contents" -label "hi byte $i" -radix hex "${dataset}test_sisa/SoC/vgactrl0/U_MonitorRam/mem1(${i})"
-}
+# for {set i 50} {$i >= 0} {incr i -1} {
+#     add wave -group "Memory Contents" -label "word $i" -radix hex "${dataset}test_sisa/mem0/mem_array(${i})"
+# }
+#
+# for {set i 100} {$i >= 0} {incr i -1} {
+#     add wave -group "LO VGA RAM Contents" -label "lo byte $i" -radix hex "${dataset}test_sisa/SoC/vgactrl0/U_MonitorRam/mem0(${i})"
+# }
+#
+# for {set i 100} {$i >= 0} {incr i -1} {
+#     add wave -group "HI VGA RAM Contents" -label "hi byte $i" -radix hex "${dataset}test_sisa/SoC/vgactrl0/U_MonitorRam/mem1(${i})"
+# }
 
 configure wave -signalnamewidth 1
 configure wave -timelineunits ns
