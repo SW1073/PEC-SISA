@@ -8,8 +8,9 @@
        ; *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
        ; Inicializacion
        ; *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
+       di                 ;desactiva las interrupciones (o se asegura que lo esten)
        $MOVEI r1, RSG
-       wrs    s5, r1      ;inicializamos en S5 la direccion de la rutina de antencion a las interrupcciones
+       wrs    s5, r1      ;inicializamos en S5 la direccion de la rutina de antencion a las excepciones
        movi   r1, 0xF
        out     9, r1      ;activa todos los visores hexadecimales
        movi   r1, 0xFF
@@ -21,8 +22,8 @@
        ; Rutina de servicio de interrupcion
        ; *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
 RSG:   rds    r7, s2      ;obtiene el valor del registro de estado. Nos dice que excepción ha ocurrido
-       addi   r6, r6, 1
-       out    10, r6      ;muestra el numero de excepciones atendidas hasta en el momento
+       addi   r5, r5, 1
+       out    10, r5      ;muestra el numero de excepciones atendidas hasta en el momento
        reti
 
 
@@ -30,7 +31,6 @@ RSG:   rds    r7, s2      ;obtiene el valor del registro de estado. Nos dice que
        ; Rutina principal
        ; *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
 inici:
-       di                 ;desactiva las interrupciones
        movi   r0, 0xAA
        movhi  r0, 0xAA
 
