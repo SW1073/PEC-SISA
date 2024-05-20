@@ -11,8 +11,15 @@ PACKAGE package_exceptions IS
     --
     CONSTANT EX_DIV_BY_ZERO     : std_logic_vector(3 DOWNTO 0) := "0100"; -- 4
     --
-    -- ...
     --
+    --
+    --
+    --
+    --
+    CONSTANT EX_PROTECTED_MEM   : std_logic_vector(3 DOWNTO 0) := "1011"; -- 11
+    --
+    CONSTANT EX_PROTECTED_IR    : std_logic_vector(3 DOWNTO 0) := "1101"; -- 13
+    CONSTANT EX_CALLS           : std_logic_vector(3 DOWNTO 0) := "1110"; -- 14
     CONSTANT EX_INTERRUPT_CODE  : std_logic_vector(3 DOWNTO 0) := "1111"; -- 15
 
 END package_exceptions;

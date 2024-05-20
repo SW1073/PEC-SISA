@@ -52,7 +52,8 @@ ARCHITECTURE Structure OF proc IS
 			regout_a   : OUT std_logic_vector(15 DOWNTO 0);
             int_enabled : OUT std_logic;
 			z          : OUT std_logic;
-            div_by_zero : OUT std_logic);
+            div_by_zero : OUT std_logic;
+            privileged : OUT std_logic);
 	END COMPONENT;
 
 	COMPONENT unidad_control IS
@@ -66,6 +67,7 @@ ARCHITECTURE Structure OF proc IS
             intr        : IN std_logic;
             addr_m      : IN std_logic_vector(15 DOWNTO 0);
             div_by_zero : IN std_logic;
+            privileged :  IN std_logic;
 			op         : OUT std_logic_vector(2 DOWNTO 0);
 			f          : OUT std_logic_vector(2 DOWNTO 0);
 			wrd        : OUT std_logic;
@@ -113,6 +115,7 @@ ARCHITECTURE Structure OF proc IS
     SIGNAL s_addr_m     : std_logic_vector(15 DOWNTO 0);
     SIGNAL s_div_by_zero : std_logic;
     SIGNAL s_exception  : t_exception_record;
+    SIGNAL s_privileged : std_logic;
 
 BEGIN
 
@@ -147,7 +150,8 @@ BEGIN
 		regout_a   => s_regout_a,
         int_enabled => s_int_enabled,
 		z          => s_z,
-        div_by_zero => s_div_by_zero
+        div_by_zero => s_div_by_zero,
+        privileged => s_privileged
 	);
 
 	uc : unidad_control PORT MAP(
@@ -162,6 +166,7 @@ BEGIN
         addr_m     => s_addr_m,
         div_by_zero => s_div_by_zero,
 		-- outputs
+        privileged => s_privileged,
 		op         => s_op,
 		f          => s_f,
 		wrd        => s_wrd,

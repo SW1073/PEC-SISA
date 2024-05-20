@@ -23,7 +23,8 @@ ENTITY regfile IS
         addr_m : IN  std_logic_vector(15 DOWNTO 0);
 		a      : OUT std_logic_vector(15 DOWNTO 0);
 		b      : OUT std_logic_vector(15 DOWNTO 0);
-        int_enabled : OUT std_logic);
+        int_enabled : OUT std_logic;
+        privileged :  OUT std_logic);
 END regfile;
 
 ARCHITECTURE Structure OF regfile IS
@@ -55,6 +56,7 @@ BEGIN
 		IF rising_edge(clk) THEN
             IF system = '1' THEN
                 sys_registers(2) <= x"000" & exception.code;
+                sys_registers(7)(0) <= '1';
                 sys_registers(7)(1) <= '0';
                 sys_registers(1) <= pc;
 
@@ -82,7 +84,8 @@ BEGIN
     sys_reg_b <= sys_registers(conv_integer(addr_b));
 	b <= sys_reg_b WHEN b_sys = SYS_OUT_SYS ELSE reg_b;
 
-    -- bit 1 de S7
+    -- bits de control de S7
+    privileged <= sys_registers(7)(0);
     int_enabled <= sys_registers(7)(1);
 
 END Structure;

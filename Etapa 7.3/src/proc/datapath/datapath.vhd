@@ -27,6 +27,7 @@ ENTITY datapath IS
         rd_io      : IN  std_logic_vector(15 downto 0);
         system     : IN  std_logic;
         exception  : IN t_exception_record;
+        privileged :  OUT std_logic;
 		addr_m     : OUT std_logic_vector(15 DOWNTO 0);
 		data_wr    : OUT std_logic_vector(15 DOWNTO 0);
 		regout_a   : OUT std_logic_vector(15 DOWNTO 0);
@@ -68,7 +69,8 @@ ARCHITECTURE Structure OF datapath IS
             addr_m : IN std_logic_vector(15 DOWNTO 0);
 			a      : OUT std_logic_vector(15 DOWNTO 0);
 			b      : OUT std_logic_vector(15 DOWNTO 0);
-            int_enabled : OUT std_logic);
+            int_enabled : OUT std_logic;
+            privileged :  OUT std_logic);
 	END COMPONENT;
 
 	SIGNAL s_sys_regout_a : std_logic_vector(15 DOWNTO 0);
@@ -119,7 +121,8 @@ BEGIN
         addr_m => s_addr_m,
 		a      => s_regout_a,
         b      => s_regout_b,
-        int_enabled => int_enabled
+        int_enabled => int_enabled,
+        privileged => privileged
 	);
 
 	al : alu PORT MAP(

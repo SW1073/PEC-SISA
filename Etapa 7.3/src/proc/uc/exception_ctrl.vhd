@@ -12,6 +12,8 @@ ENTITY exception_ctrl IS
         intr            : IN std_logic;
         is_illegal_ir   : IN  std_logic;
         div_by_zero     : IN std_logic;
+        is_protected_ir : IN std_logic;
+        privileged      : IN std_logic;
         exception       : OUT t_exception_record);
 END ENTITY;
 
@@ -19,30 +21,34 @@ ARCHITECTURE Structure OF exception_ctrl IS
 
     SIGNAL s_bad_alignment : std_logic;
     SIGNAL s_interrupt     : std_logic;
-
-    -- de control_l sale:
-        -- illegal_ir
-        -- is_mem_access
+    SIGNAL s_protected_ir  : std_logic;
 
 BEGIN
 
-    s_bad_alignment <= '1' WHEN is_word_mem_access = '1' AND addr_m(0) = '1'
+    s_bad_alignment <= '1' WHEN is_word_mem_access = '1' AND addr_m(0) = '1' ELSE '0';
+
+    s_interrupt <= '1' WHEN is_illegal_ir = '0' AND int_enabled = '1' AND intr = '1'
+                    ELSE '0';
+
+    s_protected_ir <= '1' WHEN  is_illegal_ir = '0'   AND
+                                is_protected_ir = '1' AND
+                                privileged = '0'
                        ELSE '0';
 
-    s_interrupt <= '1' WHEN int_enabled = '1' AND intr = '1'
-                  ELSE '0';
 
-    exception.is_exception <= '1' WHEN  s_interrupt = '1'   OR
-                                        is_illegal_ir = '1' OR
-                                        div_by_zero = '1'   OR
+    exception.is_exception <= '1' WHEN  s_interrupt = '1'       OR
+                                        is_illegal_ir = '1'     OR
+                                        div_by_zero = '1'       OR
+                                        s_protected_ir = '1'    OR
                                         s_bad_alignment = '1'
                             ELSE '0';
 
-    exception.code <=   EX_DIV_BY_ZERO      WHEN div_by_zero = '1'      ELSE 
+    exception.code <=   EX_DIV_BY_ZERO      WHEN div_by_zero = '1'      ELSE
                         EX_ILLEGAL_INSTR    WHEN is_illegal_ir = '1'    ELSE
-                        EX_BAD_ALIGNMENT   WHEN s_bad_alignment = '1'  ELSE
+                        EX_BAD_ALIGNMENT    WHEN s_bad_alignment = '1'  ELSE
+                        EX_PROTECTED_IR     WHEN s_protected_ir = '1'   ELSE
                         EX_INTERRUPT_CODE   WHEN s_interrupt = '1'      ELSE
-                        (OTHERS => 'X'); 
+                        (OTHERS => 'X');
 
 END Structure;
 

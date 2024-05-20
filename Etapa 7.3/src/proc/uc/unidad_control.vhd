@@ -17,6 +17,7 @@ ENTITY unidad_control IS
         intr       : IN  std_logic;
         addr_m     : IN std_logic_vector(15 DOWNTO 0);
         div_by_zero : IN std_logic;
+        privileged : IN std_logic;
         op         : OUT std_logic_vector(2 DOWNTO 0);
         f          : OUT std_logic_vector(2 DOWNTO 0);
         wrd        : OUT std_logic;
@@ -73,7 +74,8 @@ ARCHITECTURE Structure OF unidad_control IS
             rd_in      : OUT std_logic;
             inta       : OUT STD_LOGIC;
             is_illegal_ir       : OUT std_logic;
-            is_word_mem_access  : OUT std_logic);
+            is_word_mem_access  : OUT std_logic;
+            is_protected_ir     : OUT std_logic);
 	END COMPONENT;
 
 	-- Multi
@@ -107,6 +109,8 @@ ARCHITECTURE Structure OF unidad_control IS
         intr            : IN std_logic;
         is_illegal_ir   : IN  std_logic;
         div_by_zero     : IN std_logic;
+        is_protected_ir : IN std_logic;
+        privileged      : IN std_logic;
         exception       : OUT t_exception_record);
     END COMPONENT;
 
@@ -137,6 +141,7 @@ ARCHITECTURE Structure OF unidad_control IS
 
     SIGNAL s_is_word_mem_access : std_logic;
     SIGNAL s_is_illegal_ir      : std_logic;
+    SIGNAL s_is_protected_ir    : std_logic;
     SIGNAL s_exception          : t_exception_record;
 BEGIN
 
@@ -175,7 +180,8 @@ BEGIN
         rd_in      => s_rd_in,
         inta       => inta,
         is_illegal_ir => s_is_illegal_ir,
-        is_word_mem_access => s_is_word_mem_access
+        is_word_mem_access => s_is_word_mem_access,
+        is_protected_ir => s_is_protected_ir
 	);
 
 	multi0 : multi PORT MAP(
@@ -209,6 +215,8 @@ BEGIN
         intr          => intr,
         is_illegal_ir => s_is_illegal_ir,
         div_by_zero   => div_by_zero,
+        is_protected_ir => s_is_protected_ir,
+        privileged    => privileged,
         exception     => s_exception
     );
 

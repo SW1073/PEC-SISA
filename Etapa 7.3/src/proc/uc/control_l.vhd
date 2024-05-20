@@ -32,7 +32,8 @@ ENTITY control_l IS
         rd_in      : OUT STD_LOGIC;
         inta       : OUT STD_LOGIC;
         is_illegal_ir       : OUT std_logic;
-        is_word_mem_access  : OUT std_logic);
+        is_word_mem_access  : OUT std_logic;
+        is_protected_ir     : OUT std_logic);
 END control_l;
 
 ARCHITECTURE Structure OF control_l IS
@@ -281,6 +282,9 @@ BEGIN
 
     -- Enable de lectura en el módulo io
     rd_in  <= '1' when s_opcode = OPCODE_IO and s_op = F_INPUT else '0';
+
+    -- Nos dice si la instruccion es protegida
+    is_protected_ir <= '1' WHEN s_opcode = OPCODE_SYS and ir /= x"FFFF" ELSE '0';
 
 END Structure;
 
