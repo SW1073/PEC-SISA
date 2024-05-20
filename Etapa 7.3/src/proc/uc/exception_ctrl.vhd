@@ -14,6 +14,7 @@ ENTITY exception_ctrl IS
         is_illegal_ir   : IN std_logic;
         div_by_zero     : IN std_logic;
         is_protected_ir : IN std_logic;
+        calls           : IN std_logic;
         privileged      : IN std_logic;
         exception       : OUT t_exception_record);
 END ENTITY;
@@ -24,6 +25,7 @@ ARCHITECTURE Structure OF exception_ctrl IS
     SIGNAL s_interrupt     : std_logic;
     SIGNAL s_protected_ir  : std_logic;
     SIGNAL s_protected_mem : std_logic;
+    SIGNAL s_calls         : std_logic;
 
 BEGIN
 
@@ -44,6 +46,8 @@ BEGIN
                        addr_m(15)        AND
                        not privileged;
 
+    s_calls <= not is_illegal_ir AND
+               calls;
 
 
     exception.is_exception <= '1' WHEN  s_interrupt = '1'       OR
@@ -51,6 +55,7 @@ BEGIN
                                         div_by_zero = '1'       OR
                                         s_protected_ir = '1'    OR
                                         s_protected_mem = '1'   OR
+                                        s_calls = '1'           OR
                                         s_bad_alignment = '1'
                             ELSE '0';
 
@@ -59,6 +64,7 @@ BEGIN
                         EX_BAD_ALIGNMENT    WHEN s_bad_alignment = '1'  ELSE
                         EX_PROTECTED_IR     WHEN s_protected_ir = '1'   ELSE
                         EX_PROTECTED_MEM    WHEN s_protected_mem = '1'  ELSE
+                        EX_CALLS            WHEN s_calls = '1'          ELSE
                         EX_INTERRUPT_CODE   WHEN s_interrupt = '1'      ELSE
                         (OTHERS => 'X');
 

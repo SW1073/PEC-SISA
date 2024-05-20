@@ -32,8 +32,9 @@ ENTITY control_l IS
         rd_in      : OUT STD_LOGIC;
         inta       : OUT STD_LOGIC;
         is_illegal_ir       : OUT std_logic;
-        is_mem_access  : OUT std_logic;
-        is_protected_ir     : OUT std_logic);
+        is_mem_access       : OUT std_logic;
+        is_protected_ir     : OUT std_logic;
+        calls               : OUT std_logic);
 END control_l;
 
 ARCHITECTURE Structure OF control_l IS
@@ -64,6 +65,7 @@ ARCHITECTURE Structure OF control_l IS
     SIGNAL s_d_sys          : std_logic;
     SIGNAL s_b_or_immed_sys : std_logic;
     SIGNAL s_in_d_sys       : std_logic_vector(1 DOWNTO 0);
+    SIGNAL s_in_d_jumps     : std_logic_vector(1 DOWNTO 0);
 BEGIN
 
 	s_opcode      <= ir(15 DOWNTO 12);
@@ -97,6 +99,7 @@ BEGIN
           OP_IMMED    WHEN s_opcode = OPCODE_IMMED    ELSE -- IMMED (addi)
           OP_MISC     WHEN s_opcode = OPCODE_MOVS     ELSE -- MOVS Y MISC
           s_op_sys    WHEN s_opcode = OPCODE_SYS      ELSE -- SISTEMA. Dependen de F
+          OP_MISC     WHEN s_opcode = OPCODE_JUMPS    ELSE -- JUMPS
           OP_ARIT_LOG ; -- DEFAULT
 
     s_f_alu_sys <= F_MISC_X_OUT     WHEN (s_f_sys = F_SYS_RDS OR s_f_sys = F_SYS_WRS) ELSE
@@ -113,6 +116,7 @@ BEGIN
          F_ARIT_LOG_ADD  WHEN s_opcode = OPCODE_STOREB  ELSE
          F_ARIT_LOG_ADD  WHEN s_opcode = OPCODE_IMMED   ELSE
          s_f_alu_sys     WHEN s_opcode = OPCODE_SYS     ELSE
+         F_MISC_X_OUT    WHEN s_opcode = OPCODE_JUMPS   ELSE
          s_f ;
 
 	-- falta el 11 para cuando falla el TLB
@@ -147,6 +151,7 @@ BEGIN
 
     d_sys <= '1'     WHEN system = '1'          ELSE
              s_d_sys WHEN s_opcode = OPCODE_SYS ELSE
+             '1'     WHEN (s_opcode = OPCODE_JUMPS AND s_f_jumps = F_JUMP_CALLS) ELSE
              '0';
 
     -- Señal de esritura wrd cuando instruccion de sistema.
@@ -215,6 +220,7 @@ BEGIN
     addr_d <= "000" WHEN system = '1' ELSE
               "111" WHEN (s_opcode = OPCODE_SYS AND (s_f_sys = F_SYS_EI OR s_f_sys = F_SYS_DI OR
                           s_f_sys = F_SYS_RETI)) ELSE
+              "011" WHEN (s_opcode = OPCODE_JUMPS AND s_f_jumps = F_JUMP_CALLS) ELSE
               s_first_reg;
 
     s_b_or_immed_sys <= BIMM_IMMED_OUT WHEN s_f_sys = F_SYS_DI or s_f_sys = F_SYS_EI ELSE
@@ -256,11 +262,13 @@ BEGIN
     s_in_d_sys <= IN_D_IO when s_f_sys = F_SYS_GETIID ELSE
                   IN_D_ALUOUT;
 
+    s_in_d_jumps <= IN_D_ALUOUT WHEN s_f_jumps = F_JUMP_CALLS ELSE IN_D_PC;
+
     -- Señal que decide que dato entra al puerto de escritura del regfile (d)
     in_d <= IN_D_ALUOUT  WHEN system = '1'              ELSE -- Entrada a sistema
             IN_D_DATAMEM WHEN s_opcode = OPCODE_LOAD    ELSE -- Cuando LD
             IN_D_DATAMEM WHEN s_opcode = OPCODE_LOADB   ELSE -- Cuando LDB
-            IN_D_PC      WHEN s_opcode = OPCODE_JUMPS   ELSE -- ESTO IGNORA SI ES JAL O CALLS, LE ENTRA PC+2 AL BANCO DE REGS SIEMPRE.
+            s_in_d_jumps WHEN s_opcode = OPCODE_JUMPS   ELSE
             IN_D_IO      WHEN s_opcode = OPCODE_IO      ELSE -- Cuando operamos con IO
             s_in_d_sys   WHEN s_opcode = OPCODE_SYS     ELSE -- Cuando operamos con instrucciones de acceso a registros especiales
             IN_D_ALUOUT  ;
@@ -288,6 +296,9 @@ BEGIN
 
     -- Nos dice si la instruccion es protegida
     is_protected_ir <= '1' WHEN s_opcode = OPCODE_SYS and ir /= x"FFFF" ELSE '0';
+
+    -- Nos dice si la instrucción es una entrada a sistema por software (syscall)
+    calls <= '1' WHEN s_opcode = OPCODE_JUMPS AND s_f_jumps = F_JUMP_CALLS ELSE '0';
 
 END Structure;
 

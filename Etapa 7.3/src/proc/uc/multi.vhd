@@ -60,7 +60,7 @@ BEGIN
 	-- Señal que, o bien vale el valor de wrd generado por la lógica de control cuando se está en el ciclo
 	-- de DEMW o 0 en otro caso.
     wrd <=  '1'     WHEN s_estado = SYS ELSE
-            wrd_l   WHEN s_estado = DEMW AND ((exception.is_exception = '1' AND exception.code = EX_INTERRUPT_CODE)
+            wrd_l   WHEN s_estado = DEMW AND ((exception.is_exception = '1' AND (exception.code = EX_INTERRUPT_CODE OR exception.code = EX_CALLS))
                                             OR (exception.is_exception = '0'))
             ELSE '0';
 
