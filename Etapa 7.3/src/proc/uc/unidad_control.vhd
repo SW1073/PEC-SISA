@@ -74,7 +74,7 @@ ARCHITECTURE Structure OF unidad_control IS
             rd_in      : OUT std_logic;
             inta       : OUT STD_LOGIC;
             is_illegal_ir       : OUT std_logic;
-            is_word_mem_access  : OUT std_logic;
+            is_mem_access  : OUT std_logic;
             is_protected_ir     : OUT std_logic);
 	END COMPONENT;
 
@@ -104,7 +104,8 @@ ARCHITECTURE Structure OF unidad_control IS
     COMPONENT exception_ctrl IS
 	PORT (clk           : IN std_logic;
         addr_m          : IN std_logic_vector(15 DOWNTO 0);
-        is_word_mem_access : IN std_logic;
+        word_byte       : IN std_logic;
+        is_mem_access : IN std_logic;
         int_enabled     : IN std_logic;
         intr            : IN std_logic;
         is_illegal_ir   : IN  std_logic;
@@ -139,7 +140,7 @@ ARCHITECTURE Structure OF unidad_control IS
 
     SIGNAL s_system : std_logic;
 
-    SIGNAL s_is_word_mem_access : std_logic;
+    SIGNAL s_is_mem_access      : std_logic;
     SIGNAL s_is_illegal_ir      : std_logic;
     SIGNAL s_is_protected_ir    : std_logic;
     SIGNAL s_exception          : t_exception_record;
@@ -180,7 +181,7 @@ BEGIN
         rd_in      => s_rd_in,
         inta       => inta,
         is_illegal_ir => s_is_illegal_ir,
-        is_word_mem_access => s_is_word_mem_access,
+        is_mem_access => s_is_mem_access,
         is_protected_ir => s_is_protected_ir
 	);
 
@@ -210,7 +211,8 @@ BEGIN
     ex_ctrl : exception_ctrl PORT MAP(
         clk           => clk,
         addr_m        => addr_m,
-        is_word_mem_access => s_is_word_mem_access,
+        word_byte     => s_word_byte,
+        is_mem_access => s_is_mem_access,
         int_enabled   => int_enabled,
         intr          => intr,
         is_illegal_ir => s_is_illegal_ir,

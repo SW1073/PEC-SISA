@@ -32,7 +32,7 @@ ENTITY control_l IS
         rd_in      : OUT STD_LOGIC;
         inta       : OUT STD_LOGIC;
         is_illegal_ir       : OUT std_logic;
-        is_word_mem_access  : OUT std_logic;
+        is_mem_access  : OUT std_logic;
         is_protected_ir     : OUT std_logic);
 END control_l;
 
@@ -241,8 +241,11 @@ BEGIN
                  s_f_immed_sys                                         WHEN OPCODE_SYS,
                  std_logic_vector(resize(s_short_immed, immed'length)) WHEN OTHERS;
 
-    is_word_mem_access <= '1' WHEN s_opcode = OPCODE_STORE OR s_opcode = OPCODE_LOAD ELSE
-                          '0';
+    is_mem_access <= '1' WHEN s_opcode = OPCODE_STORE   OR
+                              s_opcode = OPCODE_STOREB  OR
+                              s_opcode = OPCODE_LOAD    OR
+                              s_opcode = OPCODE_LOADB   ELSE
+                     '0';
 
 	-- Permiso de escritura en la memoria si es una instrucción ST o STB
     wr_m <= '0' WHEN system = '1'               ELSE -- Entrada a sistema
