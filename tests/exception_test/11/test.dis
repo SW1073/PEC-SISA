@@ -1,0 +1,75 @@
+
+test.exe:     file format elf32-sisa
+test.exe
+architecture: sisa:3, flags 0x00000112:
+EXEC_P, HAS_SYMS, D_PAGED
+start address 0x0000c000
+
+Program Header:
+    LOAD off    0x00000000 vaddr 0x0000bfac paddr 0x0000bfac align 2**0
+         filesz 0x00000086 memsz 0x00000086 flags r-x
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn  Flags
+  0 .text         00000032  0000c000  0000c000  00000054  2**0  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .stab         00000138  00000000  00000000  00000088  2**2  CONTENTS, READONLY, DEBUGGING
+  2 .stabstr      0000003c  00000000  00000000  000001c0  2**0  CONTENTS, READONLY, DEBUGGING
+SYMBOL TABLE:
+0000c000 l    d  .text	00000000 .text
+00000000 l    d  .stab	00000000 .stab
+00000000 l    d  .stabstr	00000000 .stabstr
+00000000 l    d  *ABS*	00000000 .shstrtab
+00000000 l    d  *ABS*	00000000 .symtab
+00000000 l    d  *ABS*	00000000 .strtab
+0000c01c l       .text	00000000 RSG
+0000c024 l       .text	00000000 inici
+0000c000 g       .text	00000000 __entry_point
+0000c032 g       .text	00000000 _etext
+0000c032 g       *ABS*	00000000 __data_load_end
+0000c032 g       *ABS*	00000000 __data_load_start
+0000c032 g       .text	00000000 __dtors_end
+0000c032 g       .text	00000000 __ctors_start
+0000c032 g       .text	00000000 __dtors_start
+0000c032 g       .text	00000000 __ctors_end
+0000c032 g       *ABS*	00000000 _edata
+0000c032 g       *ABS*	00000000 _end
+
+
+
+test.exe:     file format elf32-sisa
+
+
+test.exe:     file format elf32-sisa
+
+Disassembly of section .text:
+
+0000c000 <__entry_point>:
+    c000:	521c 	movi	r1, 28
+    c002:	53c0 	movhi	r1, -64
+    c004:	fa70 	wrs	s5, r1
+    c006:	5224 	movi	r1, 36
+    c008:	53c0 	movhi	r1, -64
+    c00a:	f270 	wrs	s1, r1
+    c00c:	5200 	movi	r1, 0
+    c00e:	5300 	movhi	r1, 0
+    c010:	f070 	wrs	s0, r1
+    c012:	520f 	movi	r1, 15
+    c014:	7309 	out	9, r1
+    c016:	52ff 	movi	r1, -1
+    c018:	730a 	out	10, r1
+    c01a:	f024 	reti	
+
+0000c01c <RSG>:
+    c01c:	feac 	rds	r7, s2
+    c01e:	2b41 	addi	r5, r5, 1
+    c020:	7b0a 	out	10, r5
+    c022:	f024 	reti	
+
+0000c024 <inici>:
+    c024:	5002 	movi	r0, 2
+    c026:	5180 	movhi	r0, -128
+    c028:	4200 	st	0(r0), r1
+    c02a:	3200 	ld	r1, 0(r0)
+    c02c:	e200 	stb	0(r0), r1
+    c02e:	d200 	ldb	r1, 0(r0)
+    c030:	ffff 	halt	
