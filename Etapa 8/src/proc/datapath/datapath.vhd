@@ -76,17 +76,21 @@ ARCHITECTURE Structure OF datapath IS
 	END COMPONENT;
 
     COMPONENT tlb IS
-        PORT (
-            clk     : IN  std_logic;
-            boot    : IN  std_logic;
-            vtag    : IN  std_logic_vector(3 DOWNTO 0);
-            addr    : IN  std_logic_vector(2 DOWNTO 0);
-            we_v    : IN  std_logic;
-            we_p    : IN  std_logic;
-            ptag_d  : IN  std_logic_vector(5 DOWNTO 0);
-            ptag    : OUT std_logic_vector(3 DOWNTO 0);
-            v       : OUT std_logic;
-            r       : OUT std_logic);
+    PORT (
+        -- INPUT
+        clk         : IN  std_logic;
+        boot        : IN  std_logic;
+        vtag        : IN  std_logic_vector(3 DOWNTO 0);
+        addr        : IN  std_logic_vector(2 DOWNTO 0);
+        we_v        : IN  std_logic;
+        we_p        : IN  std_logic;
+        tag_d       : IN  std_logic_vector(5 DOWNTO 0);
+        flush       : IN  std_logic;
+        -- OUTPUT
+        tlb_miss    : OUT std_logic;
+        ptag        : OUT std_logic_vector(3 DOWNTO 0);
+        v           : OUT std_logic;
+        r           : OUT std_logic);
     END COMPONENT;
 
 	SIGNAL s_sys_regout_a : std_logic_vector(15 DOWNTO 0);
@@ -101,6 +105,8 @@ ARCHITECTURE Structure OF datapath IS
 	SIGNAL s_pc : std_logic_vector(15 DOWNTO 0);
 
     SIGNAL s_addr_m : std_logic_vector(15 DOWNTO 0);
+
+    SIGNAL s_tlb_ptag : std_logic_vector(3 DOWNTO 0);
 
 BEGIN
 
@@ -155,21 +161,43 @@ BEGIN
 	s_addr_m  <= s_aluout WHEN ins_dad = '1' ELSE pc;
 
 	data_wr <= s_regout_b;
-    addr_m <= s_addr_m;
+
+    -- PORT (
+    --     -- INPUT
+    --     clk         : IN  std_logic;
+    --     boot        : IN  std_logic;
+    --     vtag        : IN  std_logic_vector(3 DOWNTO 0);
+    --     addr        : IN  std_logic_vector(2 DOWNTO 0);
+    --     we_v        : IN  std_logic;
+    --     we_p        : IN  std_logic;
+    --     tag_d       : IN  std_logic_vector(5 DOWNTO 0);
+    --     flush       : IN  std_logic;
+    --     -- OUTPUT
+    --     tlb_miss    : OUT std_logic;
+    --     ptag        : OUT std_logic_vector(3 DOWNTO 0);
+    --     v           : OUT std_logic;
+    --     r           : OUT std_logic);
 
 
     tlbi: tlb PORT MAP(
+        -- INPUT
         clk     => clk,
         boot    => boot,
-        vtag    => s_addr_m(15 DOWNTO 12),
-        addr    => "000",
-        we_v    => '0',
-        we_p    => '0',
-        ptag_d  => "000000",
-        ptag    => open,
-        v       => open,
-        r       => open
+        vtag    => s_addr_m(15 DOWNTO 12);
+        addr    => "000",   -- TODO
+        we_v    => '0',     -- TODO
+        we_p    => '0',     -- TODO
+        tag_d   => s_aluout(5 DOWNTO 0), --???
+        flush   => '0',     -- TODO
+        -- OUTPUT
+        tlb_miss=> open,    -- TODO
+        ptag    => s_tlb_ptag,
+        v       => open,    -- TODO
+        r       => open     -- TODO
     );
+
+    addr_m <= s_tlb_ptag & s_addr_m (11 downto 0);
+
 
 END Structure;
 
