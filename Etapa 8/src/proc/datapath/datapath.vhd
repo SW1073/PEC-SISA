@@ -75,6 +75,20 @@ ARCHITECTURE Structure OF datapath IS
             privileged :  OUT std_logic);
 	END COMPONENT;
 
+    COMPONENT tlb IS
+        PORT (
+            clk     : IN  std_logic;
+            boot    : IN  std_logic;
+            vtag    : IN  std_logic_vector(3 DOWNTO 0);
+            addr    : IN  std_logic_vector(2 DOWNTO 0);
+            we_v    : IN  std_logic;
+            we_p    : IN  std_logic;
+            ptag_d  : IN  std_logic_vector(5 DOWNTO 0);
+            ptag    : OUT std_logic_vector(3 DOWNTO 0);
+            v       : OUT std_logic;
+            r       : OUT std_logic);
+    END COMPONENT;
+
 	SIGNAL s_sys_regout_a : std_logic_vector(15 DOWNTO 0);
 	SIGNAL s_regout_a : std_logic_vector(15 DOWNTO 0);
 	SIGNAL s_regout_b : std_logic_vector(15 DOWNTO 0);
@@ -142,6 +156,20 @@ BEGIN
 
 	data_wr <= s_regout_b;
     addr_m <= s_addr_m;
+
+
+    tlbi: tlb PORT MAP(
+        clk     => clk,
+        boot    => boot,
+        vtag    => s_addr_m(15 DOWNTO 12),
+        addr    => "000",
+        we_v    => '0',
+        we_p    => '0',
+        ptag_d  => "000000",
+        ptag    => open,
+        v       => open,
+        r       => open
+    );
 
 END Structure;
 
