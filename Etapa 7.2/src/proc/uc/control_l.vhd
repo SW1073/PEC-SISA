@@ -7,34 +7,42 @@ USE work.package_alu.ALL;
 
 ENTITY control_l IS
 	PORT (
-		ir              : IN  std_logic_vector(15 DOWNTO 0);
-        system          : IN  std_logic;
-		z               : IN  std_logic;
-		op              : OUT std_logic_vector(2 DOWNTO 0);
-		f               : OUT std_logic_vector(2 DOWNTO 0);
-		ldpc            : OUT std_logic;
-		wrd             : OUT std_logic;
-        d_sys           : OUT std_logic;
-		addr_a          : OUT std_logic_vector(2 DOWNTO 0);
-		addr_b          : OUT std_logic_vector(2 DOWNTO 0);
-		addr_d          : OUT std_logic_vector(2 DOWNTO 0);
-		immed           : OUT std_logic_vector(15 DOWNTO 0);
-		wr_m            : OUT std_logic;
-		in_d            : OUT std_logic_vector(1 DOWNTO 0);
-		immed_x2        : OUT std_logic;
-		word_byte       : OUT std_logic;
-		tknbr           : OUT std_logic_vector(1 DOWNTO 0);
-		b_or_immed      : OUT std_logic;
-        a_sys           : OUT std_logic;
-        b_sys           : OUT std_logic;
-        addr_io         : OUT STD_LOGIC_VECTOR(7  DOWNTO 0);
-        wr_out          : OUT STD_LOGIC;
-        rd_in           : OUT STD_LOGIC;
-        inta            : OUT STD_LOGIC;
-        is_mem_access   : OUT std_logic);
+		ir         : IN  std_logic_vector(15 DOWNTO 0);
+        system     : IN std_logic;
+		z          : IN  std_logic;
+		op         : OUT std_logic_vector(2 DOWNTO 0);
+		f          : OUT std_logic_vector(2 DOWNTO 0);
+		ldpc       : OUT std_logic;
+		wrd        : OUT std_logic;
+        d_sys      : OUT std_logic;
+		addr_a     : OUT std_logic_vector(2 DOWNTO 0);
+		addr_b     : OUT std_logic_vector(2 DOWNTO 0);
+		addr_d     : OUT std_logic_vector(2 DOWNTO 0);
+		immed      : OUT std_logic_vector(15 DOWNTO 0);
+		wr_m       : OUT std_logic;
+		in_d       : OUT std_logic_vector(1 DOWNTO 0);
+		immed_x2   : OUT std_logic;
+		word_byte  : OUT std_logic;
+		tknbr      : OUT std_logic_vector(1 DOWNTO 0);
+		b_or_immed : OUT std_logic;
+        a_sys      : OUT std_logic;
+        b_sys      : OUT std_logic;
+        addr_io    : OUT STD_LOGIC_VECTOR(7  DOWNTO 0);
+        wr_out     : OUT STD_LOGIC;
+        rd_in      : OUT STD_LOGIC;
+        inta       : OUT STD_LOGIC;
+        is_illegal_ir       : OUT std_logic;
+        is_word_mem_access  : OUT std_logic);
 END control_l;
 
 ARCHITECTURE Structure OF control_l IS
+
+    COMPONENT illegal_ir IS
+        PORT (
+            ir              : IN std_logic_vector(15 DOWNTO 0);
+            is_illegal      : OUT std_logic);
+    END COMPONENT;
+
 	SIGNAL s_opcode         : std_logic_vector(3 DOWNTO 0);
 	SIGNAL s_f              : std_logic_vector(2 DOWNTO 0);
 	SIGNAL s_f_jumps        : std_logic_vector(2 DOWNTO 0);
@@ -55,7 +63,6 @@ ARCHITECTURE Structure OF control_l IS
     SIGNAL s_d_sys          : std_logic;
     SIGNAL s_b_or_immed_sys : std_logic;
     SIGNAL s_in_d_sys       : std_logic_vector(1 DOWNTO 0);
-
 BEGIN
 
 	s_opcode      <= ir(15 DOWNTO 12);
@@ -68,6 +75,8 @@ BEGIN
 	s_short_immed <= signed(ir(5 DOWNTO 0));
 	s_long_immed  <= signed(ir(7 DOWNTO 0));
 	s_op          <= ir(8);
+
+    illegal_ir0 : illegal_ir PORT MAP (ir, is_illegal_ir);
 
     inta <= '1' WHEN s_opcode = OPCODE_SYS AND s_f_sys = F_SYS_GETIID ELSE
             '0';
@@ -231,6 +240,9 @@ BEGIN
                  s_f_immed_sys                                         WHEN OPCODE_SYS,
                  std_logic_vector(resize(s_short_immed, immed'length)) WHEN OTHERS;
 
+    is_word_mem_access <= '1' WHEN s_opcode = OPCODE_STORE OR s_opcode = OPCODE_LOAD ELSE
+                          '0';
+
 	-- Permiso de escritura en la memoria si es una instrucción ST o STB
     wr_m <= '0' WHEN system = '1'               ELSE -- Entrada a sistema
             '1' WHEN s_opcode = OPCODE_STORE    ELSE -- Cuando ST
@@ -269,14 +281,6 @@ BEGIN
 
     -- Enable de lectura en el módulo io
     rd_in  <= '1' when s_opcode = OPCODE_IO and s_op = F_INPUT else '0';
-
-    -- Indica si la instrucción actual es de acceso a memoria
-    with s_opcode select
-        is_mem_access <= '1' WHEN OPCODE_LOAD,
-                         '1' WHEN OPCODE_STORE,
-                         '1' WHEN OPCODE_LOADB,
-                         '1' WHEN OPCODE_STOREB,
-                         '0' WHEN OTHERS;
 
 END Structure;
 

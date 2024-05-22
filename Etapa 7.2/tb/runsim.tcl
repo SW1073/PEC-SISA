@@ -12,7 +12,4 @@ do compile.tcl
 vsim work.test_sisa
 
 do wave.tcl
-
-log -r /*
-
 run 12100ns

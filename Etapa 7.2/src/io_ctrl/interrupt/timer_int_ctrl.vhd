@@ -19,7 +19,6 @@ ARCHITECTURE Structure OF timer_int_ctrl IS
 
     -- 0.05 s. a 50MHz (20 ns) = 25 x10^5 clock events
     CONSTANT counter_objective : integer := 2500000;
-    -- CONSTANT counter_objective : integer := 2500; -- FOR TESTING
     SIGNAL counter : integer range 0 to counter_objective := 0;
     SIGNAL s_prev_inta : std_logic := '0';
 BEGIN

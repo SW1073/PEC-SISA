@@ -11,7 +11,7 @@ array set VAR1 {
     "Unidad Control" "test_sisa/SoC/proc0/uc/*"
     "Control Logic" "test_sisa/SoC/proc0/uc/control_l0/*"
     "Multi" "test_sisa/SoC/proc0/uc/multi0/*"
-    "Illegal IR" "test_sisa/SoC/proc0/uc/ex_ctrl/illegal_ir1/*"
+    "Illegal IR" "test_sisa/SoC/proc0/uc/control_l0/illegal_ir0/*"
     "Exception Controller" "test_sisa/SoC/proc0/uc/ex_ctrl/*"
 
     "Memory Controller" "test_sisa/SoC/memctrl0/*"
@@ -40,15 +40,15 @@ foreach name [array name VAR1] {
     add wave -group $name -radix hex -internal $dataset$VAR1($name)
 }
 
-for {set i 50} {$i >= 0} {incr i -1} {
-    add wave -group "Memory Contents" -label "word $i" -radix hex "${dataset}test_sisa/mem0/mem_array(${i})"
-}
-
-# for {set i 200} {$i >= 100} {incr i -1} {
+# for {set i 50} {$i >= 0} {incr i -1} {
+#     add wave -group "Memory Contents" -label "word $i" -radix hex "${dataset}test_sisa/mem0/mem_array(${i})"
+# }
+#
+# for {set i 100} {$i >= 0} {incr i -1} {
 #     add wave -group "LO VGA RAM Contents" -label "lo byte $i" -radix hex "${dataset}test_sisa/SoC/vgactrl0/U_MonitorRam/mem0(${i})"
 # }
 #
-# for {set i 200} {$i >= 100} {incr i -1} {
+# for {set i 100} {$i >= 0} {incr i -1} {
 #     add wave -group "HI VGA RAM Contents" -label "hi byte $i" -radix hex "${dataset}test_sisa/SoC/vgactrl0/U_MonitorRam/mem1(${i})"
 # }
 

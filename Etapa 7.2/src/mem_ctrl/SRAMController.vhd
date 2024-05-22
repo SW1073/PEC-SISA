@@ -17,8 +17,7 @@ entity SRAMController is
           dataReaded  : out   std_logic_vector(15 downto 0);
           dataToWrite : in    std_logic_vector(15 downto 0);
           WR          : in    std_logic;
-          byte_m      : in    std_logic := '0';
-          bad_allignment : in std_logic);
+          byte_m      : in    std_logic := '0');
 end SRAMController;
 
 architecture comportament of SRAMController is
@@ -35,6 +34,7 @@ begin
 					else std_logic_vector(resize(signed(SRAM_DQ(15 downto 8)), dataReaded'length)) when byte_m = '1' and address(0) = '1'
 					else SRAM_DQ;
 
+
     next_state: process(clk) is
         variable v_valid_counter: integer;
         variable v_state: State_t;
@@ -43,9 +43,7 @@ begin
             v_state := s_state;
             case (s_state) is
                 when READ =>
-                    if bad_allignment = '1' then
-                        v_state := READ;
-					elsif WR = '1' then
+					if WR = '1' then
 						v_state := WRITE_SETUP;
 					end if;
 
@@ -68,10 +66,14 @@ begin
         if rising_edge(clk) then
             case (s_state) is
                 when READ =>
-					if WR = '1' and bad_allignment = '0' then
+					if WR = '1' then
 						if byte_m = '0' and address(0) = '0' then
 							SRAM_UB_N <= '0';
 							SRAM_LB_N <= '0';
+							SRAM_DQ <= dataToWrite;
+						elsif byte_m = '0' and address(0) = '1' then
+							SRAM_UB_N <= 'W';
+							SRAM_LB_N <= 'W';
 							SRAM_DQ <= dataToWrite;
 						elsif byte_m = '1' and address(0) = '0' then
 							SRAM_UB_N <= '1';

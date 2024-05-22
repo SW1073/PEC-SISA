@@ -3,6 +3,7 @@ USE ieee.std_logic_1164.ALL;
 USE ieee.numeric_std.ALL;
 USE ieee.std_logic_unsigned.ALL;
 USE work.package_control.ALL;
+USE work.package_records.ALL;
 
 ENTITY datapath IS
 	PORT (
@@ -25,14 +26,13 @@ ENTITY datapath IS
 		b_or_immed : IN  std_logic;
         rd_io      : IN  std_logic_vector(15 downto 0);
         system     : IN  std_logic;
-        exception  : IN  std_logic;
-        exception_code : IN std_logic_vector(3 DOWNTO 0);
+        exception  : IN t_exception_record;
 		addr_m     : OUT std_logic_vector(15 DOWNTO 0);
 		data_wr    : OUT std_logic_vector(15 DOWNTO 0);
 		regout_a   : OUT std_logic_vector(15 DOWNTO 0);
         int_enabled : OUT std_logic;
-        div_by_zero : OUT std_logic;
-		z          : OUT std_logic);
+		z          : OUT std_logic;
+        div_by_zero : OUT std_logic);
 END datapath;
 
 ARCHITECTURE Structure OF datapath IS
@@ -43,13 +43,13 @@ ARCHITECTURE Structure OF datapath IS
 
 	COMPONENT alu IS
 		PORT (
-			x           : IN  std_logic_vector(15 DOWNTO 0);
-			y           : IN  std_logic_vector(15 DOWNTO 0);
-			op          : IN  std_logic_vector(2 DOWNTO 0);
-			f           : IN  std_logic_vector(2 DOWNTO 0);
-			w           : OUT std_logic_vector(15 DOWNTO 0);
-            div_by_zero : OUT std_logic;
-			z           : OUT std_logic);
+			x  : IN  std_logic_vector(15 DOWNTO 0);
+			y  : IN  std_logic_vector(15 DOWNTO 0);
+			op : IN  std_logic_vector(2 DOWNTO 0);
+			f  : IN  std_logic_vector(2 DOWNTO 0);
+			w  : OUT std_logic_vector(15 DOWNTO 0);
+			z  : OUT std_logic;
+            div_by_zero : OUT std_logic);
 	END COMPONENT;
 	COMPONENT regfile IS
 		PORT (
@@ -63,10 +63,9 @@ ARCHITECTURE Structure OF datapath IS
             a_sys  : IN  std_logic;
             b_sys  : IN  std_logic;
             system : IN  std_logic;
-            addr_m : IN  std_logic_vector(15 DOWNTO 0);
-            exception : IN std_logic;
-            exception_code : IN std_logic_vector(3 DOWNTO 0);
             pc     : IN  std_logic_vector(15 DOWNTO 0);
+            exception : IN t_exception_record;
+            addr_m : IN std_logic_vector(15 DOWNTO 0);
 			a      : OUT std_logic_vector(15 DOWNTO 0);
 			b      : OUT std_logic_vector(15 DOWNTO 0);
             int_enabled : OUT std_logic);
@@ -83,7 +82,7 @@ ARCHITECTURE Structure OF datapath IS
 
 	SIGNAL s_pc : std_logic_vector(15 DOWNTO 0);
 
-    SIGNAL s_addr_m : std_logic_vector(15 DOWNTO 0); 
+    SIGNAL s_addr_m : std_logic_vector(15 DOWNTO 0);
 
 BEGIN
 
@@ -115,10 +114,9 @@ BEGIN
         a_sys  => a_sys,
         b_sys  => b_sys,
         system => system,
-        addr_m => s_addr_m,
-        exception => exception,
-        exception_code => exception_code,
         pc     => pc,
+        exception => exception,
+        addr_m => s_addr_m,
 		a      => s_regout_a,
         b      => s_regout_b,
         int_enabled => int_enabled
@@ -130,14 +128,14 @@ BEGIN
 		x  => s_regout_a,
 		y  => s_y,
 		w  => s_aluout,
-        div_by_zero => div_by_zero,
-		z  => z
+		z  => z,
+        div_by_zero => div_by_zero
 	);
 
 	s_addr_m  <= s_aluout WHEN ins_dad = '1' ELSE pc;
 
 	data_wr <= s_regout_b;
-    addr_m  <= s_addr_m;
+    addr_m <= s_addr_m;
 
 END Structure;
 

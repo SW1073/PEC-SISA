@@ -37,22 +37,20 @@ ARCHITECTURE Structure OF sisa IS
 
 	COMPONENT proc IS
 		PORT (
-            clk             : IN  std_logic;
-            boot            : IN  std_logic;
-            inta            : OUT std_logic;
-            intr            : IN  std_logic;
-            datard_m        : IN  std_logic_vector(15 DOWNTO 0);
-            bad_allignment  : IN std_logic;
-            addr_m          : OUT std_logic_vector(15 DOWNTO 0);
-            data_wr         : OUT std_logic_vector(15 DOWNTO 0);
-            wr_m            : OUT std_logic;
-            word_byte       : OUT std_logic;
-            dbg_pc          : OUT std_logic_vector(15 DOWNTO 0);
-            addr_io         : OUT STD_LOGIC_VECTOR(7  DOWNTO 0);
-            rd_io           : IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
-            wr_out          : OUT STD_LOGIC;
-            rd_in           : OUT STD_LOGIC;
-            is_mem_access   : OUT std_logic);
+			clk       : IN  std_logic;
+			boot      : IN  std_logic;
+            inta      : OUT  STD_LOGIC;
+            intr      : IN  STD_LOGIC;
+			datard_m  : IN  std_logic_vector(15 DOWNTO 0);
+			addr_m    : OUT std_logic_vector(15 DOWNTO 0);
+			data_wr   : OUT std_logic_vector(15 DOWNTO 0);
+			wr_m      : OUT std_logic;
+			word_byte : OUT std_logic;
+            dbg_pc    : OUT std_logic_vector(15 DOWNTO 0);
+            addr_io   : OUT STD_LOGIC_VECTOR(7  DOWNTO 0);
+            rd_io     : IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
+            wr_out    : OUT STD_LOGIC;
+            rd_in     : OUT STD_LOGIC);
 	END COMPONENT;
 
 	COMPONENT MemoryController IS
@@ -63,8 +61,6 @@ ARCHITECTURE Structure OF sisa IS
 			rd_data   : OUT   std_logic_vector(15 DOWNTO 0);
 			we        : IN    std_logic;
 			byte_m    : IN    std_logic;
-            is_mem_access  : IN  std_logic;
-            bad_allignment : OUT std_logic;
 			-- señales para la placa de desarrollo
 			SRAM_ADDR : OUT   std_logic_vector(17 DOWNTO 0);
 			SRAM_DQ   : INOUT std_logic_vector(15 DOWNTO 0);
@@ -153,7 +149,6 @@ ARCHITECTURE Structure OF sisa IS
     SIGNAL s_rd_io       : std_logic_vector(15 DOWNTO 0);
     SIGNAL s_wr_out      : std_logic;
     SIGNAL s_rd_in       : std_logic;
-    SIGNAL s_is_mem_access : std_logic;
 	-- Que surten de MEMCTRL
 	SIGNAL s_rd_data     : std_logic_vector(15 DOWNTO 0);
     SIGNAL s_vga_wr_data : std_logic_vector(15 DOWNTO 0);
@@ -163,7 +158,6 @@ ARCHITECTURE Structure OF sisa IS
     SIGNAL s_vga_byte_m  : std_logic;
     SIGNAL s_vga_cursor  : std_logic_vector(15 DOWNTO 0) := (others => '0');
     SIGNAL s_vga_cursor_enable : std_logic := '0';
-    SIGNAL s_bad_allignment : std_logic;
 
 	-- Registre del divisor de rellotge
 	SIGNAL s_reg_divisor : std_logic_vector(2 DOWNTO 0) := "000";
@@ -256,7 +250,6 @@ BEGIN
 		datard_m  => s_rd_data,
         rd_io     => s_rd_io,
         intr      => s_intr,
-        bad_allignment => s_bad_allignment,
 		-- outputs
         inta      => s_inta,
 		word_byte => s_word_byte,
@@ -266,8 +259,7 @@ BEGIN
 		dbg_pc    => s_dbg_pc,
         addr_io   => s_addr_io,
         wr_out    => s_wr_out,
-        rd_in     => s_rd_in,
-        is_mem_access => s_is_mem_access
+        rd_in     => s_rd_in
 	);
 
 	memctrl0 : MemoryController PORT MAP(
@@ -277,8 +269,6 @@ BEGIN
 		rd_data   => s_rd_data,
 		we        => s_wr_m,
 		byte_m    => s_word_byte,
-        is_mem_access => s_is_mem_access,
-        bad_allignment => s_bad_allignment,
 		-- señales para la placa de desarrollo
 		SRAM_ADDR => SRAM_ADDR,
 		SRAM_DQ   => SRAM_DQ,
