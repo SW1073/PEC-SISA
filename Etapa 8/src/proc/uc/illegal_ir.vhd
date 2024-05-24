@@ -38,7 +38,7 @@ BEGIN
                                         (s_reserved = '0') OR
                                         (s_f_sys /= F_SYS_EI AND s_f_sys /= F_SYS_DI AND s_f_sys /= F_SYS_RETI AND
                                         s_f_sys /= F_SYS_GETIID AND s_f_sys /= F_SYS_RDS AND s_f_sys /= F_SYS_WRS AND
-                                        -- s_f_sys /= F_SYS_WRPI AND s_f_sys /= F_SYS_WRVI AND s_f_sys /= F_SYS_WRPD AND s_f_sys /= F_SYS_WRVD AND s_f_sys /= F_SYS_FLUSH AND
+                                        s_f_sys /= F_SYS_WRPI AND s_f_sys /= F_SYS_WRVI AND s_f_sys /= F_SYS_WRPD AND s_f_sys /= F_SYS_WRVD AND s_f_sys /= F_SYS_FLUSH AND
                                         s_f_sys /= F_SYS_HALT) OR
                                         ((s_f_sys = F_SYS_EI OR s_f_sys = F_SYS_DI) AND (s_first_reg /= "000" OR s_second_reg /= "000")) OR
                                         ((s_f_sys = F_SYS_RETI) AND (s_first_reg /= "000" OR s_second_reg /= "000")) OR

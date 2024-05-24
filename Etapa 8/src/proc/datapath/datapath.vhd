@@ -7,34 +7,40 @@ USE work.package_records.ALL;
 
 ENTITY datapath IS
 	PORT (
-		clk        : IN  std_logic;
-        boot       : IN  std_logic;
-		op         : IN  std_logic_vector(2 DOWNTO 0);
-		f          : IN  std_logic_vector(2 DOWNTO 0);
-		wrd        : IN  std_logic;
-        d_sys      : IN  std_logic;
-		addr_a     : IN  std_logic_vector(2 DOWNTO 0);
-		addr_b     : IN  std_logic_vector(2 DOWNTO 0);
-		addr_d     : IN  std_logic_vector(2 DOWNTO 0);
-		immed      : IN  std_logic_vector(15 DOWNTO 0);
-		immed_x2   : IN  std_logic;
-		datard_m   : IN  std_logic_vector(15 DOWNTO 0);
-		ins_dad    : IN  std_logic;
-		pc         : IN  std_logic_vector(15 DOWNTO 0);
-		in_d       : IN  std_logic_vector(1 DOWNTO 0);
-        a_sys      : IN  std_logic;
-        b_sys      : IN  std_logic;
-		b_or_immed : IN  std_logic;
-        rd_io      : IN  std_logic_vector(15 downto 0);
-        system     : IN  std_logic;
-        exception  : IN t_exception_record;
-        privileged :  OUT std_logic;
-		addr_m     : OUT std_logic_vector(15 DOWNTO 0);
-		data_wr    : OUT std_logic_vector(15 DOWNTO 0);
-		regout_a   : OUT std_logic_vector(15 DOWNTO 0);
+		clk         : IN  std_logic;
+        boot        : IN  std_logic;
+		op          : IN  std_logic_vector(2 DOWNTO 0);
+		f           : IN  std_logic_vector(2 DOWNTO 0);
+		wrd         : IN  std_logic;
+        d_sys       : IN  std_logic;
+		addr_a      : IN  std_logic_vector(2 DOWNTO 0);
+		addr_b      : IN  std_logic_vector(2 DOWNTO 0);
+		addr_d      : IN  std_logic_vector(2 DOWNTO 0);
+		immed       : IN  std_logic_vector(15 DOWNTO 0);
+		immed_x2    : IN  std_logic;
+		datard_m    : IN  std_logic_vector(15 DOWNTO 0);
+		ins_dad     : IN  std_logic;
+		pc          : IN  std_logic_vector(15 DOWNTO 0);
+		in_d        : IN  std_logic_vector(1 DOWNTO 0);
+        a_sys       : IN  std_logic;
+        b_sys       : IN  std_logic;
+		b_or_immed  : IN  std_logic;
+        rd_io       : IN  std_logic_vector(15 downto 0);
+        system      : IN  std_logic;
+        exception   : IN  t_exception_record;
+        tlb_we      : IN  std_logic;
+        tlb_we_sel  : IN  std_logic;
+        tlb_is_we_instr : IN std_logic;
+        privileged  : OUT std_logic;
+		addr_m      : OUT std_logic_vector(15 DOWNTO 0);
+		data_wr     : OUT std_logic_vector(15 DOWNTO 0);
+		regout_a    : OUT std_logic_vector(15 DOWNTO 0);
         int_enabled : OUT std_logic;
-		z          : OUT std_logic;
-        div_by_zero : OUT std_logic);
+		z           : OUT std_logic;
+        div_by_zero : OUT std_logic;
+        tlb_miss    : OUT std_logic;
+        tlb_valid   : OUT std_logic;
+        tlb_readonly: OUT std_logic);
 END datapath;
 
 ARCHITECTURE Structure OF datapath IS
@@ -81,7 +87,7 @@ ARCHITECTURE Structure OF datapath IS
         clk         : IN  std_logic;
         boot        : IN  std_logic;
         vtag        : IN  std_logic_vector(3 DOWNTO 0);
-        addr        : IN  std_logic_vector(2 DOWNTO 0);
+        tag_addr    : IN  std_logic_vector(2 DOWNTO 0);
         we          : IN  std_logic;
         we_sel      : IN  std_logic;
         tag_d       : IN  std_logic_vector(5 DOWNTO 0);
@@ -106,7 +112,20 @@ ARCHITECTURE Structure OF datapath IS
 
     SIGNAL s_addr_m : std_logic_vector(15 DOWNTO 0);
 
-    SIGNAL s_tlb_ptag : std_logic_vector(3 DOWNTO 0);
+    SIGNAL s_tlb_ptag   : std_logic_vector(3 DOWNTO 0);
+    SIGNAL s_tlb_ptag_i : std_logic_vector(3 DOWNTO 0);
+    SIGNAL s_tlb_ptag_d : std_logic_vector(3 DOWNTO 0);
+
+    SIGNAL s_tlb_miss_i : std_logic;
+    SIGNAL s_tlb_vi     : std_logic;
+    SIGNAL s_tlb_ri     : std_logic;
+
+    SIGNAL s_tlb_miss_d : std_logic;
+    SIGNAL s_tlb_vd     : std_logic;
+    SIGNAL s_tlb_rd     : std_logic;
+
+    SIGNAL s_tlb_we_i     : std_logic;
+    SIGNAL s_tlb_we_d     : std_logic;
 
 BEGIN
 
@@ -178,23 +197,47 @@ BEGIN
     --     v           : OUT std_logic;
     --     r           : OUT std_logic);
 
+    s_tlb_we_i <= tlb_we WHEN tlb_is_we_instr = '1' ELSE '0';
+    s_tlb_we_d <= tlb_we WHEN tlb_is_we_instr = '0' ELSE '0';
 
     tlbi: tlb PORT MAP(
         -- INPUT
         clk     => clk,
         boot    => boot,
         vtag    => s_addr_m(15 DOWNTO 12),
-        addr    => "000",   -- TODO
-        we      => '0',     -- TODO
-        we_sel  => '0',     -- TODO
-        tag_d   => s_aluout(5 DOWNTO 0), --???
-        flush   => '0',     -- TODO
+        tag_addr=> s_regout_a(2 DOWNTO 0),
+        we      => s_tlb_we_i,
+        we_sel  => tlb_we_sel,
+        tag_d   => s_regout_b(5 DOWNTO 0),
+        flush   => '0',
         -- OUTPUT
-        tlb_miss=> open,    -- TODO
-        ptag    => s_tlb_ptag,
-        v       => open,    -- TODO
-        r       => open     -- TODO
+        tlb_miss=> s_tlb_miss_i,
+        ptag    => s_tlb_ptag_i,
+        v       => s_tlb_vi,
+        r       => s_tlb_ri
     );
+
+    tlbd: tlb PORT MAP(
+        -- INPUT
+        clk     => clk,
+        boot    => boot,
+        vtag    => s_addr_m(15 DOWNTO 12),
+        tag_addr=> s_regout_a(2 DOWNTO 0),
+        we      => s_tlb_we_d,
+        we_sel  => tlb_we_sel,
+        tag_d   => s_regout_b(5 DOWNTO 0),
+        flush   => '0',
+        -- OUTPUT
+        tlb_miss=> s_tlb_miss_d,
+        ptag    => s_tlb_ptag_d,
+        v       => s_tlb_vd,
+        r       => s_tlb_rd
+    );
+
+    tlb_miss     <= s_tlb_miss_i    WHEN ins_dad = '0' ELSE s_tlb_miss_d;
+    tlb_valid    <= s_tlb_vi        WHEN ins_dad = '0' ELSE s_tlb_vd;
+    tlb_readonly <= s_tlb_ri        WHEN ins_dad = '0' ELSE s_tlb_rd;
+    s_tlb_ptag   <= s_tlb_ptag_i    WHEN ins_dad = '0' ELSE s_tlb_ptag_d;
 
     addr_m <= s_tlb_ptag & s_addr_m (11 downto 0);
 

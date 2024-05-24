@@ -14,7 +14,7 @@ ENTITY tlb IS
         vtag        : IN  std_logic_vector(3 DOWNTO 0);
         -- =========== INPUT de escritura ===========
         -- ID de la entrada que se quiere escribir
-        addr        : IN  std_logic_vector(2 DOWNTO 0);
+        tag_addr    : IN  std_logic_vector(2 DOWNTO 0);
         -- Write Enable para escribir tags
         we          : IN  std_logic;
         -- Selecciona si la escritura se efectua en el banco virtual o físico
@@ -53,14 +53,14 @@ ARCHITECTURE Structure OF tlb IS
     SIGNAL s_one_hot        : std_logic_vector(c_NUM_ENTRIES-1 DOWNTO 0) := (OTHERS => '0');
 
     CONSTANT c_init_tlb : t_tlb := (
-        (x"0", x"0", '1', '0'),
-        (x"1", x"1", '1', '0'),
-        (x"2", x"2", '1', '0'),
-        (x"8", x"8", '1', '0'),
-        (x"C", x"C", '1', '0'),
-        (x"D", x"D", '1', '0'),
+        (x"F", x"F", '1', '1'),
         (x"E", x"E", '1', '1'),
-        (x"F", x"F", '1', '1')
+        (x"D", x"D", '1', '0'),
+        (x"C", x"C", '1', '0'),
+        (x"8", x"8", '1', '0'),
+        (x"2", x"2", '1', '0'),
+        (x"1", x"1", '1', '0'),
+        (x"0", x"0", '1', '0')
     );
 
 BEGIN
@@ -78,11 +78,11 @@ BEGIN
                 ELSE
                     IF we = '1' THEN
                         IF we_sel = W_SEL_VIRTUAL THEN
-                            s_tlb(to_integer(unsigned(addr))).vtag <= tag_d(c_TAG_WIDTH-1 DOWNTO 0);
+                            s_tlb(to_integer(unsigned(tag_addr))).vtag <= tag_d(c_TAG_WIDTH-1 DOWNTO 0);
                         ELSE -- WE_SEL_PHYSICAL
-                            s_tlb(to_integer(unsigned(addr))).v    <= tag_d(c_TAG_WIDTH+1);
-                            s_tlb(to_integer(unsigned(addr))).r    <= tag_d(c_TAG_WIDTH);
-                            s_tlb(to_integer(unsigned(addr))).ptag <= tag_d(c_TAG_WIDTH-1 DOWNTO 0);
+                            s_tlb(to_integer(unsigned(tag_addr))).v    <= tag_d(c_TAG_WIDTH+1);
+                            s_tlb(to_integer(unsigned(tag_addr))).r    <= tag_d(c_TAG_WIDTH);
+                            s_tlb(to_integer(unsigned(tag_addr))).ptag <= tag_d(c_TAG_WIDTH-1 DOWNTO 0);
                         END IF;
                     END IF;
                 END IF;

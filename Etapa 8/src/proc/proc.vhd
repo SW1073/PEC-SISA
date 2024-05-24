@@ -27,34 +27,40 @@ ARCHITECTURE Structure OF proc IS
 
 	COMPONENT datapath IS
 		PORT (
-			clk        : IN  std_logic;
-			boot       : IN  std_logic;
-			op         : IN  std_logic_vector(2 DOWNTO 0);
-			f          : IN  std_logic_vector(2 DOWNTO 0);
-			wrd        : IN  std_logic;
-            d_sys      : IN  std_logic;
-			addr_a     : IN  std_logic_vector(2 DOWNTO 0);
-			addr_b     : IN  std_logic_vector(2 DOWNTO 0);
-			addr_d     : IN  std_logic_vector(2 DOWNTO 0);
-			immed      : IN  std_logic_vector(15 DOWNTO 0);
-			immed_x2   : IN  std_logic;
-			datard_m   : IN  std_logic_vector(15 DOWNTO 0);
-			ins_dad    : IN  std_logic;
-			pc         : IN  std_logic_vector(15 DOWNTO 0);
-			in_d       : IN  std_logic_vector(1 DOWNTO 0);
-			b_or_immed : IN  std_logic;
-            a_sys      : IN  std_logic;
-            b_sys      : IN  std_logic;
-            rd_io      : IN  std_logic_vector(15 downto 0);
-            system     : IN  std_logic;
-            exception  : IN t_exception_record;
-			addr_m     : OUT std_logic_vector(15 DOWNTO 0);
-			data_wr    : OUT std_logic_vector(15 DOWNTO 0);
-			regout_a   : OUT std_logic_vector(15 DOWNTO 0);
+			clk         : IN  std_logic;
+			boot        : IN  std_logic;
+			op          : IN  std_logic_vector(2 DOWNTO 0);
+			f           : IN  std_logic_vector(2 DOWNTO 0);
+			wrd         : IN  std_logic;
+            d_sys       : IN  std_logic;
+			addr_a      : IN  std_logic_vector(2 DOWNTO 0);
+			addr_b      : IN  std_logic_vector(2 DOWNTO 0);
+			addr_d      : IN  std_logic_vector(2 DOWNTO 0);
+			immed       : IN  std_logic_vector(15 DOWNTO 0);
+			immed_x2    : IN  std_logic;
+			datard_m    : IN  std_logic_vector(15 DOWNTO 0);
+			ins_dad     : IN  std_logic;
+			pc          : IN  std_logic_vector(15 DOWNTO 0);
+			in_d        : IN  std_logic_vector(1 DOWNTO 0);
+			b_or_immed  : IN  std_logic;
+            a_sys       : IN  std_logic;
+            b_sys       : IN  std_logic;
+            rd_io       : IN  std_logic_vector(15 downto 0);
+            system      : IN  std_logic;
+            exception   : IN t_exception_record;
+            tlb_we      : IN std_logic;
+            tlb_we_sel  : IN std_logic;
+            tlb_is_we_instr : IN std_logic;
+            privileged  : OUT std_logic;
+			addr_m      : OUT std_logic_vector(15 DOWNTO 0);
+			data_wr     : OUT std_logic_vector(15 DOWNTO 0);
+			regout_a    : OUT std_logic_vector(15 DOWNTO 0);
             int_enabled : OUT std_logic;
-			z          : OUT std_logic;
+			z           : OUT std_logic;
             div_by_zero : OUT std_logic;
-            privileged : OUT std_logic);
+            tlb_miss    : OUT std_logic;
+            tlb_valid   : OUT std_logic;
+            tlb_readonly: OUT std_logic);
 	END COMPONENT;
 
 	COMPONENT unidad_control IS
@@ -69,6 +75,9 @@ ARCHITECTURE Structure OF proc IS
             addr_m      : IN std_logic_vector(15 DOWNTO 0);
             div_by_zero : IN std_logic;
             privileged :  IN std_logic;
+            tlb_miss    : IN std_logic;
+            tlb_valid   : IN std_logic;
+            tlb_readonly: IN std_logic;
 			op         : OUT std_logic_vector(2 DOWNTO 0);
 			f          : OUT std_logic_vector(2 DOWNTO 0);
 			wrd        : OUT std_logic;
@@ -91,6 +100,9 @@ ARCHITECTURE Structure OF proc IS
             rd_in      : OUT std_logic;
             system     : OUT std_logic;
             inta       : OUT std_logic;
+            tlb_we     : OUT std_logic;
+            tlb_we_sel : OUT std_logic;
+            tlb_is_we_instr : OUT std_logic;
             exception  : OUT t_exception_record);
 	END COMPONENT;
 
@@ -117,6 +129,12 @@ ARCHITECTURE Structure OF proc IS
     SIGNAL s_div_by_zero : std_logic;
     SIGNAL s_exception  : t_exception_record;
     SIGNAL s_privileged : std_logic;
+    SIGNAL s_tlb_we     : std_logic;
+    SIGNAL s_tlb_we_sel : std_logic;
+    SIGNAL s_tlb_miss    : std_logic;
+    SIGNAL s_tlb_valid   : std_logic;
+    SIGNAL s_tlb_readonly: std_logic;
+    SIGNAL s_tlb_wurpidurpi : std_logic;
 
 BEGIN
 
@@ -146,6 +164,8 @@ BEGIN
         rd_io      => rd_io,
         system     => s_system,
         exception  => s_exception,
+        tlb_we     => s_tlb_we,
+        tlb_we_sel => s_tlb_we_sel,
 		-- outputs
 		addr_m     => s_addr_m,
 		data_wr    => data_wr,
@@ -153,7 +173,11 @@ BEGIN
         int_enabled => s_int_enabled,
 		z          => s_z,
         div_by_zero => s_div_by_zero,
-        privileged => s_privileged
+        privileged => s_privileged,
+        tlb_miss    => s_tlb_miss,
+        tlb_valid   => s_tlb_valid,
+        tlb_readonly=> s_tlb_readonly,
+        tlb_is_we_instr => s_tlb_wurpidurpi
 	);
 
 	uc : unidad_control PORT MAP(
@@ -191,7 +215,13 @@ BEGIN
         rd_in      => rd_in,
         system     => s_system,
         inta       => inta,
-        exception  => s_exception
+        exception  => s_exception,
+        tlb_we     => s_tlb_we,
+        tlb_we_sel => s_tlb_we_sel,
+        tlb_miss    => s_tlb_miss,
+        tlb_valid   => s_tlb_valid,
+        tlb_readonly=> s_tlb_readonly,
+        tlb_is_we_instr => s_tlb_wurpidurpi
 	);
 
 	dbg_pc <= s_pc;

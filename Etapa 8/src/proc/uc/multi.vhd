@@ -14,6 +14,7 @@ ENTITY multi IS
         wr_out_l  : IN  std_logic;
         exception : IN t_exception_record;
 		w_b       : IN  std_logic;
+        tlb_we_l  : IN  std_logic;
 		ldpc      : OUT std_logic;
 		wrd       : OUT std_logic;
 		wr_m      : OUT std_logic;
@@ -22,6 +23,7 @@ ENTITY multi IS
 		ldir      : OUT std_logic;
 		ins_dad   : OUT std_logic;
 		word_byte : OUT std_logic;
+        tlb_we    : OUT std_logic;
         system    : OUT std_logic);
 END ENTITY;
 
@@ -69,6 +71,8 @@ BEGIN
     wr_m <= '0' WHEN s_estado = DEMW AND exception.is_exception = '1' AND exception.code /= EX_INTERRUPT_CODE
             ELSE wr_m_l WHEN s_estado = DEMW
             ELSE '0';
+
+    tlb_we <= tlb_we_l WHEN s_estado = DEMW ELSE '0';
 
 	-- Señal word_byte generada por la lógica de control y que sólo debe dejarse pasar en el ciclo de
 	-- DEMW. En el ciclo F debe valer 0 ya que el acceso a la memoria,

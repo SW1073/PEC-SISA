@@ -16,6 +16,9 @@ ENTITY exception_ctrl IS
         is_protected_ir : IN std_logic;
         calls           : IN std_logic;
         privileged      : IN std_logic;
+        tlb_miss        : IN std_logic;
+        tlb_valid       : IN std_logic;
+        tlb_readonly    : IN std_logic;
         exception       : OUT t_exception_record);
 END ENTITY;
 

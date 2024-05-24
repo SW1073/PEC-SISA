@@ -11,6 +11,7 @@
    wrpi r3, r1   ; dejamos la pos 7 igual
    movi r4, 12
    movi r5, 15
+   movi r2, 6
    wrvi r3, r4   ; itlb.v[7] = 12
    wrvi r2, r5   ; itlb.v[6] = 15
    movi r1, 3

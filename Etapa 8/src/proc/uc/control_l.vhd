@@ -4,6 +4,7 @@ USE ieee.numeric_std.ALL;
 USE work.package_control.ALL;
 USE work.package_opcodes.ALL;
 USE work.package_alu.ALL;
+USE work.package_tlb.ALL;
 
 ENTITY control_l IS
 	PORT (
@@ -34,7 +35,10 @@ ENTITY control_l IS
         is_illegal_ir       : OUT std_logic;
         is_mem_access       : OUT std_logic;
         is_protected_ir     : OUT std_logic;
-        calls               : OUT std_logic);
+        calls               : OUT std_logic;
+        tlb_we              : OUT std_logic;
+        tlb_we_sel          : OUT std_logic;
+        tlb_is_we_instr     : OUT std_logic);
 END control_l;
 
 ARCHITECTURE Structure OF control_l IS
@@ -66,6 +70,8 @@ ARCHITECTURE Structure OF control_l IS
     SIGNAL s_b_or_immed_sys : std_logic;
     SIGNAL s_in_d_sys       : std_logic_vector(1 DOWNTO 0);
     SIGNAL s_in_d_jumps     : std_logic_vector(1 DOWNTO 0);
+    SIGNAL s_wurpidurpi    : std_logic;
+    SIGNAL s_wurpidurpi_d    : std_logic;
 BEGIN
 
 	s_opcode      <= ir(15 DOWNTO 12);
@@ -207,12 +213,25 @@ BEGIN
 
     -- Direccion del segundo puerto de lectura
 
+    s_wurpidurpi <= '1' WHEN s_opcode = OPCODE_SYS AND (s_f_sys = F_SYS_WRPI OR s_f_sys = F_SYS_WRVI)
+                    ELSE '0';
+
+    s_wurpidurpi_d <= '1' WHEN s_opcode = OPCODE_SYS AND (s_f_sys = F_SYS_WRPD OR s_f_sys = F_SYS_WRVD)
+                    ELSE '0';
+
+    tlb_we <= '1' WHEN s_wurpidurpi = '1' OR s_wurpidurpi_d = '1'
+              ELSE '0';
+
+    tlb_we_sel <= W_SEL_PHYSICAL WHEN s_f_sys = F_SYS_WRPI OR s_f_sys = F_SYS_WRPD
+              ELSE W_SEL_VIRTUAL;
+
     addr_b <= "111"       WHEN system = '1'                 ELSE
               s_first_reg WHEN s_opcode = OPCODE_STORE      ELSE
               s_first_reg WHEN s_opcode = OPCODE_STOREB     ELSE
               s_first_reg WHEN s_opcode = OPCODE_BRANCHES   ELSE
               s_first_reg WHEN s_opcode = OPCODE_JUMPS      ELSE
               s_first_reg WHEN s_opcode = OPCODE_IO         ELSE
+              s_first_reg WHEN s_wurpidurpi = '1' OR s_wurpidurpi_d = '1' ELSE
               "000"       WHEN s_opcode = OPCODE_SYS        ELSE
               s_third_reg;
 

@@ -20,6 +20,9 @@ ENTITY unidad_control IS
         addr_m     : IN std_logic_vector(15 DOWNTO 0);
         div_by_zero : IN std_logic;
         privileged : IN std_logic;
+        tlb_miss   : IN std_logic;
+        tlb_valid  : IN std_logic;
+        tlb_readonly : IN std_logic;
         op         : OUT std_logic_vector(2 DOWNTO 0);
         f          : OUT std_logic_vector(2 DOWNTO 0);
         wrd        : OUT std_logic;
@@ -42,6 +45,9 @@ ENTITY unidad_control IS
         rd_in      : OUT std_logic;
         system     : OUT std_logic;
         inta       : OUT std_logic;
+        tlb_we     : OUT std_logic;
+        tlb_we_sel : OUT std_logic;
+        tlb_is_we_instr : OUT std_logic;
         exception  : OUT t_exception_record);
 END unidad_control;
 
@@ -78,7 +84,10 @@ ARCHITECTURE Structure OF unidad_control IS
             is_illegal_ir       : OUT std_logic;
             is_mem_access       : OUT std_logic;
             is_protected_ir     : OUT std_logic;
-            calls               : OUT std_logic);
+            calls               : OUT std_logic;
+            tlb_we              : OUT std_logic;
+            tlb_we_sel          : OUT std_logic;
+            tlb_is_we_instr     : OUT std_logic);
 	END COMPONENT;
 
 	-- Multi
@@ -93,6 +102,7 @@ ARCHITECTURE Structure OF unidad_control IS
             wr_out_l  : IN  std_logic;
             w_b       : IN  std_logic;
             exception : IN t_exception_record;
+            tlb_we_l  : IN  std_logic;
             ldpc      : OUT std_logic;
             wrd       : OUT std_logic;
             wr_m      : OUT std_logic;
@@ -101,6 +111,7 @@ ARCHITECTURE Structure OF unidad_control IS
             ldir      : OUT std_logic;
             ins_dad   : OUT std_logic;
             word_byte : OUT std_logic;
+            tlb_we    : OUT std_logic;
             system    : OUT std_logic);
 	END COMPONENT;
 
@@ -116,6 +127,9 @@ ARCHITECTURE Structure OF unidad_control IS
         is_protected_ir : IN std_logic;
         calls           : IN std_logic;
         privileged      : IN std_logic;
+        tlb_miss        : IN std_logic;
+        tlb_valid       : IN std_logic;
+        tlb_readonly    : IN std_logic;
         exception       : OUT t_exception_record);
     END COMPONENT;
 
@@ -124,6 +138,7 @@ ARCHITECTURE Structure OF unidad_control IS
 	SIGNAL s_word_byte : std_logic;
 	SIGNAL s_wr_m      : std_logic;
 	SIGNAL s_wrd       : std_logic;
+    SIGNAL s_tlb_we    : std_logic;
 
 	-- Senales utiles que salen del multi y usamos dentro de la uc
 	SIGNAL s_multi_ldpc : std_logic;
@@ -194,7 +209,10 @@ BEGIN
         is_illegal_ir => s_is_illegal_ir,
         is_mem_access => s_is_mem_access,
         is_protected_ir => s_is_protected_ir,
-        calls      => s_calls
+        calls      => s_calls,
+        tlb_we     => s_tlb_we,
+        tlb_we_sel => tlb_we_sel,
+        tlb_is_we_instr => tlb_is_we_instr
 	);
 
 	multi0 : multi PORT MAP(
@@ -207,6 +225,7 @@ BEGIN
         rd_in_l => s_rd_in,
         wr_out_l => s_wr_out,
 		w_b    => s_word_byte,
+        tlb_we_l => s_tlb_we,
         exception => s_exception,
 		-- outputs
 		ldpc      => s_multi_ldpc,
@@ -217,6 +236,7 @@ BEGIN
 		ldir      => s_multi_ldir,
 		ins_dad   => ins_dad,
 		word_byte => word_byte,
+        tlb_we    => tlb_we,
         system    => s_system
 	);
 
@@ -232,7 +252,10 @@ BEGIN
         is_protected_ir => s_is_protected_ir,
         calls         => s_calls,
         privileged    => privileged,
-        exception     => s_exception
+        exception     => s_exception,
+        tlb_miss      => tlb_miss,
+        tlb_valid     => tlb_valid,
+        tlb_readonly  => tlb_readonly
     );
 
 	-- Program Counter and Instruction Register
