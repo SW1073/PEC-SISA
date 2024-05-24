@@ -10,6 +10,7 @@ vcom -93 -work work {../src/proc/packages/package_opcodes.vhd}
 vcom -93 -work work {../src/proc/packages/package_alu.vhd}
 vcom -93 -work work {../src/proc/packages/package_control.vhd}
 vcom -93 -work work {../src/proc/packages/package_exceptions.vhd}
+vcom -93 -work work {../src/proc/packages/package_tlb.vhd}
 vcom -93 -work work {../src/io_ctrl/package_io.vhd}
 
 
@@ -43,6 +44,7 @@ vcom -93 -work work {../src/proc/alu/alu_misc.vhd}
 vcom -93 -work work {../src/proc/alu/alu.vhd}
 # dp itself
 vcom -93 -work work {../src/proc/datapath/datapath.vhd}
+vcom -93 -work work {../src/proc/datapath/tlb.vhd}
 
 
 # Control Unit and things inside it

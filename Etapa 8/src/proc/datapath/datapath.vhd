@@ -82,8 +82,8 @@ ARCHITECTURE Structure OF datapath IS
         boot        : IN  std_logic;
         vtag        : IN  std_logic_vector(3 DOWNTO 0);
         addr        : IN  std_logic_vector(2 DOWNTO 0);
-        we_v        : IN  std_logic;
-        we_p        : IN  std_logic;
+        we          : IN  std_logic;
+        we_sel      : IN  std_logic;
         tag_d       : IN  std_logic_vector(5 DOWNTO 0);
         flush       : IN  std_logic;
         -- OUTPUT
@@ -183,10 +183,10 @@ BEGIN
         -- INPUT
         clk     => clk,
         boot    => boot,
-        vtag    => s_addr_m(15 DOWNTO 12);
+        vtag    => s_addr_m(15 DOWNTO 12),
         addr    => "000",   -- TODO
-        we_v    => '0',     -- TODO
-        we_p    => '0',     -- TODO
+        we      => '0',     -- TODO
+        we_sel  => '0',     -- TODO
         tag_d   => s_aluout(5 DOWNTO 0), --???
         flush   => '0',     -- TODO
         -- OUTPUT

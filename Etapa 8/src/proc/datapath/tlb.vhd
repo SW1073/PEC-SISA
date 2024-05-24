@@ -2,6 +2,7 @@ LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 USE ieee.numeric_std.ALL;
 USE ieee.std_logic_unsigned.ALL;
+USE work.package_tlb.ALL;
 
 ENTITY tlb IS
     PORT (
@@ -14,10 +15,10 @@ ENTITY tlb IS
         -- =========== INPUT de escritura ===========
         -- ID de la entrada que se quiere escribir
         addr        : IN  std_logic_vector(2 DOWNTO 0);
-        -- Write Enable para la entrada del vtag
-        we_v        : IN  std_logic;
-        -- Write Enable para la entrada del ptag
-        we_p        : IN  std_logic;
+        -- Write Enable para escribir tags
+        we          : IN  std_logic;
+        -- Selecciona si la escritura se efectua en el banco virtual o físico
+        we_sel      : IN  std_logic;
         -- Data line de la entrada del tag que se quiere escribir
         tag_d       : IN  std_logic_vector(5 DOWNTO 0);
         -- =========== INPUT control ============
@@ -75,16 +76,16 @@ BEGIN
                         s_tlb(i).v <= '0';
                     END LOOP;
                 ELSE
-                    IF we_v = '1' THEN
-                        s_tlb(to_integer(unsigned(addr))).vtag <= tag_d(c_TAG_WIDTH-1 DOWNTO 0);
-                    END IF;
-                    IF we_p = '1' THEN
-                        s_tlb(to_integer(unsigned(addr))).v    <= tag_d(c_TAG_WIDTH+1);
-                        s_tlb(to_integer(unsigned(addr))).r    <= tag_d(c_TAG_WIDTH);
-                        s_tlb(to_integer(unsigned(addr))).ptag <= tag_d(c_TAG_WIDTH-1 DOWNTO 0);
+                    IF we = '1' THEN
+                        IF we_sel = W_SEL_VIRTUAL THEN
+                            s_tlb(to_integer(unsigned(addr))).vtag <= tag_d(c_TAG_WIDTH-1 DOWNTO 0);
+                        ELSE -- WE_SEL_PHYSICAL
+                            s_tlb(to_integer(unsigned(addr))).v    <= tag_d(c_TAG_WIDTH+1);
+                            s_tlb(to_integer(unsigned(addr))).r    <= tag_d(c_TAG_WIDTH);
+                            s_tlb(to_integer(unsigned(addr))).ptag <= tag_d(c_TAG_WIDTH-1 DOWNTO 0);
+                        END IF;
                     END IF;
                 END IF;
-
             END IF;
         END IF;
     END PROCESS;
@@ -132,7 +133,7 @@ BEGIN
             v_idx := 7;
         ELSE
             -- No encontrado. Fallo de tlb
-            v_tlb_miss <= 0;
+            v_tlb_miss := '1';
         END IF;
 
         s_output_idx <= v_idx;
