@@ -17,7 +17,8 @@ ENTITY unidad_control IS
         regout_a   : IN  std_logic_vector(15 DOWNTO 0);
         int_enabled: IN  std_logic;
         intr       : IN  std_logic;
-        addr_m     : IN std_logic_vector(15 DOWNTO 0);
+        vaddr_m_msb : IN std_logic;
+        vaddr_m_lsb : IN std_logic;
         div_by_zero : IN std_logic;
         privileged : IN std_logic;
         tlb_miss   : IN std_logic;
@@ -251,8 +252,8 @@ BEGIN
 
     ex_ctrl : exception_ctrl PORT MAP(
         clk           => clk,
-        vaddr_m_lsb   => addr_m(0),
-        vaddr_m_msb   => addr_m(15),
+        vaddr_m_lsb   => vaddr_m_lsb,
+        vaddr_m_msb   => vaddr_m_msb,
         word_byte     => s_word_byte,
         is_mem_access => s_is_mem_access,
         wr_m          => s_wr_m,

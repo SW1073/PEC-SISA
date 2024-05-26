@@ -40,7 +40,9 @@ ENTITY datapath IS
         div_by_zero : OUT std_logic;
         tlb_miss    : OUT std_logic;
         tlb_valid   : OUT std_logic;
-        tlb_readonly: OUT std_logic);
+        tlb_readonly: OUT std_logic;
+        vaddr_m_msb : OUT std_logic;
+        vaddr_m_lsb : OUT std_logic);
 END datapath;
 
 ARCHITECTURE Structure OF datapath IS
@@ -181,22 +183,6 @@ BEGIN
 
 	data_wr <= s_regout_b;
 
-    -- PORT (
-    --     -- INPUT
-    --     clk         : IN  std_logic;
-    --     boot        : IN  std_logic;
-    --     vtag        : IN  std_logic_vector(3 DOWNTO 0);
-    --     addr        : IN  std_logic_vector(2 DOWNTO 0);
-    --     we_v        : IN  std_logic;
-    --     we_p        : IN  std_logic;
-    --     tag_d       : IN  std_logic_vector(5 DOWNTO 0);
-    --     flush       : IN  std_logic;
-    --     -- OUTPUT
-    --     tlb_miss    : OUT std_logic;
-    --     ptag        : OUT std_logic_vector(3 DOWNTO 0);
-    --     v           : OUT std_logic;
-    --     r           : OUT std_logic);
-
     s_tlb_we_i <= tlb_we WHEN tlb_is_we_instr = '1' ELSE '0';
     s_tlb_we_d <= tlb_we WHEN tlb_is_we_instr = '0' ELSE '0';
 
@@ -240,6 +226,9 @@ BEGIN
     s_tlb_ptag   <= s_tlb_ptag_i    WHEN ins_dad = '0' ELSE s_tlb_ptag_d;
 
     addr_m <= s_tlb_ptag & s_addr_m (11 downto 0);
+
+    vaddr_m_msb <= s_addr_m(15);
+    vaddr_m_lsb <= s_addr_m(0);
 
 
 END Structure;

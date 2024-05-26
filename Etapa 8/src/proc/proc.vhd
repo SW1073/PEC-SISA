@@ -60,7 +60,9 @@ ARCHITECTURE Structure OF proc IS
             div_by_zero : OUT std_logic;
             tlb_miss    : OUT std_logic;
             tlb_valid   : OUT std_logic;
-            tlb_readonly: OUT std_logic);
+            tlb_readonly: OUT std_logic;
+            vaddr_m_msb : OUT std_logic;
+            vaddr_m_lsb : OUT std_logic);
 	END COMPONENT;
 
 	COMPONENT unidad_control IS
@@ -72,7 +74,8 @@ ARCHITECTURE Structure OF proc IS
 			regout_a   : IN  std_logic_vector(15 DOWNTO 0);
             int_enabled : IN std_logic;
             intr        : IN std_logic;
-            addr_m      : IN std_logic_vector(15 DOWNTO 0);
+            vaddr_m_msb : IN std_logic;
+            vaddr_m_lsb : IN std_logic;
             div_by_zero : IN std_logic;
             privileged :  IN std_logic;
             tlb_miss    : IN std_logic;
@@ -136,6 +139,9 @@ ARCHITECTURE Structure OF proc IS
     SIGNAL s_tlb_readonly: std_logic;
     SIGNAL s_tlb_wurpidurpi : std_logic;
 
+    SIGNAL s_vaddr_m_msb : std_logic;
+    SIGNAL s_vaddr_m_lsb : std_logic;
+
 BEGIN
 
 	-- Aqui iria la declaracion del "mapeo" (PORT MAP) de los nombres de las entradas/salidas de los componentes
@@ -177,7 +183,9 @@ BEGIN
         tlb_miss    => s_tlb_miss,
         tlb_valid   => s_tlb_valid,
         tlb_readonly=> s_tlb_readonly,
-        tlb_is_we_instr => s_tlb_wurpidurpi
+        tlb_is_we_instr => s_tlb_wurpidurpi,
+        vaddr_m_msb => s_vaddr_m_msb,
+        vaddr_m_lsb => s_vaddr_m_lsb
 	);
 
 	uc : unidad_control PORT MAP(
@@ -189,7 +197,8 @@ BEGIN
 		z          => s_z,
         int_enabled => s_int_enabled,
         intr       => intr,
-        addr_m     => s_addr_m,
+        vaddr_m_msb => s_vaddr_m_msb,
+        vaddr_m_lsb => s_vaddr_m_lsb,
         div_by_zero => s_div_by_zero,
 		-- outputs
         privileged => s_privileged,

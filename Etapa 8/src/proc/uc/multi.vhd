@@ -73,7 +73,7 @@ BEGIN
 		END IF;
 	END PROCESS; -- prx_estado
 
-    exception_handler: PROCESS (clk) IS
+    exception_handler: PROCESS (clk, boot) IS
     BEGIN
         IF boot = '1' THEN
             s_recorded_exception.is_exception <= '0';

@@ -54,7 +54,7 @@ BEGIN
 
     s_protected_mem <= not is_illegal_ir AND
                        is_mem_access     AND
-                       vaddr_m_msb      AND
+                       vaddr_m_msb       AND
                        not privileged;
 
     s_calls <= not is_illegal_ir AND
@@ -106,8 +106,8 @@ BEGIN
 
                         EX_READONLY_DTLB    WHEN s_tlb_readonly = '1'   AND ins_dad = '1'   ELSE
                         -- NON EXCEPTION EXCEPTIONS
-                        EX_PROTECTED_IR     WHEN s_protected_ir = '1'   AND ins_dad = '1'   ELSE -- Solo se puede generar cuando estamos en demw
-                        EX_CALLS            WHEN s_calls = '1' AND ins_dad = '1'            ELSE
+                        EX_PROTECTED_IR     WHEN s_protected_ir = '1'   AND ins_dad = '1'   ELSE
+                        EX_CALLS            WHEN s_calls = '1'          AND ins_dad = '1'   ELSE
                         EX_INTERRUPT_CODE   WHEN s_interrupt = '1'                          ELSE
                         (OTHERS => 'X');
 
