@@ -116,10 +116,13 @@ ARCHITECTURE Structure OF unidad_control IS
 	END COMPONENT;
 
     COMPONENT exception_ctrl IS
-	PORT (clk           : IN std_logic;
-        addr_m          : IN std_logic_vector(15 DOWNTO 0);
+	PORT (
+        clk             : IN std_logic;
+        vaddr_m_msb     : IN std_logic;
+        vaddr_m_lsb     : IN std_logic;
         word_byte       : IN std_logic;
-        is_mem_access : IN std_logic;
+        is_mem_access   : IN std_logic;
+        wr_m            : IN std_logic;
         int_enabled     : IN std_logic;
         intr            : IN std_logic;
         is_illegal_ir   : IN  std_logic;
@@ -130,6 +133,7 @@ ARCHITECTURE Structure OF unidad_control IS
         tlb_miss        : IN std_logic;
         tlb_valid       : IN std_logic;
         tlb_readonly    : IN std_logic;
+        ins_dad         : IN std_logic;
         exception       : OUT t_exception_record);
     END COMPONENT;
 
@@ -139,6 +143,11 @@ ARCHITECTURE Structure OF unidad_control IS
 	SIGNAL s_wr_m      : std_logic;
 	SIGNAL s_wrd       : std_logic;
     SIGNAL s_tlb_we    : std_logic;
+
+    -- Senales para conectar multi con exception controller
+    -- (necesario para que se sepa si las tlb_exceptions llegan
+    -- del iTLB, o del dTLB)
+    SIGNAL s_ins_dad   : std_logic;
 
 	-- Senales utiles que salen del multi y usamos dentro de la uc
 	SIGNAL s_multi_ldpc : std_logic;
@@ -234,7 +243,7 @@ BEGIN
         rd_in     => rd_in,
         wr_out    => wr_out,
 		ldir      => s_multi_ldir,
-		ins_dad   => ins_dad,
+		ins_dad   => s_ins_dad,
 		word_byte => word_byte,
         tlb_we    => tlb_we,
         system    => s_system
@@ -242,9 +251,11 @@ BEGIN
 
     ex_ctrl : exception_ctrl PORT MAP(
         clk           => clk,
-        addr_m        => addr_m,
+        vaddr_m_lsb   => addr_m(0),
+        vaddr_m_msb   => addr_m(15),
         word_byte     => s_word_byte,
         is_mem_access => s_is_mem_access,
+        wr_m          => s_wr_m,
         int_enabled   => int_enabled,
         intr          => intr,
         is_illegal_ir => s_is_illegal_ir,
@@ -255,6 +266,7 @@ BEGIN
         exception     => s_exception,
         tlb_miss      => tlb_miss,
         tlb_valid     => tlb_valid,
+        ins_dad       => s_ins_dad,
         tlb_readonly  => tlb_readonly
     );
 
@@ -299,6 +311,7 @@ BEGIN
 	immed <= s_immed;
     system <= s_system;
     exception <= s_exception;
+    ins_dad <= s_ins_dad;
 
 END Structure;
 
