@@ -1,6 +1,6 @@
 
-test.exe:     file format elf32-sisa
-test.exe
+alineacion_impar.exe:     file format elf32-sisa
+alineacion_impar.exe
 architecture: sisa:3, flags 0x00000112:
 EXEC_P, HAS_SYMS, D_PAGED
 start address 0x0000c000
@@ -13,7 +13,7 @@ Sections:
 Idx Name          Size      VMA       LMA       File off  Algn  Flags
   0 .text         00000036  0000c000  0000c000  00000054  2**0  CONTENTS, ALLOC, LOAD, READONLY, CODE
   1 .stab         00000150  00000000  00000000  0000008c  2**2  CONTENTS, READONLY, DEBUGGING
-  2 .stabstr      0000003b  00000000  00000000  000001dc  2**0  CONTENTS, READONLY, DEBUGGING
+  2 .stabstr      0000004a  00000000  00000000  000001dc  2**0  CONTENTS, READONLY, DEBUGGING
 SYMBOL TABLE:
 0000c000 l    d  .text	00000000 .text
 00000000 l    d  .stab	00000000 .stab
@@ -36,10 +36,10 @@ SYMBOL TABLE:
 
 
 
-test.exe:     file format elf32-sisa
+alineacion_impar.exe:     file format elf32-sisa
 
 
-test.exe:     file format elf32-sisa
+alineacion_impar.exe:     file format elf32-sisa
 
 Disassembly of section .text:
 

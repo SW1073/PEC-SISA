@@ -23,7 +23,7 @@
        ; *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
 RSG:   rds    r7, s2      ;obtiene el valor del registro de estado. Nos dice que excepción ha ocurrido
        addi   r5, r5, 1
-       out    10, r5      ;muestra el numero de excepciones atendidas hasta en el momento
+       out    10, r5      ;muestra el numero de excepciones atendidas hasta en el momento. Debería ser 2.
        reti
 
 

@@ -26,14 +26,13 @@
        movi   r1, 0xFF
        out    10, r1      ;muestra el valor 0xFFFF en los visores
 
-       reti
+       reti               ; volvemos a modo usuario
 
 
        ; *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
        ; Rutina de servicio de interrupcion
        ; *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
-RSG:   rds    r7, s3      ;obtiene el valor del registro de identificador de la interrupcion
-       out    10, r7      ;muestra el identificador de syscall por el hex
+RSG:   addi   r5, r5, 1
        reti
 
 
@@ -41,10 +40,21 @@ RSG:   rds    r7, s3      ;obtiene el valor del registro de identificador de la 
        ; Rutina principal
        ; *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
 inici:
-       movi   r0, 0x00
-       movi   r1, 0x01
+       ; RDS, WRS: Los valores de s0 y r0 no deberían cambiar.
+       movi   r0, 0x01
+       rds    r0, s0
+       wrs    s0, r0
 
-       div    r2, r1, r0
-       divu   r2, r1, r0
+       ; EI, DI: El valor de s7 no debería cambiar.
+       ei
+       di
+
+       ; RETI, GETIID: Se debería continuar el programa después de la excepción.
+       reti
+       getiid r0
+
+       ; IN, OUT: No deberían generar excepciones.
+       in     r0, 5
+       out    10, r5      ; Muestra el número de excepciones por el hex. Debería ser 6.
 
        halt
