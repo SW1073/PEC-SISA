@@ -12,7 +12,7 @@ ENTITY multi IS
 		wr_m_l    : IN  std_logic;
         rd_in_l   : IN  std_logic;
         wr_out_l  : IN  std_logic;
-        exception : IN  t_exception_record;
+        exception_l : IN  t_exception_record;
 		w_b       : IN  std_logic;
         tlb_we_l  : IN  std_logic;
 		ldpc      : OUT std_logic;
@@ -24,7 +24,8 @@ ENTITY multi IS
 		ins_dad   : OUT std_logic;
 		word_byte : OUT std_logic;
         tlb_we    : OUT std_logic;
-        system    : OUT std_logic);
+        system    : OUT std_logic;
+        exception : OUT t_exception_record);
 END ENTITY;
 
 ARCHITECTURE Structure OF multi IS
@@ -41,14 +42,14 @@ ARCHITECTURE Structure OF multi IS
 BEGIN
 
     s_should_goto_sys <= '1' WHEN s_recorded_exception.is_exception = '1'   OR
-                                  exception.is_exception = '1'              ELSE
+                                  exception_l.is_exception = '1'            ELSE
                          '0';
 
     s_smoke_demw <= '1' WHEN s_recorded_exception.is_exception = '1'    OR
 
                             (s_recorded_exception.is_exception = '0'    AND
-                            exception.is_exception = '1'                AND
-                            exception.code /= EX_INTERRUPT_CODE)        ELSE
+                            exception_l.is_exception = '1'              AND
+                            exception_l.code /= EX_INTERRUPT_CODE)      ELSE
                     '0';
 
 	-- Aqui iria la maquina de estados del modelos de Moore que gestiona el multiciclo
@@ -77,12 +78,11 @@ BEGIN
     BEGIN
         IF boot = '1' THEN
             s_recorded_exception.is_exception <= '0';
+            s_recorded_exception.code <= (others => 'X');
         ELSE
             CASE s_estado IS
                 WHEN FETCH =>
-                    IF exception.is_exception = '1' THEN
-                        s_recorded_exception <= exception;
-                    END IF;
+                    s_recorded_exception <= exception_l;
                 WHEN DEMW =>
                     -- IF s_recorded_exception.is_exception = '0' THEN
                     --     IF exception.is_exception = '1' THEN
@@ -92,25 +92,27 @@ BEGIN
                     --     END IF;
                     -- END IF;
 
-                    IF    exception.is_exception = '0' AND s_recorded_exception.is_exception = '0' THEN
+                    IF    exception_l.is_exception = '0' AND s_recorded_exception.is_exception = '0' THEN
                         -- No han habído exceptiones
                         s_recorded_exception.is_exception <= '0';
+                        s_recorded_exception.code <= (others => 'X');
 
-                    -- ELSIF exception.is_exception = '0' AND s_recorded_exception.is_exception = '1' THEN
+                    -- ELSIF exception_l.is_exception = '0' AND s_recorded_exception.is_exception = '1' THEN
                         -- Ha habido una excepción en FETCH
                         -- No se actualiza la excepción guardada
 
-                    ELSIF exception.is_exception = '1' AND s_recorded_exception.is_exception = '0' THEN
+                    ELSIF exception_l.is_exception = '1' AND s_recorded_exception.is_exception = '0' THEN
                         -- Ha habido una excepción en DEMW
-                        s_recorded_exception <= exception;
+                        s_recorded_exception <= exception_l;
 
-                    -- ELSE -- exception.is_exception = '1' AND s_recorded_exception.is_exception = '1' THEN
+                    -- ELSE -- exception_l.is_exception = '1' AND s_recorded_exception.is_exception = '1' THEN
                         -- Ha habido una excepción en FETCH y en DEMW.
                         -- Le hacemos caso a la de fetch, pues la de DEMW es invalida
                         -- (podría ser un artefacto de la previa excepción)
                     END IF;
                 WHEN SYS =>
                     s_recorded_exception.is_exception <= '0';
+                    s_recorded_exception.code <= (others => 'X');
             END CASE;
         END IF;
     END PROCESS; -- exception_handler
@@ -123,7 +125,7 @@ BEGIN
 	-- de DEMW o 0 en otro caso.
     wrd <=  '1'     WHEN s_estado = SYS ELSE
             wrd_l   WHEN s_estado = DEMW AND (s_smoke_demw = '0' OR
-                                             (s_smoke_demw = '1' AND exception.code = EX_CALLS))
+                                             (s_smoke_demw = '1' AND exception_l.code = EX_CALLS))
             ELSE '0';
 
 	-- Señal que, o bien vale el valor de wr_m generado por la lógica de control cuando se está en el
@@ -150,6 +152,8 @@ BEGIN
 	ldir <= '1' WHEN s_estado = FETCH ELSE '0';
 
     system <= '1' WHEN s_estado = SYS ELSE '0';
+
+    exception <= s_recorded_exception;
 
 END Structure;
 

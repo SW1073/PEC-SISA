@@ -93,7 +93,7 @@ ARCHITECTURE Structure OF unidad_control IS
 
 	-- Multi
 	COMPONENT multi IS
-		PORT (
+        PORT (
             clk       : IN  std_logic;
             boot      : IN  std_logic;
             ldpc_l    : IN  std_logic;
@@ -101,8 +101,8 @@ ARCHITECTURE Structure OF unidad_control IS
             wr_m_l    : IN  std_logic;
             rd_in_l   : IN  std_logic;
             wr_out_l  : IN  std_logic;
+            exception_l : IN  t_exception_record;
             w_b       : IN  std_logic;
-            exception : IN t_exception_record;
             tlb_we_l  : IN  std_logic;
             ldpc      : OUT std_logic;
             wrd       : OUT std_logic;
@@ -113,7 +113,8 @@ ARCHITECTURE Structure OF unidad_control IS
             ins_dad   : OUT std_logic;
             word_byte : OUT std_logic;
             tlb_we    : OUT std_logic;
-            system    : OUT std_logic);
+            system    : OUT std_logic;
+            exception : OUT t_exception_record);
 	END COMPONENT;
 
     COMPONENT exception_ctrl IS
@@ -153,6 +154,7 @@ ARCHITECTURE Structure OF unidad_control IS
 	-- Senales utiles que salen del multi y usamos dentro de la uc
 	SIGNAL s_multi_ldpc : std_logic;
 	SIGNAL s_multi_ldir : std_logic;
+    SIGNAL s_multi_exception : t_exception_record;
 
 	SIGNAL s_immed                    : std_logic_vector(15 DOWNTO 0);
 	SIGNAL s_tknbr                    : std_logic_vector(1 DOWNTO 0);
@@ -236,7 +238,7 @@ BEGIN
         wr_out_l => s_wr_out,
 		w_b    => s_word_byte,
         tlb_we_l => s_tlb_we,
-        exception => s_exception,
+        exception_l => s_exception,
 		-- outputs
 		ldpc      => s_multi_ldpc,
 		wrd       => wrd,
@@ -247,7 +249,8 @@ BEGIN
 		ins_dad   => s_ins_dad,
 		word_byte => word_byte,
         tlb_we    => tlb_we,
-        system    => s_system
+        system    => s_system,
+        exception => s_multi_exception
 	);
 
     ex_ctrl : exception_ctrl PORT MAP(
@@ -311,7 +314,7 @@ BEGIN
 	pc    <= s_reg_pc;
 	immed <= s_immed;
     system <= s_system;
-    exception <= s_exception;
+    exception <= s_multi_exception;
     ins_dad <= s_ins_dad;
 
 END Structure;
