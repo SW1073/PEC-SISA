@@ -48,9 +48,12 @@ BEGIN
     s_is_demw            <= ins_dad;
     s_is_demw_mem_access <= is_mem_access AND s_is_demw;
 
-    s_bad_alignment <= is_mem_access AND
-                       not word_byte AND
-                       vaddr_m_lsb;
+    s_bad_alignment <=  (
+                            (is_mem_access AND s_is_demw AND not word_byte)
+                            OR
+                            (s_is_fetch)
+                        ) AND
+                        vaddr_m_lsb;
 
     s_interrupt <= not is_illegal_ir AND
                    int_enabled       AND
@@ -87,13 +90,13 @@ BEGIN
                                        -- DEMW
                                            div_by_zero = '1'       OR
                                            is_illegal_ir = '1'     OR
-                                           s_bad_alignment = '1'   OR
                                            s_tlb_readonly = '1'    OR
                                            s_protected_ir = '1'    OR
                                            s_calls = '1'
                                        ))
                                        -- Both FETCH or DEMW
                                        OR (
+                                           s_bad_alignment = '1'   OR
                                            s_interrupt = '1'
                                        )
                                        -- Fetch, or DEMW with memory access
@@ -106,7 +109,7 @@ BEGIN
 
     exception.code <=   EX_DIV_BY_ZERO      WHEN div_by_zero = '1'      AND s_is_demw = '1'             ELSE
                         EX_ILLEGAL_INSTR    WHEN is_illegal_ir = '1'    AND s_is_demw = '1'             ELSE
-                        EX_BAD_ALIGNMENT    WHEN s_bad_alignment = '1'  AND s_is_demw = '1'             ELSE
+                        EX_BAD_ALIGNMENT    WHEN s_bad_alignment = '1'                                  ELSE
                         -- TLB
                         EX_MISS_ITLB        WHEN s_tlb_miss = '1'       AND s_is_fetch = '1'            ELSE
                         EX_MISS_DTLB        WHEN s_tlb_miss = '1'       AND s_is_demw_mem_access = '1'  ELSE
