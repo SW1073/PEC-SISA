@@ -62,6 +62,7 @@ BEGIN
                        not privileged;
 
     s_calls <= not is_illegal_ir AND
+               s_fetch_demw      AND
                calls;
 
 
