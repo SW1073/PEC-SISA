@@ -33,6 +33,7 @@
        ; Rutina de servicio de interrupcion
        ; *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
 RSG:   rds    r7, s3      ;obtiene el valor del registro de identificador de la interrupcion
+       addi   r5, r5, 1   ;
        out    10, r7      ;muestra el identificador de syscall por el hex
        reti
 
@@ -44,7 +45,12 @@ inici:
        movi   r0, 0x00
        movi   r1, 0x01
 
+       ; DIVS ilegales
        div    r2, r1, r0
        divu   r2, r1, r0
+
+       ; DIVS legales
+       div    r2, r0, r1
+       divu   r2, r0, r1
 
        halt
