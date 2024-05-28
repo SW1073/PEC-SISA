@@ -190,10 +190,10 @@ BEGIN
     s_tlb_we_i <= tlb_we WHEN tlb_is_we_instr = '1' ELSE '0';
     s_tlb_we_d <= tlb_we WHEN tlb_is_we_instr = '0' ELSE '0';
 
-    s_tlb_flush_i <= '1' WHEN tlb_flush = '1' AND s_regout_a(1) = '1'
+    s_tlb_flush_d <= '1' WHEN tlb_flush = '1' AND s_regout_a(1) = '1'
                      ELSE '0';
 
-    s_tlb_flush_d <= '1' WHEN tlb_flush = '1' AND s_regout_a(3) = '1'
+    s_tlb_flush_i <= '1' WHEN tlb_flush = '1' AND s_regout_a(3) = '1'
                      ELSE '0';
 
     tlbi: tlb PORT MAP(
