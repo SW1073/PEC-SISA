@@ -26,6 +26,7 @@ ARCHITECTURE Structure OF exception_ctrl IS
     SIGNAL s_fetch_demw    : std_logic;
 
     SIGNAL s_bad_alignment : std_logic;
+    SIGNAL s_div_by_zero   : std_logic;
     SIGNAL s_interrupt     : std_logic;
     SIGNAL s_protected_ir  : std_logic;
     SIGNAL s_protected_mem : std_logic;
@@ -42,11 +43,16 @@ BEGIN
                         ) AND
                         addr_m(0);
 
+    s_div_by_zero <= not is_illegal_ir AND
+                     s_fetch_demw      AND
+                     div_by_zero;
+
     s_interrupt <= not is_illegal_ir AND
                    int_enabled       AND
                    intr;
 
-    s_protected_ir <= not is_illegal_ir AND
+    s_protected_ir <= s_fetch_demw      AND
+                      not is_illegal_ir AND
                       is_protected_ir   AND
                       not privileged;
 
@@ -61,14 +67,14 @@ BEGIN
 
     exception.is_exception <= '1' WHEN  s_interrupt = '1'       OR
                                         is_illegal_ir = '1'     OR
-                                        div_by_zero = '1'       OR
+                                        s_div_by_zero = '1'     OR
                                         s_protected_ir = '1'    OR
                                         s_protected_mem = '1'   OR
                                         s_calls = '1'           OR
                                         s_bad_alignment = '1'
                             ELSE '0';
 
-    exception.code <=   EX_DIV_BY_ZERO      WHEN div_by_zero = '1'      ELSE
+    exception.code <=   EX_DIV_BY_ZERO      WHEN s_div_by_zero = '1'    ELSE
                         EX_ILLEGAL_INSTR    WHEN is_illegal_ir = '1'    ELSE
                         EX_BAD_ALIGNMENT    WHEN s_bad_alignment = '1'  ELSE
                         EX_PROTECTED_IR     WHEN s_protected_ir = '1'   ELSE

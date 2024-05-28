@@ -28,6 +28,7 @@ END ENTITY;
 ARCHITECTURE Structure OF exception_ctrl IS
 
     SIGNAL s_bad_alignment : std_logic;
+    SIGNAL s_div_by_zero   : std_logic;
     SIGNAL s_interrupt     : std_logic;
     SIGNAL s_protected_ir  : std_logic;
     SIGNAL s_protected_mem : std_logic;
@@ -54,6 +55,9 @@ BEGIN
                             (s_is_fetch)
                         ) AND
                         vaddr_m_lsb;
+
+    s_div_by_zero <= not is_illegal_ir AND
+                     div_by_zero;
 
     s_interrupt <= not is_illegal_ir AND
                    int_enabled       AND
@@ -88,7 +92,7 @@ BEGIN
 
     exception.is_exception <= '1' WHEN (s_is_demw = '1' AND (
                                        -- DEMW
-                                           div_by_zero = '1'       OR
+                                           s_div_by_zero = '1'     OR
                                            is_illegal_ir = '1'     OR
                                            s_tlb_readonly = '1'    OR
                                            s_protected_ir = '1'    OR
@@ -107,7 +111,7 @@ BEGIN
                                        )
                               ELSE '0';
 
-    exception.code <=   EX_DIV_BY_ZERO      WHEN div_by_zero = '1'      AND s_is_demw = '1'             ELSE
+    exception.code <=   EX_DIV_BY_ZERO      WHEN s_div_by_zero = '1'    AND s_is_demw = '1'             ELSE
                         EX_ILLEGAL_INSTR    WHEN is_illegal_ir = '1'    AND s_is_demw = '1'             ELSE
                         EX_BAD_ALIGNMENT    WHEN s_bad_alignment = '1'                                  ELSE
                         -- TLB
