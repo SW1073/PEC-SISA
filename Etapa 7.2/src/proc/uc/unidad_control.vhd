@@ -89,7 +89,7 @@ ARCHITECTURE Structure OF unidad_control IS
             rd_in_l   : IN  std_logic;
             wr_out_l  : IN  std_logic;
             w_b       : IN  std_logic;
-            exception : IN t_exception_record;
+            exception_l : IN t_exception_record;
             ldpc      : OUT std_logic;
             wrd       : OUT std_logic;
             wr_m      : OUT std_logic;
@@ -98,7 +98,8 @@ ARCHITECTURE Structure OF unidad_control IS
             ldir      : OUT std_logic;
             ins_dad   : OUT std_logic;
             word_byte : OUT std_logic;
-            system    : OUT std_logic);
+            system    : OUT std_logic;
+            exception : OUT t_exception_record);
 	END COMPONENT;
 
     COMPONENT exception_ctrl IS
@@ -109,6 +110,7 @@ ARCHITECTURE Structure OF unidad_control IS
         intr            : IN std_logic;
         is_illegal_ir   : IN  std_logic;
         div_by_zero     : IN std_logic;
+        ins_dad         : IN std_logic;
         exception       : OUT t_exception_record);
     END COMPONENT;
 
@@ -121,6 +123,7 @@ ARCHITECTURE Structure OF unidad_control IS
 	-- Senales utiles que salen del multi y usamos dentro de la uc
 	SIGNAL s_multi_ldpc : std_logic;
 	SIGNAL s_multi_ldir : std_logic;
+    SIGNAL s_multi_ins_dad : std_logic;
 
 	SIGNAL s_immed                    : std_logic_vector(15 DOWNTO 0);
 	SIGNAL s_tknbr                    : std_logic_vector(1 DOWNTO 0);
@@ -193,7 +196,7 @@ BEGIN
         rd_in_l => s_rd_in,
         wr_out_l => s_wr_out,
 		w_b    => s_word_byte,
-        exception => s_exception,
+        exception_l => s_exception,
 		-- outputs
 		ldpc      => s_multi_ldpc,
 		wrd       => wrd,
@@ -201,9 +204,10 @@ BEGIN
         rd_in     => rd_in,
         wr_out    => wr_out,
 		ldir      => s_multi_ldir,
-		ins_dad   => ins_dad,
+		ins_dad   => s_multi_ins_dad,
 		word_byte => word_byte,
-        system    => s_system
+        system    => s_system,
+        exception => exception
 	);
 
     ex_ctrl : exception_ctrl PORT MAP(
@@ -214,6 +218,7 @@ BEGIN
         intr          => intr,
         is_illegal_ir => s_is_illegal_ir,
         div_by_zero   => div_by_zero,
+        ins_dad       => s_multi_ins_dad,
         exception     => s_exception
     );
 
@@ -260,7 +265,7 @@ BEGIN
 	pc    <= s_reg_pc;
 	immed <= s_immed;
     system <= s_system;
-    exception <= s_exception;
+    ins_dad <= s_multi_ins_dad;
 
 END Structure;
 
