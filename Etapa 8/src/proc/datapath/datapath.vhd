@@ -31,6 +31,7 @@ ENTITY datapath IS
         tlb_we      : IN  std_logic;
         tlb_we_sel  : IN  std_logic;
         tlb_is_we_instr : IN std_logic;
+        tlb_flush   : IN  std_logic;
         privileged  : OUT std_logic;
 		addr_m      : OUT std_logic_vector(15 DOWNTO 0);
 		data_wr     : OUT std_logic_vector(15 DOWNTO 0);
@@ -126,8 +127,11 @@ ARCHITECTURE Structure OF datapath IS
     SIGNAL s_tlb_vd     : std_logic;
     SIGNAL s_tlb_rd     : std_logic;
 
-    SIGNAL s_tlb_we_i     : std_logic;
-    SIGNAL s_tlb_we_d     : std_logic;
+    SIGNAL s_tlb_we_i   : std_logic;
+    SIGNAL s_tlb_we_d   : std_logic;
+
+    SIGNAL s_tlb_flush_d: std_logic;
+    SIGNAL s_tlb_flush_i: std_logic;
 
 BEGIN
 
@@ -186,6 +190,12 @@ BEGIN
     s_tlb_we_i <= tlb_we WHEN tlb_is_we_instr = '1' ELSE '0';
     s_tlb_we_d <= tlb_we WHEN tlb_is_we_instr = '0' ELSE '0';
 
+    s_tlb_flush_i <= '1' WHEN tlb_flush = '1' AND s_regout_a(1) = '1'
+                     ELSE '0';
+
+    s_tlb_flush_d <= '1' WHEN tlb_flush = '1' AND s_regout_a(3) = '1'
+                     ELSE '0';
+
     tlbi: tlb PORT MAP(
         -- INPUT
         clk     => clk,
@@ -195,7 +205,7 @@ BEGIN
         we      => s_tlb_we_i,
         we_sel  => tlb_we_sel,
         tag_d   => s_regout_b(5 DOWNTO 0),
-        flush   => '0',
+        flush   => s_tlb_flush_i,
         -- OUTPUT
         tlb_miss=> s_tlb_miss_i,
         ptag    => s_tlb_ptag_i,
@@ -212,7 +222,7 @@ BEGIN
         we      => s_tlb_we_d,
         we_sel  => tlb_we_sel,
         tag_d   => s_regout_b(5 DOWNTO 0),
-        flush   => '0',
+        flush   => s_tlb_flush_d,
         -- OUTPUT
         tlb_miss=> s_tlb_miss_d,
         ptag    => s_tlb_ptag_d,

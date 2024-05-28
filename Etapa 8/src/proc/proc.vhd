@@ -51,6 +51,7 @@ ARCHITECTURE Structure OF proc IS
             tlb_we      : IN std_logic;
             tlb_we_sel  : IN std_logic;
             tlb_is_we_instr : IN std_logic;
+            tlb_flush   : IN std_logic;
             privileged  : OUT std_logic;
 			addr_m      : OUT std_logic_vector(15 DOWNTO 0);
 			data_wr     : OUT std_logic_vector(15 DOWNTO 0);
@@ -106,6 +107,7 @@ ARCHITECTURE Structure OF proc IS
             tlb_we     : OUT std_logic;
             tlb_we_sel : OUT std_logic;
             tlb_is_we_instr : OUT std_logic;
+            tlb_flush  : OUT std_logic;
             exception  : OUT t_exception_record);
 	END COMPONENT;
 
@@ -125,19 +127,20 @@ ARCHITECTURE Structure OF proc IS
     SIGNAL s_a_sys      : std_logic;
     SIGNAL s_b_sys      : std_logic;
 	SIGNAL s_z          : std_logic;
-    SIGNAL s_int_enabled : std_logic;
+    SIGNAL s_int_enabled: std_logic;
     SIGNAL s_system     : std_logic;
 	SIGNAL s_regout_a   : std_logic_vector(15 DOWNTO 0);
     SIGNAL s_addr_m     : std_logic_vector(15 DOWNTO 0);
-    SIGNAL s_div_by_zero : std_logic;
+    SIGNAL s_div_by_zero: std_logic;
     SIGNAL s_exception  : t_exception_record;
     SIGNAL s_privileged : std_logic;
-    SIGNAL s_tlb_we     : std_logic;
-    SIGNAL s_tlb_we_sel : std_logic;
-    SIGNAL s_tlb_miss    : std_logic;
-    SIGNAL s_tlb_valid   : std_logic;
-    SIGNAL s_tlb_readonly: std_logic;
+    SIGNAL s_tlb_we         : std_logic;
+    SIGNAL s_tlb_we_sel     : std_logic;
+    SIGNAL s_tlb_miss       : std_logic;
+    SIGNAL s_tlb_valid      : std_logic;
+    SIGNAL s_tlb_readonly   : std_logic;
     SIGNAL s_tlb_wurpidurpi : std_logic;
+    SIGNAL s_tlb_flush      : std_logic;
 
     SIGNAL s_vaddr_m_msb : std_logic;
     SIGNAL s_vaddr_m_lsb : std_logic;
@@ -184,6 +187,7 @@ BEGIN
         tlb_valid   => s_tlb_valid,
         tlb_readonly=> s_tlb_readonly,
         tlb_is_we_instr => s_tlb_wurpidurpi,
+        tlb_flush   => s_tlb_flush,
         vaddr_m_msb => s_vaddr_m_msb,
         vaddr_m_lsb => s_vaddr_m_lsb
 	);
@@ -230,7 +234,8 @@ BEGIN
         tlb_miss    => s_tlb_miss,
         tlb_valid   => s_tlb_valid,
         tlb_readonly=> s_tlb_readonly,
-        tlb_is_we_instr => s_tlb_wurpidurpi
+        tlb_is_we_instr => s_tlb_wurpidurpi,
+        tlb_flush   => s_tlb_flush
 	);
 
 	dbg_pc <= s_pc;

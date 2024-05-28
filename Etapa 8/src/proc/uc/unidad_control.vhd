@@ -49,6 +49,7 @@ ENTITY unidad_control IS
         tlb_we     : OUT std_logic;
         tlb_we_sel : OUT std_logic;
         tlb_is_we_instr : OUT std_logic;
+        tlb_flush  : OUT std_logic;
         exception  : OUT t_exception_record);
 END unidad_control;
 
@@ -81,14 +82,15 @@ ARCHITECTURE Structure OF unidad_control IS
             addr_io    : OUT std_logic_vector(7  DOWNTO 0);
             wr_out     : OUT std_logic;
             rd_in      : OUT std_logic;
-            inta       : OUT STD_LOGIC;
+            inta       : OUT std_logic;
             is_illegal_ir       : OUT std_logic;
             is_mem_access       : OUT std_logic;
             is_protected_ir     : OUT std_logic;
             calls               : OUT std_logic;
             tlb_we              : OUT std_logic;
             tlb_we_sel          : OUT std_logic;
-            tlb_is_we_instr     : OUT std_logic);
+            tlb_is_we_instr     : OUT std_logic;
+            tlb_flush           : OUT std_logic);
 	END COMPONENT;
 
 	-- Multi
@@ -104,6 +106,7 @@ ARCHITECTURE Structure OF unidad_control IS
             exception_l : IN  t_exception_record;
             w_b       : IN  std_logic;
             tlb_we_l  : IN  std_logic;
+            tlb_flush_l : IN std_logic;
             ldpc      : OUT std_logic;
             wrd       : OUT std_logic;
             wr_m      : OUT std_logic;
@@ -113,6 +116,7 @@ ARCHITECTURE Structure OF unidad_control IS
             ins_dad   : OUT std_logic;
             word_byte : OUT std_logic;
             tlb_we    : OUT std_logic;
+            tlb_flush : OUT std_logic;
             system    : OUT std_logic;
             exception : OUT t_exception_record);
 	END COMPONENT;
@@ -177,6 +181,8 @@ ARCHITECTURE Structure OF unidad_control IS
     SIGNAL s_exception          : t_exception_record;
     SIGNAL s_calls              : std_logic;
 
+    SIGNAL s_tlb_flush          : std_logic;
+
     SIGNAL s_opcode             : std_logic_vector(3 DOWNTO 0);
     SIGNAL s_f                  : std_logic_vector(5 DOWNTO 0);
 BEGIN
@@ -224,7 +230,8 @@ BEGIN
         calls      => s_calls,
         tlb_we     => s_tlb_we,
         tlb_we_sel => tlb_we_sel,
-        tlb_is_we_instr => tlb_is_we_instr
+        tlb_is_we_instr => tlb_is_we_instr,
+        tlb_flush  => s_tlb_flush
 	);
 
 	multi0 : multi PORT MAP(
@@ -239,6 +246,7 @@ BEGIN
 		w_b    => s_word_byte,
         tlb_we_l => s_tlb_we,
         exception_l => s_exception,
+        tlb_flush_l => s_tlb_flush,
 		-- outputs
 		ldpc      => s_multi_ldpc,
 		wrd       => wrd,
@@ -249,6 +257,7 @@ BEGIN
 		ins_dad   => s_ins_dad,
 		word_byte => word_byte,
         tlb_we    => tlb_we,
+        tlb_flush => tlb_flush,
         system    => s_system,
         exception => s_multi_exception
 	);

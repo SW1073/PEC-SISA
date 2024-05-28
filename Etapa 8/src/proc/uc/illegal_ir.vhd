@@ -43,7 +43,7 @@ BEGIN
                                         ((s_f_sys = F_SYS_EI OR s_f_sys = F_SYS_DI) AND (s_first_reg /= "000" OR s_second_reg /= "000")) OR
                                         ((s_f_sys = F_SYS_RETI) AND (s_first_reg /= "000" OR s_second_reg /= "000")) OR
                                         ((s_f_sys = F_SYS_GETIID) AND (s_second_reg /= "000")) OR
-                                        -- ((s_f_sys = F_SYS_FLUSH) AND (s_first_reg /= "000")) OR
+                                        ((s_f_sys = F_SYS_FLUSH) AND (s_first_reg /= "000")) OR
                                         ((s_f_sys = F_SYS_HALT) AND (s_first_reg /= "111" OR s_second_reg /= "111"))))
                 ELSE '0';
 

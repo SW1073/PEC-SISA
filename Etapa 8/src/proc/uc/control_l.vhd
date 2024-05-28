@@ -38,7 +38,8 @@ ENTITY control_l IS
         calls               : OUT std_logic;
         tlb_we              : OUT std_logic;
         tlb_we_sel          : OUT std_logic;
-        tlb_is_we_instr     : OUT std_logic);
+        tlb_is_we_instr     : OUT std_logic;
+        tlb_flush           : OUT std_logic);
 END control_l;
 
 ARCHITECTURE Structure OF control_l IS
@@ -148,7 +149,7 @@ BEGIN
 
     -- Señal de selección d_sys. Indica en cual de los 2 bancos de registros se escribe el dato d
     WITH s_f_sys SELECT
-        s_d_sys <= '1' WHEN F_SYS_WRS,
+         s_d_sys <= '1' WHEN F_SYS_WRS,
                    '1' WHEN F_SYS_RETI,
                    '1' WHEN F_SYS_EI,
                    '1' WHEN F_SYS_DI,
@@ -201,9 +202,9 @@ BEGIN
 
     -- Registro que se lee cuando estamos en ops de sistema.
     -- Hardcoded para algunas instrucciones que siempre leen del mismo reg
-     s_f_addra_sys <="111" WHEN (s_f_sys = F_SYS_EI OR s_f_sys = F_SYS_DI)  ELSE
-                     "001" WHEN (s_f_sys = F_SYS_RETI)                      ELSE
-                     s_second_reg;
+     s_f_addra_sys <= "111" WHEN (s_f_sys = F_SYS_EI OR s_f_sys = F_SYS_DI)  ELSE
+                      "001" WHEN (s_f_sys = F_SYS_RETI)                      ELSE
+                      s_second_reg;
 
 	-- Dirección del primer puerto de lectura
     addr_a <= "101"         WHEN system = '1'           ELSE
@@ -229,6 +230,9 @@ BEGIN
     tlb_is_we_instr <= '1' WHEN s_wurpidurpi = '1'   ELSE
                        '0' WHEN s_wurpidurpi_d = '1' ELSE
                        'X';
+
+    tlb_flush <= '1' WHEN s_opcode = OPCODE_SYS AND s_f_sys = F_SYS_FLUSH ELSE
+                 '0';
 
     addr_b <= "111"       WHEN system = '1'                 ELSE
               s_first_reg WHEN s_opcode = OPCODE_STORE      ELSE
