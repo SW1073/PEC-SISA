@@ -80,7 +80,6 @@ BEGIN
     BEGIN
         IF boot = '1' THEN
             s_recorded_exception.is_exception <= '0';
-            s_recorded_exception.code <= (others => 'X');
         ELSE
             CASE s_estado IS
                 WHEN FETCH =>
@@ -97,7 +96,6 @@ BEGIN
                     IF    exception_l.is_exception = '0' AND s_recorded_exception.is_exception = '0' THEN
                         -- No han habído exceptiones
                         s_recorded_exception.is_exception <= '0';
-                        s_recorded_exception.code <= (others => 'X');
 
                     -- ELSIF exception_l.is_exception = '0' AND s_recorded_exception.is_exception = '1' THEN
                         -- Ha habido una excepción en FETCH
@@ -114,7 +112,6 @@ BEGIN
                     END IF;
                 WHEN SYS =>
                     s_recorded_exception.is_exception <= '0';
-                    s_recorded_exception.code <= (others => 'X');
             END CASE;
         END IF;
     END PROCESS; -- exception_handler

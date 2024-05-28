@@ -53,6 +53,7 @@ BEGIN
 	-- Una buena (y limpia) implementacion no deberia ocupar más de 7 o 8 lineas
 
 	PROCESS (clk) IS
+        VARIABLE v_prev_is_exception : std_logic := '0';
 	BEGIN
 		IF rising_edge(clk) THEN
             IF boot = '1' THEN
@@ -66,7 +67,7 @@ BEGIN
                     sys_registers(1) <= pc;
                 END IF;
 
-                IF exception.is_exception = '1' THEN
+                IF v_prev_is_exception = '0' AND exception.is_exception = '1' THEN
                     sys_registers(2) <= x"000" & exception.code;
                     IF exception.code = EX_BAD_ALIGNMENT THEN
                         sys_registers(3) <= addr_m;
@@ -81,6 +82,7 @@ BEGIN
                     sys_registers(conv_integer(addr_d)) <= d;
                 END IF;
             END IF;
+            v_prev_is_exception := exception.is_exception;
 		END IF;
 	END PROCESS;
 

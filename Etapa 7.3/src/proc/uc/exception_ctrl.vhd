@@ -16,10 +16,14 @@ ENTITY exception_ctrl IS
         is_protected_ir : IN std_logic;
         calls           : IN std_logic;
         privileged      : IN std_logic;
+        ins_dad         : IN std_logic;
         exception       : OUT t_exception_record);
 END ENTITY;
 
 ARCHITECTURE Structure OF exception_ctrl IS
+
+    -- 0 fetch, 1 demw
+    SIGNAL s_fetch_demw    : std_logic;
 
     SIGNAL s_bad_alignment : std_logic;
     SIGNAL s_interrupt     : std_logic;
@@ -29,9 +33,14 @@ ARCHITECTURE Structure OF exception_ctrl IS
 
 BEGIN
 
-    s_bad_alignment <= is_mem_access AND
-                       not word_byte AND
-                       addr_m(0);
+    s_fetch_demw <= ins_dad;
+
+    s_bad_alignment <=  (
+                            (is_mem_access AND not word_byte AND s_fetch_demw)
+                            OR
+                            (not s_fetch_demw)
+                        ) AND
+                        addr_m(0);
 
     s_interrupt <= not is_illegal_ir AND
                    int_enabled       AND
