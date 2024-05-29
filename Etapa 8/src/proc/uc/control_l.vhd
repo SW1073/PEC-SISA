@@ -228,7 +228,7 @@ BEGIN
 
     tlb_is_we_instr <= '1' WHEN s_wurpidurpi = '1'   ELSE
                        '0' WHEN s_wurpidurpi_d = '1' ELSE
-                       'X';
+                       '0';
 
     addr_b <= "111"       WHEN system = '1'                 ELSE
               s_first_reg WHEN s_opcode = OPCODE_STORE      ELSE

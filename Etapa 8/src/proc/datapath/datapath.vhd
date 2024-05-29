@@ -38,9 +38,7 @@ ENTITY datapath IS
         int_enabled : OUT std_logic;
 		z           : OUT std_logic;
         div_by_zero : OUT std_logic;
-        tlb_miss    : OUT std_logic;
-        tlb_valid   : OUT std_logic;
-        tlb_readonly: OUT std_logic);
+        tlb_status_out : OUT t_tlb_status_out);
 END datapath;
 
 ARCHITECTURE Structure OF datapath IS
@@ -181,22 +179,6 @@ BEGIN
 
 	data_wr <= s_regout_b;
 
-    -- PORT (
-    --     -- INPUT
-    --     clk         : IN  std_logic;
-    --     boot        : IN  std_logic;
-    --     vtag        : IN  std_logic_vector(3 DOWNTO 0);
-    --     addr        : IN  std_logic_vector(2 DOWNTO 0);
-    --     we_v        : IN  std_logic;
-    --     we_p        : IN  std_logic;
-    --     tag_d       : IN  std_logic_vector(5 DOWNTO 0);
-    --     flush       : IN  std_logic;
-    --     -- OUTPUT
-    --     tlb_miss    : OUT std_logic;
-    --     ptag        : OUT std_logic_vector(3 DOWNTO 0);
-    --     v           : OUT std_logic;
-    --     r           : OUT std_logic);
-
     s_tlb_we_i <= tlb_we WHEN tlb_is_we_instr = '1' ELSE '0';
     s_tlb_we_d <= tlb_we WHEN tlb_is_we_instr = '0' ELSE '0';
 
@@ -234,13 +216,19 @@ BEGIN
         r       => s_tlb_rd
     );
 
-    tlb_miss     <= s_tlb_miss_i    WHEN ins_dad = '0' ELSE s_tlb_miss_d;
-    tlb_valid    <= s_tlb_vi        WHEN ins_dad = '0' ELSE s_tlb_vd;
-    tlb_readonly <= s_tlb_ri        WHEN ins_dad = '0' ELSE s_tlb_rd;
-    s_tlb_ptag   <= s_tlb_ptag_i    WHEN ins_dad = '0' ELSE s_tlb_ptag_d;
+    tlb_status_out.v_addr_msb <= s_addr_m(15);
+    tlb_status_out.v_addr_lsb <= s_addr_m(0);
+
+    tlb_status_out.tlb_miss_i <= s_tlb_miss_i;
+    tlb_status_out.tlb_valid_i <= s_tlb_vi;
+
+    tlb_status_out.tlb_miss_d <= s_tlb_miss_d;
+    tlb_status_out.tlb_valid_d <= s_tlb_vd;
+    tlb_status_out.tlb_readonly_d <= s_tlb_rd;
+
+    s_tlb_ptag <= s_tlb_ptag_i    WHEN ins_dad = '0' ELSE s_tlb_ptag_d;
 
     addr_m <= s_tlb_ptag & s_addr_m (11 downto 0);
-
 
 END Structure;
 

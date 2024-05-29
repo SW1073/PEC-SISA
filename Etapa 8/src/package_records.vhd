@@ -25,4 +25,18 @@ package package_records is
         code            : std_logic_vector(3 DOWNTO 0);
     end record t_exception_record;
 
+    type t_tlb_status_out is record
+        v_addr_msb  : std_logic;
+        v_addr_lsb  : std_logic;
+
+        -- instr status
+        tlb_miss_i  : std_logic;
+        tlb_valid_i : std_logic;
+
+        -- data status
+        tlb_miss_d      : std_logic;
+        tlb_valid_d     : std_logic;
+        tlb_readonly_d  : std_logic;
+    end record t_tlb_status_out;
+
 end package_records;

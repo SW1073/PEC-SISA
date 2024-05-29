@@ -20,9 +20,7 @@ ENTITY unidad_control IS
         addr_m     : IN std_logic_vector(15 DOWNTO 0);
         div_by_zero : IN std_logic;
         privileged : IN std_logic;
-        tlb_miss   : IN std_logic;
-        tlb_valid  : IN std_logic;
-        tlb_readonly : IN std_logic;
+        tlb_status_out : IN t_tlb_status_out;
         op         : OUT std_logic_vector(2 DOWNTO 0);
         f          : OUT std_logic_vector(2 DOWNTO 0);
         wrd        : OUT std_logic;
@@ -127,9 +125,9 @@ ARCHITECTURE Structure OF unidad_control IS
         is_protected_ir : IN std_logic;
         calls           : IN std_logic;
         privileged      : IN std_logic;
-        tlb_miss        : IN std_logic;
-        tlb_valid       : IN std_logic;
-        tlb_readonly    : IN std_logic;
+        is_demw         : IN std_logic;
+        wr_m            : IN std_logic;
+        tlb_status_out : IN t_tlb_status_out;
         exception       : OUT t_exception_record);
     END COMPONENT;
 
@@ -143,6 +141,7 @@ ARCHITECTURE Structure OF unidad_control IS
 	-- Senales utiles que salen del multi y usamos dentro de la uc
 	SIGNAL s_multi_ldpc : std_logic;
 	SIGNAL s_multi_ldir : std_logic;
+    SIGNAL s_multi_wr_m : std_logic;
 
 	SIGNAL s_immed                    : std_logic_vector(15 DOWNTO 0);
 	SIGNAL s_tknbr                    : std_logic_vector(1 DOWNTO 0);
@@ -167,6 +166,8 @@ ARCHITECTURE Structure OF unidad_control IS
 
     SIGNAL s_opcode             : std_logic_vector(3 DOWNTO 0);
     SIGNAL s_f                  : std_logic_vector(5 DOWNTO 0);
+
+    SIGNAL s_ins_dad    : std_logic;
 BEGIN
 
     s_opcode <= s_reg_ir(15 DOWNTO 12);
@@ -230,32 +231,32 @@ BEGIN
 		-- outputs
 		ldpc      => s_multi_ldpc,
 		wrd       => wrd,
-		wr_m      => wr_m,
+		wr_m      => s_multi_wr_m,
         rd_in     => rd_in,
         wr_out    => wr_out,
 		ldir      => s_multi_ldir,
-		ins_dad   => ins_dad,
+		ins_dad   => s_ins_dad,
 		word_byte => word_byte,
         tlb_we    => tlb_we,
         system    => s_system
 	);
 
     ex_ctrl : exception_ctrl PORT MAP(
-        clk           => clk,
-        addr_m        => addr_m,
-        word_byte     => s_word_byte,
-        is_mem_access => s_is_mem_access,
-        int_enabled   => int_enabled,
-        intr          => intr,
-        is_illegal_ir => s_is_illegal_ir,
-        div_by_zero   => div_by_zero,
+        clk             => clk,
+        addr_m          => addr_m,
+        word_byte       => s_word_byte,
+        is_mem_access   => s_is_mem_access,
+        int_enabled     => int_enabled,
+        intr            => intr,
+        is_illegal_ir   => s_is_illegal_ir,
+        div_by_zero     => div_by_zero,
         is_protected_ir => s_is_protected_ir,
-        calls         => s_calls,
-        privileged    => privileged,
-        exception     => s_exception,
-        tlb_miss      => tlb_miss,
-        tlb_valid     => tlb_valid,
-        tlb_readonly  => tlb_readonly
+        wr_m            => s_multi_wr_m,
+        calls           => s_calls,
+        privileged      => privileged,
+        is_demw         => s_ins_dad,
+        tlb_status_out  => tlb_status_out,
+        exception       => s_exception
     );
 
 	-- Program Counter and Instruction Register
@@ -299,6 +300,8 @@ BEGIN
 	immed <= s_immed;
     system <= s_system;
     exception <= s_exception;
+
+    ins_dad <= s_ins_dad;
 
 END Structure;
 

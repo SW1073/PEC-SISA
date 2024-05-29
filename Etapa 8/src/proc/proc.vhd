@@ -58,9 +58,7 @@ ARCHITECTURE Structure OF proc IS
             int_enabled : OUT std_logic;
 			z           : OUT std_logic;
             div_by_zero : OUT std_logic;
-            tlb_miss    : OUT std_logic;
-            tlb_valid   : OUT std_logic;
-            tlb_readonly: OUT std_logic);
+            tlb_status_out : OUT t_tlb_status_out);
 	END COMPONENT;
 
 	COMPONENT unidad_control IS
@@ -75,9 +73,7 @@ ARCHITECTURE Structure OF proc IS
             addr_m      : IN std_logic_vector(15 DOWNTO 0);
             div_by_zero : IN std_logic;
             privileged :  IN std_logic;
-            tlb_miss    : IN std_logic;
-            tlb_valid   : IN std_logic;
-            tlb_readonly: IN std_logic;
+            tlb_status_out : IN t_tlb_status_out;
 			op         : OUT std_logic_vector(2 DOWNTO 0);
 			f          : OUT std_logic_vector(2 DOWNTO 0);
 			wrd        : OUT std_logic;
@@ -131,9 +127,7 @@ ARCHITECTURE Structure OF proc IS
     SIGNAL s_privileged : std_logic;
     SIGNAL s_tlb_we     : std_logic;
     SIGNAL s_tlb_we_sel : std_logic;
-    SIGNAL s_tlb_miss    : std_logic;
-    SIGNAL s_tlb_valid   : std_logic;
-    SIGNAL s_tlb_readonly: std_logic;
+    SIGNAL s_tlb_status_out : t_tlb_status_out;
     SIGNAL s_tlb_wurpidurpi : std_logic;
 
 BEGIN
@@ -174,10 +168,8 @@ BEGIN
 		z          => s_z,
         div_by_zero => s_div_by_zero,
         privileged => s_privileged,
-        tlb_miss    => s_tlb_miss,
-        tlb_valid   => s_tlb_valid,
-        tlb_readonly=> s_tlb_readonly,
-        tlb_is_we_instr => s_tlb_wurpidurpi
+        tlb_is_we_instr => s_tlb_wurpidurpi,
+        tlb_status_out => s_tlb_status_out
 	);
 
 	uc : unidad_control PORT MAP(
@@ -218,10 +210,8 @@ BEGIN
         exception  => s_exception,
         tlb_we     => s_tlb_we,
         tlb_we_sel => s_tlb_we_sel,
-        tlb_miss    => s_tlb_miss,
-        tlb_valid   => s_tlb_valid,
-        tlb_readonly=> s_tlb_readonly,
-        tlb_is_we_instr => s_tlb_wurpidurpi
+        tlb_is_we_instr => s_tlb_wurpidurpi,
+        tlb_status_out => s_tlb_status_out
 	);
 
 	dbg_pc <= s_pc;

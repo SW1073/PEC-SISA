@@ -78,7 +78,7 @@ ARCHITECTURE Structure OF controladores_IO IS
             intr        : OUT std_logic);
     END COMPONENT;
 
-    TYPE Mat IS ARRAY (255 DOWNTO 0) OF std_logic_vector(15 DOWNTO 0);
+    TYPE Mat IS ARRAY (31 DOWNTO 0) OF std_logic_vector(15 DOWNTO 0);
     SIGNAL registers : Mat := (OTHERS => (OTHERS => '0'));
 
     SIGNAL s_ps2_ascii_code : std_logic_vector(7 downto 0);
