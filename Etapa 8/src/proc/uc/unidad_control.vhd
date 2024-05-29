@@ -271,16 +271,20 @@ BEGIN
                          OR (s_opcode = OPCODE_SYS AND (s_f = F_SYS_RETI))) THEN
                         s_reg_pc <= s_pc_mas_dos;
                     ELSE
-                        CASE s_tknbr IS
-                            WHEN TKNBR_NOT_TAKEN =>
-                                s_reg_pc <= s_pc_mas_dos;
-                            WHEN TKNBR_BRANCH =>
-                                s_reg_pc <= s_pc_mas_immed;
-                            WHEN TKNBR_JUMP =>
-                                s_reg_pc <= regout_a;
-                            WHEN OTHERS =>
-                                s_reg_pc <= s_pc_mas_dos;
-                        END CASE;
+                        IF privileged = '0' AND exception.is_exception = '1' THEN
+                            s_reg_pc <= s_pc_mas_dos;
+                        ELSE
+                            CASE s_tknbr IS
+                                WHEN TKNBR_NOT_TAKEN =>
+                                    s_reg_pc <= s_pc_mas_dos;
+                                WHEN TKNBR_BRANCH =>
+                                    s_reg_pc <= s_pc_mas_immed;
+                                WHEN TKNBR_JUMP =>
+                                    s_reg_pc <= regout_a;
+                                WHEN OTHERS =>
+                                    s_reg_pc <= s_pc_mas_dos;
+                            END CASE;
+                        END IF;
                     END IF;
 				END IF;
 
