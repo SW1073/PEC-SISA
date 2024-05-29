@@ -68,7 +68,12 @@ BEGIN
 
                 IF exception.is_exception = '1' THEN
                     sys_registers(2) <= x"000" & exception.code;
-                    IF exception.code = EX_BAD_ALIGNMENT THEN
+                    IF exception.code = EX_BAD_ALIGNMENT  OR 
+                       exception.code = EX_MISS_DTLB      OR 
+                       exception.code = EX_INVALID_DTLB   OR 
+                       exception.code = EX_PROTECTED_DTLB OR 
+                       exception.code = EX_READONLY_DTLB
+                    THEN
                         sys_registers(3) <= addr_m;
                     END IF;
                 END IF;

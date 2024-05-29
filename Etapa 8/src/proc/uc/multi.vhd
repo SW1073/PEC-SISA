@@ -44,11 +44,7 @@ BEGIN
 		ELSIF rising_edge(clk) THEN
 			CASE s_estado IS
 				WHEN FETCH =>
-                    IF exception.is_exception = '1' AND exception.code /= EX_INTERRUPT_CODE AND exception.code /= EX_CALLS THEN
-                        s_estado  <= SYS;
-                    ELSE
                         s_estado  <= DEMW;
-                    END IF;
 				WHEN DEMW  =>
                     IF exception.is_exception = '1' THEN
                         s_estado  <= SYS;
@@ -62,9 +58,7 @@ BEGIN
 
 	-- Señal que, o bien vale el valor de ldpc generado por la lógica de control cuando se está en el ciclo
 	--de DEMW o 0 en otro caso
-	ldpc <= ldpc_l  WHEN s_estado = DEMW OR s_estado = SYS ELSE
-            '1'     WHEN s_estado = FETCH AND exception.is_exception = '1' AND exception.code /= EX_INTERRUPT_CODE AND exception.code /= EX_CALLS ELSE
-            '0';
+	ldpc <= ldpc_l  WHEN s_estado = DEMW OR s_estado = SYS ELSE '0';
 
 	-- Señal que, o bien vale el valor de wrd generado por la lógica de control cuando se está en el ciclo
 	-- de DEMW o 0 en otro caso.

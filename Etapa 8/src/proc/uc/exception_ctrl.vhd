@@ -102,8 +102,8 @@ BEGIN
                                         s_protected_ir = '1'    OR
                                         s_protected_mem = '1'   OR
                                         s_calls = '1'           OR
-                                        s_tlb_miss_i = '1'      OR
-                                        s_tlb_invalid_i = '1'     OR
+                                        -- s_tlb_miss_i = '1'      OR
+                                        -- s_tlb_invalid_i = '1'     OR
                                         s_tlb_miss_d = '1'      OR
                                         s_tlb_invalid_d = '1'     OR
                                         s_tlb_readonly_d = '1'  OR
