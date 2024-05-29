@@ -301,6 +301,7 @@ BEGIN
     system <= s_system;
     exception <= s_exception;
 
+    wr_m <= s_multi_wr_m;
     ins_dad <= s_ins_dad;
 
 END Structure;
