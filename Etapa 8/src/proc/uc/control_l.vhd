@@ -226,6 +226,7 @@ BEGIN
               ELSE W_SEL_VIRTUAL;
 
 
+    -- Señal que indica si la instrucción actual es una instrucción de escritura en la TLB
     tlb_is_we_instr <= '1' WHEN s_wurpidurpi = '1'   ELSE
                        '0' WHEN s_wurpidurpi_d = '1' ELSE
                        '0';

@@ -95,51 +95,6 @@ BEGIN
         s_one_hot(i) <= '1' WHEN vtag = s_tlb(i).vtag ELSE '0';
     END GENERATE;
 
-    -- PROCESS (s_one_hot) IS
-    --     VARIABLE v_idx : INTEGER range 0 to c_NUM_ENTRIES - 1 := 0;
-    --     VARIABLE v_tlb_miss : std_logic := '0';
-    --     VARIABLE v_inverted_one_hot : std_logic_vector(0 TO c_NUM_ENTRIES-1) := (OTHERS => '0');
-    -- BEGIN
-    --     -- IF s_one_hot = 0 THEN
-    --     --     -- TENEMOS UN FALLO DE TLB
-    --     -- ELSE
-    --     --     v_inverted_one_hot := s_one_hot;
-    --     --     FOR i IN v_inverted_one_hot'range LOOP
-    --     --         IF v_inverted_one_hot(i) = '1' THEN
-    --     --             v_idx := i;
-    --     --         END IF;
-    --     --     END LOOP;
-    --     --     s_output_idx <= v_idx;
-    --     -- END IF;
-    --
-    --     v_tlb_miss := '0';
-    --     v_idx := s_output_idx;
-    --
-    --     IF    s_one_hot(0) = '1' THEN
-    --         v_idx := 0;
-    --     ELSIF s_one_hot(1) = '1' THEN
-    --         v_idx := 1;
-    --     ELSIF s_one_hot(2) = '1' THEN
-    --         v_idx := 2;
-    --     ELSIF s_one_hot(3) = '1' THEN
-    --         v_idx := 3;
-    --     ELSIF s_one_hot(4) = '1' THEN
-    --         v_idx := 4;
-    --     ELSIF s_one_hot(5) = '1' THEN
-    --         v_idx := 5;
-    --     ELSIF s_one_hot(6) = '1' THEN
-    --         v_idx := 6;
-    --     ELSIF s_one_hot(7) = '1' THEN
-    --         v_idx := 7;
-    --     ELSE
-    --         -- No encontrado. Fallo de tlb
-    --         v_tlb_miss := '1';
-    --     END IF;
-    --
-    --     s_output_idx <= v_idx;
-    --     tlb_miss <= v_tlb_miss;
-    -- END PROCESS;
-
     s_output_idx <= 0 WHEN s_one_hot(0) = '1' ELSE
                     1 WHEN s_one_hot(1) = '1' ELSE
                     2 WHEN s_one_hot(2) = '1' ELSE

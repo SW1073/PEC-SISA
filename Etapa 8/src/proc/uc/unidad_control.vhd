@@ -266,12 +266,19 @@ BEGIN
 			IF boot = '0' THEN
 				-- Sumamos al PC solo cuando ldpc que sale del multi = 1
 				IF s_multi_ldpc = '1' THEN
+                    -- Si estamos en DEMW y detectamos una intrucción de tipo salto ilegal,
+                    -- vamos al PC siguiente.
+                    -- Si no hacemos esto, el PC cambia al salto ilegal.
                     IF s_system = '0' AND s_is_illegal_ir = '1' AND
                         (s_opcode = OPCODE_JUMPS OR s_opcode = OPCODE_BRANCHES
                          OR (s_opcode = OPCODE_SYS AND (s_f = F_SYS_RETI))) THEN
                         s_reg_pc <= s_pc_mas_dos;
                     ELSE
                         IF privileged = '0' AND s_exception.is_exception = '1' THEN
+                            -- Si estamos en modo usuario y hay una excepción, vamos al PC siguiente.
+                            -- El único caso que donde realmente es necesario esto es cuando se hace
+                            -- un RETI en modo usuario, ya que es la única instrucción de salto
+                            -- privilegiada.
                             s_reg_pc <= s_pc_mas_dos;
                         ELSE
                             CASE s_tknbr IS

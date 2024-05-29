@@ -28,10 +28,6 @@ BEGIN
 
     PROCESS (inta) IS
     BEGIN
-        -- FIXME: treure aixo si dones problemes inta.
-        -- Actualitzar una senyal i mostrejar-la per
-        -- un altre cable pot crear glitches.
-        -- Al MODELSIM, funciona amb i sense comprovació.
         IF rising_edge(inta) THEN
             IF timer_intr = '1' THEN
                 current_iid <= "00";
