@@ -271,7 +271,7 @@ BEGIN
                          OR (s_opcode = OPCODE_SYS AND (s_f = F_SYS_RETI))) THEN
                         s_reg_pc <= s_pc_mas_dos;
                     ELSE
-                        IF privileged = '0' AND exception.is_exception = '1' THEN
+                        IF privileged = '0' AND s_exception.is_exception = '1' THEN
                             s_reg_pc <= s_pc_mas_dos;
                         ELSE
                             CASE s_tknbr IS

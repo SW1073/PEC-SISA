@@ -89,6 +89,7 @@ BEGIN
                      not tlb_status_out.tlb_valid_d;
 
     s_tlb_readonly_d <= not is_illegal_ir AND
+                      is_demw             AND
                       is_mem_access       AND
                       wr_m                AND
                       not tlb_status_out.tlb_miss_d      AND
