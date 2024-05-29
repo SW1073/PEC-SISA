@@ -251,7 +251,7 @@ BEGIN
         is_illegal_ir   => s_is_illegal_ir,
         div_by_zero     => div_by_zero,
         is_protected_ir => s_is_protected_ir,
-        wr_m            => s_multi_wr_m,
+        wr_m            => s_wr_m,
         calls           => s_calls,
         privileged      => privileged,
         is_demw         => s_ins_dad,
