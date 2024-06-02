@@ -1,0 +1,30 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: Processador SISA - Assignatura PEC
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Jafeth Rafael
+    family-names: Concepción Castillo
+    email: jafeth.rafael.concepcion@estudiantat.upc.edu
+    affiliation: Student
+  - given-names: Eloi
+    family-names: Merino Serrat
+    email: eloi.merino@estudiantat.upc.edu
+    affiliation: Student
+repository-code: 'https://github.com/SW1073/PEC-SISA'
+abstract: >-
+  Repositori de codi d'un processador SISA. Projecte de
+  l'assignatura Projecte d'Enginyeria de Computadors, de la
+  Facultat d'Informàtica de Barcelona, UPC.
+keywords:
+  - VHDL
+  - Modelsim
+  - Quartus
+  - SISA
+  - UPC
+  - FIB
